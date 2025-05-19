@@ -1,4 +1,4 @@
-package com.kernel360.Halo.Web;
+package com.kernel360.Halo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
