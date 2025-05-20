@@ -13,11 +13,22 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Inquiry extends BaseEntity {
 
-    private Long categoryId;
+
+    private Long authorId;
 
     private String title;
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    public void updateContent(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+/*
+    public void updateStatus(String status) {
+        this.status = status;
+    }
+    */
 
 }

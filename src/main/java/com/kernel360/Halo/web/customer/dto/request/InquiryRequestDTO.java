@@ -6,7 +6,7 @@ import lombok.Data;
 public class InquiryRequestDTO {
     // categoryId, title, content
 
-    private Long categoryId;
+    private Long authorId;
     private String title;
     private String content;
 
