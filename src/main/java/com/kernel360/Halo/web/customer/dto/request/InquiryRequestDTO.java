@@ -4,10 +4,11 @@ import lombok.Data;
 
 @Data
 public class InquiryRequestDTO {
-    // categoryId, title, content
+    // categoryId, title, content, deleted
 
     private Long authorId;
     private String title;
     private String content;
+    private Boolean deleted;
 
 }

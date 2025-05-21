@@ -25,6 +25,7 @@ public class Inquiry extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+
 /*
     public void updateStatus(String status) {
         this.status = status;

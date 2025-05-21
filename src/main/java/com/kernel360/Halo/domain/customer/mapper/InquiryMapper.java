@@ -31,6 +31,7 @@ public class InquiryMapper {
                 .title(inquiry.getTitle())
                 .content(inquiry.getContent())
                 .createdAt(inquiry.getCreatedAt())
+                .deleted(inquiry.isDeleted())
                 .build();
     }
 

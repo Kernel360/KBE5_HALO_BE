@@ -26,8 +26,11 @@ public class InquiryServiceImpl implements InquiryService {
     public List<InquiryResponseDTO> getInquiries(String keyword) {
         List<Inquiry> inquiries;
 
-        if("all".equalsIgnoreCase(keyword)) inquiries = inquiryRepository.findAll();
-        else inquiries = inquiryRepository.findByTitleContainingIgnoreCase(keyword);
+        if ("all".equalsIgnoreCase(keyword)) {
+            inquiries = inquiryRepository.findByDeletedFalse();
+        } else {
+            inquiries = inquiryRepository.findByDeletedFalseAndTitleContainingIgnoreCase(keyword);
+        }
 
         return inquiryMapper.toResponseDTOList(inquiries);
     }
@@ -59,7 +62,9 @@ public class InquiryServiceImpl implements InquiryService {
     @Transactional
     @Override
     public void deleteInquiry(Long inquiryId) {
-        inquiryRepository.deleteById(inquiryId);
+        Inquiry inquiry = inquiryRepository.findById(inquiryId).orElseThrow(() -> new NoSuchElementException("문의글을 찾을 수 없습니다"));
+        inquiry.updateDeleted(true);
+        inquiryRepository.save(inquiry);
     }
 
 }

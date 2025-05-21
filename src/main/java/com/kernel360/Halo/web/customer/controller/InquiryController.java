@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/customers/inquiries")
@@ -40,6 +41,16 @@ public class InquiryController {
         return ResponseEntity.ok(new ApiResponse<>(true, "성공", responseList));
     }
 
+    // get detail inquiry
+    @GetMapping("/{inquiry_id}")
+    public ResponseEntity<InquiryResponseDTO> getInquiry(@PathVariable Long inquiry_id) {
+        InquiryResponseDTO inquiryResponseDTO = inquiryService.getInquiries("all").stream()
+                .filter(inquiry -> inquiry.getId().equals(inquiry_id) && !inquiry.isDeleted())
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("문의글을 찾을 수 없습니다"));
+        return ResponseEntity.ok(inquiryResponseDTO);
+    }
+
     //create
     @PostMapping("")
     public ResponseEntity<InquiryResponseDTO> createInquiry(@RequestBody InquiryRequestDTO inquiryRequestDTO) {
@@ -56,10 +67,11 @@ public class InquiryController {
     }
 
     //delete
-    public ResponseEntity<Void> deleteInquiry(@PathVariable Long inquiryId) {
+    @DeleteMapping("/{inquiry_id}")
+    public ResponseEntity<Void> deleteInquiry(@PathVariable Long inquiry_id) {
         //noContent() 메서드는 HTTP 204 Status Code와 함께 Response를 생성할 때 사용된다.
         // 주로 삭제 요청이나 업데이트 후 body가 필요 없는 경우에 사용된다.
-        inquiryService.deleteInquiry(inquiryId);
+        inquiryService.deleteInquiry(inquiry_id);
         return ResponseEntity.noContent().build();
     }
 }
