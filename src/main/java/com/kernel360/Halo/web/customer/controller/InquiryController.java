@@ -30,7 +30,7 @@ public class InquiryController {
         return ResponseEntity.status(HttpStatus.OK).body(responseList);
     }
 
-    //read return ApiResponse ..
+    //read return ApiResponse
     @GetMapping("/2")
     public ResponseEntity<ApiResponse<List<InquiryResponseDTO>>> getInquires2(
             @RequestParam String keyword
