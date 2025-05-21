@@ -8,9 +8,6 @@ jobs:
   notify-discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Debug webhook URL
         run: echo "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
