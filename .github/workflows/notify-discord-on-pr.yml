@@ -9,10 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send notification to Discord
-        run: |
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d '{
-                 "content": "📣 새 Pull Request가 생성되었습니다!?\n제목: ${{ github.event.pull_request.title }}\n작성자: ${{ github.actor }}\n링크: ${{ github.event.pull_request.html_url }}"
-               }' \
-               ${{ secrets.DISCORD_WEBHOOK }}
+        uses: tsickert/discord-webhook@7.0.0
+        with:
+            webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+            content: |
+                A new pull request has been opened!
+                - **Title**: ${{ github.event.pull_request.title }}
+                - **Author**: ${{ github.event.pull_request.user.login }}
+                - **URL**: ${{ github.event.pull_request.html_url }}
+                - **Branch**: ${{ github.event.pull_request.head.ref }}
+                - **Base Branch**: ${{ github.event.pull_request.base.ref }}
+                - **Description**: ${{ github.event.pull_request.body }}
