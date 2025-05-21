@@ -1,13 +1,18 @@
 package com.kernel360.Halo.web.customer.dto.request;
 
-import lombok.Data;
+import com.kernel360.Halo.domain.customer.entity.Inquiry;
+import lombok.*;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class InquiryRequestDTO {
     // categoryId, title, content
 
     private Long authorId;
     private String title;
     private String content;
+
 
 }
