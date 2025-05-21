@@ -2,21 +2,13 @@ name: Notify Discord on PR
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize, reopened, closed]
 
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
     steps:
       - name: Send notification to Discord
-        uses: tsickert/discord-webhook@v7.0.0
+        uses: Aleph-Kim/discord-github-notification@v1.2.0
         with:
-            webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-            content: |
-                A new pull request has been opened!
-                - **Title**: ${{ github.event.pull_request.title }}
-                - **Author**: ${{ github.event.pull_request.user.login }}
-                - **URL**: ${{ github.event.pull_request.html_url }}
-                - **Branch**: ${{ github.event.pull_request.head.ref }}
-                - **Base Branch**: ${{ github.event.pull_request.base.ref }}
-                - **Description**: ${{ github.event.pull_request.body }}
+          discord-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
