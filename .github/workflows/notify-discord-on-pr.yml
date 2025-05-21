@@ -1,16 +1,16 @@
 name: Notify Discord on PR
 
 on:
-  pull_request_target
-    #types: [opened, synchronize, reopened, closed]
+  pull_request:
+    branches:
+      - main
+      - server/dev
+    types: [opened, synchronize, reopened, closed]
 
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Debug webhook URL
-        run: echo "${{ secrets.DISCORD_WEBHOOK_URL }}"
-
       - name: Send notification to Discord
         uses: Aleph-Kim/discord-github-notification@v1.2.0
         with:
