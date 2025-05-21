@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     List<Inquiry> findByTitleContainingIgnoreCase(String keyword);
+    List<Inquiry> findByDeletedFalseAndTitleContainingIgnoreCase(String keyword);
+    List<Inquiry> findByDeletedFalse();
 }
