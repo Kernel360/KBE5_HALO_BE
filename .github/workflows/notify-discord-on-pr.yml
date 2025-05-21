@@ -11,4 +11,4 @@ jobs:
       - name: Send notification to Discord
         uses: Aleph-Kim/discord-github-notification@v1.2.0
         with:
-          discord-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          discord-webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
