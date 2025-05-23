@@ -42,6 +42,7 @@ jobs:
           mkdir ./common/src/main/resources && cd ./common/src/main/resources
           ls -al
           touch ./application.yml
+          ls -al
           echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
         shell: bash
 
