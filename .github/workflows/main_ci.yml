@@ -31,14 +31,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          cd server
           gradle clean build -x test
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: server/build/libs
 
   BUILD_AND_PUBLISH:
     needs: TESTING
@@ -46,12 +39,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: build/
 
       - name: Build Docker Image
         run: |
