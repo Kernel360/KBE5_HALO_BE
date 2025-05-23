@@ -31,10 +31,6 @@ jobs:
       - name: MySQL setup
         uses: samin/mysql-action@v1
         with:
-          host port: 3306
-          container port: 3307
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
           mysql version: '8.0'
           mysql database: 'test_db'
           mysql root password: $ {{ secrets.DB_ROOT_PASSWORD }}
