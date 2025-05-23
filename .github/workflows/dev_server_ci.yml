@@ -33,7 +33,6 @@ jobs:
         with:
           mysql version: '8.0'
           mysql database: 'test_db'
-          mysql root password: $ {{ secrets.DB_ROOT_PASSWORD }}
           mysql user: $ {{ secrets.DB_USER }}
           mysql password: $ {{ secrets.DB_PASSWORD }}
 
