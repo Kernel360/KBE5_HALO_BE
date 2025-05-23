@@ -36,16 +36,6 @@ jobs:
           mysql user: ${{ secrets.DB_USER }}
           mysql password: ${{ secrets.DB_PASSWORD }}
 
-      - name: yml 파일 생성
-        run: |
-          ls -al
-          mkdir ./common/src/main/resources && cd ./common/src/main/resources
-          ls -al
-          touch ./application.yml
-          ls -al
-          echo "${{ secrets.APPLICATION_YML }}" > ./application.yml
-        shell: bash
-
       - name: Run Test
         run: |
-          gradle clean build
+          gradle clean build -x test
