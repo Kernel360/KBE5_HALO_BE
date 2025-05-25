@@ -29,14 +29,14 @@ public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
     @CreatedBy
     @Column(updatable = false)
-    private String createdBy;
+    private Long createdBy;
 
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @LastModifiedBy
-    private String updatedBy;
+    private Long updatedBy;
 
     @Column(nullable = false)
     private boolean deleted;
