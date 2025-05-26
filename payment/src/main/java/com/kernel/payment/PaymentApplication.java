@@ -3,7 +3,7 @@ package com.kernel.payment;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+//@SpringBootApplication
 public class PaymentApplication {
 
     public static void main(String[] args) {

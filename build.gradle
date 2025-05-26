@@ -1,39 +1,22 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.5'
-	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.kernel'
-version = '0.0.1-SNAPSHOT'
+allprojects {
+	group = 'kernel'
+	version = '1.0.0'
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+	repositories {
+		mavenCentral()
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+
+subprojects {
+	apply plugin: 'java'
+
+	java {
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 	}
-}
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-tasks.named('bootJar') {
-	mainClass.set('com.kernel.common.CommonApplication')
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
 }
