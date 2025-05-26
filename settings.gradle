@@ -1,5 +1,6 @@
 rootProject.name = 'HaloCare'
 
+include 'app'
 include 'common'
 include 'customer'
 include 'admin'
