@@ -1,7 +1,6 @@
-package com.kernel.admin.controller;
+package com.kernel.common.controller;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagerManagementControllerTest {
 

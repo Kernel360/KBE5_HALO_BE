@@ -1,14 +1,11 @@
-package com.kernel.admin.service;
+package com.kernel.common.admin.service;
 
-import com.kernel.admin.dto.mapper.AdminManagerStatusMapper;
-import com.kernel.admin.dto.request.AdminManagerStatusRequestDTO;
-import com.kernel.admin.dto.response.AdminManagerStatusResponseDTO;
-import com.kernel.manager.dto.mapper.ManagerMapper;
-import com.kernel.manager.dto.response.ManagerListResponseDTO;
-import com.kernel.manager.dto.response.ManagerResponseDTO;
-import com.kernel.manager.entity.Manager;
-import com.kernel.manager.entity.Status;
-import com.kernel.manager.repository.ManagerRepository;
+
+import com.kernel.common.admin.dto.mapper.ManagerMapper;
+import com.kernel.common.admin.dto.response.ManagerResponseDTO;
+import com.kernel.common.admin.entity.Manager;
+import com.kernel.common.admin.entity.Status;
+import com.kernel.common.admin.repository.ManagerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,15 +17,14 @@ import java.util.NoSuchElementException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ManagerManagementSeviceImpl implements ManagerManagementService {
+public class AdminManagerServiceImpl implements AdminManagerService {
 
     private final ManagerRepository managerRepository;
     private final ManagerMapper managerMapper;
-    private final AdminManagerStatusMapper adminManagerStatusMapper;
 
     @Transactional(readOnly = true)
     @Override
-    public List<ManagerListResponseDTO> getManagers(String keyword) {
+    public List<ManagerResponseDTO> getManagers(String keyword) {
         // TODO: 관리자 목록 조회 로직 구현
         List<Manager> managers;
 
@@ -47,37 +43,32 @@ public class ManagerManagementSeviceImpl implements ManagerManagementService {
     }
 
     @Transactional(readOnly = true)
-    public List<ManagerListResponseDTO> getApplyManagers(String keyword) {
+    public List<ManagerResponseDTO> getApplyManagers(String keyword) {
         // TODO: 매니저 신청 목록 조회 로직 구현
         return managerMapper.toResponseDTOList(managerRepository.findByStatus(Status.PENDING));
     }
 
     @Transactional
     @Override
-    public AdminManagerStatusResponseDTO approveManager(Long managerId, AdminManagerStatusRequestDTO adminManagerStatusRequestDTO) {
+    public void approveManager(Long managerId) {
         // TODO: 관리자 승인 로직 구현
         Manager manager = managerRepository.findById(managerId)
                 .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));
-
         manager.updateStatus(Status.ACTIVE);
-
-        return adminManagerStatusMapper.toResponseDTO(manager);
     }
 
     @Transactional
     @Override
-    public AdminManagerStatusResponseDTO rejectManager(Long managerId, AdminManagerStatusRequestDTO adminManagerStatusRequestDTO) {
+    public void rejectManager(Long managerId) {
         // TODO: 관리자 거절 로직 구현
         Manager manager = managerRepository.findById(managerId)
                 .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));
         manager.updateStatus(Status.REJECTED);
-
-        return adminManagerStatusMapper.toResponseDTO(manager);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<ManagerListResponseDTO> getReportedManagers(String keyword) {
+    public List<ManagerResponseDTO> getReportedManagers(String keyword) {
         // TODO: 신고된 관리자 목록 조회 로직 구현
         List<Manager> managers;
 
