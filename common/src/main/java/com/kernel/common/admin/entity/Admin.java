@@ -1,4 +1,4 @@
-package com.kernel.admin.entity;
+package com.kernel.common.admin.entity;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

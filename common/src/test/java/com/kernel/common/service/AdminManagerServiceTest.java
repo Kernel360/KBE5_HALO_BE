@@ -1,10 +1,9 @@
-package com.kernel.admin.service;
+package com.kernel.common.service;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class ManagerManagementServiceTest {
+public class AdminManagerServiceTest {
 
     @Test
     void testGetManagers() {
