@@ -1,4 +1,4 @@
-package com.kernel.common.entity;
+package com.kernel.app.entity;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -41,8 +40,5 @@ public class BaseEntity { // 중복되는 엔티티들 모아놓음
     @Column(nullable = false)
     private boolean deleted;
 
-    public void delete() {
-        this.deleted = true;
-    }
 
 }
