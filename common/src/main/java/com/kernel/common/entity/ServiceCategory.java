@@ -29,7 +29,7 @@ public class ServiceCategory extends BaseEntity {
 
     private Boolean isActive;
 
-    private Time serviceTime;
+    private Integer serviceTime;
 
     private Integer depth;
 

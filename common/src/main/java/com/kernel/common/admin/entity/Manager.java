@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.kernel.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -25,33 +27,36 @@ public class Manager extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long managerId;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @NotBlank
+    @Size(max = 50)
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false, length = 100)
+    @NotBlank
+    @Size(max = 100)
     private String password;
 
-    @Column(length = 100)
+    @Size(max = 100)
     private String userName;
 
     private LocalDateTime birthDate;
 
-    @Column(length = 20)
+    @Size(max = 20)
     private String phone;
 
-    @Column(length = 10)
+    @Size(max = 10)
     private String zipcode;
 
-    @Column(length = 200)
+    @Size(max = 200)
     private String roadAddress;
 
-    @Column(length = 100)
+    @Size(max = 100)
     private String detailAddress;
 
     @Column
-    private Integer antecedents;
+    private Integer reservationCount;
 
-    @Column(length = 50)
+    @Size(max = 50)
     private String bio;
 
     private Long profileImageId;
@@ -62,5 +67,9 @@ public class Manager extends BaseEntity {
 
     public void updateStatus(Status status) {
         this.status = status;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
     }
 }

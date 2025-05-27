@@ -24,18 +24,19 @@ import java.time.LocalDateTime;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
-    @Column
+    @Column(updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @CreatedBy
     @Column(updatable = false)
+    @CreatedBy
     private Long createdBy;
 
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column
     @LastModifiedBy
     private Long updatedBy;
 }
