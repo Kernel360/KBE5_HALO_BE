@@ -50,20 +50,18 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     @Transactional
     @Override
-    public void approveManager(Long managerId) {
+    public void processAppliedManager(Long managerId, String status) {
         // TODO: 관리자 승인 로직 구현
         Manager manager = managerRepository.findById(managerId)
                 .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));
-        manager.updateStatus(Status.ACTIVE);
-    }
 
-    @Transactional
-    @Override
-    public void rejectManager(Long managerId) {
-        // TODO: 관리자 거절 로직 구현
-        Manager manager = managerRepository.findById(managerId)
-                .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));
-        manager.updateStatus(Status.REJECTED);
+        if (status.equalsIgnoreCase("ACTIVE")) {
+            manager.updateStatus(Status.ACTIVE);
+        } else if (status.equalsIgnoreCase("REJECTED")) {
+            manager.updateStatus(Status.REJECTED);
+        } else {
+            throw new IllegalArgumentException("유효하지 않은 상태입니다.");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -72,7 +70,7 @@ public class AdminManagerServiceImpl implements AdminManagerService {
         // TODO: 신고된 관리자 목록 조회 로직 구현
         List<Manager> managers;
 
-        if (keyword == null || keyword.isEmpty()) managers = managerRepository.findAll();
+        if (keyword == null || keyword.isEmpty()) managers = managerRepository.findByStatus(Status.SUSPENDED);
         else managers = managerRepository.findByUserNameContaining(keyword);
 
         return managerMapper.toResponseDTOList(managers);
@@ -80,7 +78,7 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     @Transactional
     @Override
-    public ManagerResponseDTO setSuspendedManager(Long managerId) {
+    public ManagerResponseDTO suspendManager(Long managerId) {
         // TODO: 블랙리스트 관리자 설정 로직 구현
         Manager manager = managerRepository.findById(managerId)
                 .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));

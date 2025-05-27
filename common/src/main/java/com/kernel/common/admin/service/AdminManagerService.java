@@ -14,11 +14,11 @@ public interface AdminManagerService {
 
     List<ManagerResponseDTO> getApplyManagers(String keyword);
 
-    void approveManager(Long managerId);
-
-    void rejectManager(Long managerId);
+    void processAppliedManager(Long managerId, String status);
 
     List<ManagerResponseDTO> getReportedManagers(String keyword);
 
-    ManagerResponseDTO setSuspendedManager(Long managerId);
+    ManagerResponseDTO suspendManager(Long managerId);
+
+
 }

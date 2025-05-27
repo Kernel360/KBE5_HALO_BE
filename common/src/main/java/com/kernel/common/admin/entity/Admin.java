@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.kernel.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +26,14 @@ public class Admin extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long adminId;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @NotBlank
+    @Size(max=50)
+    @Column(unique = true)
     private String id;
 
-    @Column(nullable = false, length = 100)
+    @NotBlank
+    @Size(max = 100)
+    @Column(nullable = false)
     private String password;
 
     public Admin(String id, String password) {
@@ -35,7 +41,5 @@ public class Admin extends BaseEntity {
         this.password = password;
     }
 
-    public void updatePassword(String password) {
-        this.password = password;
-    }
+    public void updatePassword(String password) { this.password = password; }
 }
