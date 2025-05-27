@@ -1,4 +1,4 @@
-package com.kernel.customer.dto.response;
+package com.kernel.common.customer.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InquiryResponseDTO {
+public class InquiryRspDTO {
     // id, authorId, title, content, createdAt
 
     private Long id;

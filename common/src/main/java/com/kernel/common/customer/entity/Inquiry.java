@@ -1,8 +1,7 @@
-package com.kernel.customer.entity;
+package com.kernel.common.customer.entity;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.kernel.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +12,11 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "inquiry")
 @Getter
 @NoArgsConstructor
-@SuperBuilder
+//@SuperBuilder
 @ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class Inquiry extends BaseEntity {
-
+public class Inquiry // extends BaseEntity {
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inquiryId;

@@ -1,6 +1,6 @@
-package com.kernel.customer.repository;
+package com.kernel.common.customer.repository;
 
-import com.kernel.customer.entity.Inquiry;
+import com.kernel.common.customer.entity.Inquiry;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

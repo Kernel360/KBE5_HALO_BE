@@ -1,29 +1,26 @@
-package com.kernel.customer.service;
+package com.kernel.common.customer.service;
 
-import com.kernel.customer.dto.mapper.InquiryMapper;
-import com.kernel.customer.dto.request.InquiryRequestDTO;
-import com.kernel.customer.dto.response.InquiryResponseDTO;
-import com.kernel.customer.entity.Inquiry;
-import com.kernel.customer.repository.InquiryRepository;
-import jakarta.transaction.Transactional;
+import com.kernel.common.customer.dto.mapper.InquiryMapper;
+import com.kernel.common.customer.dto.response.InquiryRspDTO;
+import com.kernel.common.customer.entity.Inquiry;
+import com.kernel.common.customer.repository.InquiryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InquiryServiceImpl implements InquiryService {
+public class InquiryServiceImpl  implements InquiryService {
 
 
     private final InquiryRepository inquiryRepository;
     private final InquiryMapper inquiryMapper;
 
     @Override
-    public List<InquiryResponseDTO> getInquiries(String keyword) {
+    public List<InquiryRspDTO> getInquiries(String keyword) {
         List<Inquiry> inquiries;
 
         // keyword == null, 전체조회
@@ -32,7 +29,7 @@ public class InquiryServiceImpl implements InquiryService {
 
         return inquiryMapper.toResponseDTOList(inquiries);
     }
-
+/*
     @Transactional
     @Override
     public InquiryResponseDTO createInquiry(InquiryRequestDTO inquiryRequestDTO) {
@@ -60,5 +57,5 @@ public class InquiryServiceImpl implements InquiryService {
     public void deleteInquiry(Long inquiryId) {
         inquiryRepository.deleteById(inquiryId);
     }
-
+*/
 }
