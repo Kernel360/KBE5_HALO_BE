@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class ManagerMapper {
 
     // Entity -> ResponseDTO
-    public ManagerResponseDTO toResponseDTO(Manager manager) {    // Manager는 manager 모듈에서 정의된 Entity 클래스라고 가정
+    public ManagerResponseDTO toResponseDTO(Manager manager) {    // Manager는 manager 패키지에서 정의된 Entity 클래스라고 가정
         // TODO: Entity를 Response DTO로 변환하는 로직 구현
         return ManagerResponseDTO.builder()
                 .managerId(manager.getManagerId())
@@ -24,11 +24,11 @@ public class ManagerMapper {
                 .status(manager.getStatus())
                 .createdAt(manager.getCreatedAt())
                 .updatedAt(manager.getUpdatedAt())
-                .antecedents(manager.getAntecedents())
+                .reservationCount(manager.getReservationCount())
                 .bio(manager.getBio())
                 .profileImageId(manager.getProfileImageId())
-                //.availableArea(manager.getAvailableArea())    // availableArea는 Manager 모듈에서 정의된 DTO라고 가정
-                //.availableTime(manager.getAvailableTime())    // availableTime는 Manager 모듈에서 정의된 DTO라고 가정
+                //.availableArea(manager.getAvailableArea())    // availableArea는 Manager 패키지에서 정의된 Entity라고 가정
+                //.availableTime(manager.getAvailableTime())    // availableTime는 Manager 패키지에서 정의된 Entity라고 가정
                 .build();
     }
 
