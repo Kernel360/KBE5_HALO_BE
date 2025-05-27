@@ -1,4 +1,4 @@
-package com.kernel.common.entity;
+package com.kernel.app.entity;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @SuperBuilder
 @NoArgsConstructor
-// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // application.yml에서 전역 설정했으므로 주석처리
+ @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // application.yml에서 전역 설정했으므로 주석처리
 public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
     @Column(updatable = false)
