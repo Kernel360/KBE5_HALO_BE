@@ -1,7 +1,7 @@
-package com.kernel.admin.dto.response;
+package com.kernel.common.admin.dto.response;
 
-import com.kernel.admin.notice.Notice;
-import com.kernel.admin.notice.NoticeType;
+import com.kernel.common.admin.entity.Notice;
+import com.kernel.common.admin.entity.NoticeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +20,7 @@ public class NoticeResDto {
     private String title;
     private String content;
     private Long fileId;
-    private Boolean Deleted;
+    private Boolean deleted;
     private Timestamp createdAt;
     private Long createdBy;
     private Timestamp updatedAt;
@@ -34,11 +34,7 @@ public class NoticeResDto {
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .fileId(notice.getFileId())
-                .Deleted(notice.getDeleted())
-                .createdAt(notice.getCreatedAt())
-                .createdBy(notice.getCreatedBy())
-                .updatedAt(notice.getUpdatedAt())
-                .updatedBy(notice.getUpdatedBy())
+                .deleted(notice.getDeleted())
                 .views(notice.getViews())
                 .build();
     }

@@ -1,11 +1,11 @@
-package com.kernel.admin.controller;
+package com.kernel.common.admin.controller;
 
-import com.kernel.admin.dto.request.NoticeReqDto;
-import com.kernel.admin.dto.response.NoticeResDto;
-import com.kernel.admin.notice.Notice;
-import com.kernel.admin.notice.NoticeRepository;
-import com.kernel.admin.notice.NoticeService;
-import com.kernel.admin.notice.NoticeType;
+import com.kernel.common.admin.dto.request.NoticeReqDto;
+import com.kernel.common.admin.dto.response.NoticeResDto;
+import com.kernel.common.admin.entity.Notice;
+import com.kernel.common.admin.entity.NoticeType;
+import com.kernel.common.admin.repository.NoticeRepository;
+import com.kernel.common.admin.service.NoticeService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,11 +74,7 @@ public class NoticeController {
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .fileId(notice.getFileId())
-                .Deleted(notice.getDeleted())
-                .createdAt(notice.getCreatedAt())
-                .createdBy(notice.getCreatedBy())
-                .updatedAt(notice.getUpdatedAt())
-                .updatedBy(notice.getUpdatedBy())
+                .deleted(notice.getDeleted())
                 .views(notice.getViews())
                 .build());
     }
@@ -92,5 +88,4 @@ public class NoticeController {
         notice.setDeleted(true);
         return ResponseEntity.noContent().build();
     }
-
 }

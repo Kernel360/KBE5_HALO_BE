@@ -1,6 +1,8 @@
-package com.kernel.admin.notice;
+package com.kernel.common.admin.service;
 
-import com.kernel.admin.dto.request.NoticeReqDto;
+import com.kernel.common.admin.dto.request.NoticeReqDto;
+import com.kernel.common.admin.entity.Notice;
+import com.kernel.common.admin.repository.NoticeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +26,6 @@ public class NoticeService {
         // TODO:파일 첨부 구현 후 값 세팅 예정
         // notice.setFileId(null);
         notice.setDeleted(false);
-        notice.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        notice.setCreatedBy(adminId);
-        notice.setUpdatedAt(null);
-        notice.setUpdatedBy(null);
         notice.setViews(0L);
 
         return noticeRepository.save(notice);

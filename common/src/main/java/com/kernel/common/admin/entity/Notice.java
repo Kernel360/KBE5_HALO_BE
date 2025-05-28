@@ -1,9 +1,7 @@
-package com.kernel.admin.notice;
+package com.kernel.common.admin.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.sql.Timestamp;
 
 @Entity
 @Table(name = "notice")
@@ -18,22 +16,16 @@ public class Notice {
     private NoticeType noticeType;
     private String title;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
     private Long fileId;
     private Boolean Deleted;
-    private Timestamp createdAt;
-    private Long createdBy;
-    private Timestamp updatedAt;
-    private Long updatedBy;
     private Long views;
 
     public void update(String title, String content, Long fileId, Long updatedBy) {
         this.title = title;
         this.content = content;
         this.fileId = fileId;
-        this.updatedAt = new java.sql.Timestamp(System.currentTimeMillis());
-        this.updatedBy = updatedBy;
     }
 
     public void setDeleted(Boolean Deleted) {

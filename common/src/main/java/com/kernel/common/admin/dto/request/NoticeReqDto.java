@@ -1,6 +1,6 @@
-package com.kernel.admin.dto.request;
+package com.kernel.common.admin.dto.request;
 
-import com.kernel.admin.notice.NoticeType;
+import com.kernel.common.admin.entity.NoticeType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -16,11 +16,11 @@ public class NoticeReqDto {
     private NoticeType noticeType;
 
     @NotBlank(message = "제목은 공백일 수 없습니다.")
-    @Size(max = 20, message = "제목은 20자 이내여야 합니다.")
+    @Size(max = 30, message = "제목은 30자 이내여야 합니다.")
     private String title;
 
     @NotBlank(message = "내용은 공백일 수 없습니다.")
-    @Size(max = 50, message = "내용은 50자 이내여야 합니다.")
+    @Size(max = 500, message = "내용은 500자 이내여야 합니다.")
     private String content;
 
 }
