@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @ToString
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // application.yml에서 전역 설정했으므로 주석처리
 public class ExtraService extends BaseEntity {
 
     @Id
