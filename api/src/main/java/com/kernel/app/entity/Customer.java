@@ -8,10 +8,7 @@ import com.kernel.app.enums.UserStatus;
 import com.kernel.app.enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -31,37 +28,36 @@ public class Customer extends BaseEntity implements UserInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long customerId;
 
-    @NotBlank
+    @Column(nullable = false)
     private String phone;
 
     @Email
     private String email;
 
-    @NotBlank
+    @Column(nullable = false)
     private String password;
 
-    @NotBlank
+    @Column(nullable = false)
     private String userName;
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDate birthDate;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-
-    @NotBlank
+    @Column(nullable = false)
     private String zipcode;
 
-    @NotBlank
+    @Column(nullable = false)
     private String roadAddress;
 
-    @NotBlank
+    @Column(nullable = false)
     private String detailAddress;
 
     @Column(nullable = false)
-    @Builder.Default
-    private int point = 0;
+    private int point;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;

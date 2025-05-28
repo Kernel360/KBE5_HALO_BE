@@ -8,8 +8,6 @@ import com.kernel.app.enums.UserStatus;
 import com.kernel.app.enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,36 +28,37 @@ public class Manager extends BaseEntity implements UserInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long managerId;
 
-    @NotBlank
+    @Column(nullable = false, unique = true)
     private String phone;
 
     @Email
+    @Column(nullable = true)
     private String email;
 
-    @NotBlank
+    @Column(nullable = false)
     private String password;
 
-    @NotBlank
+    @Column(nullable = false)
     private String userName;
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDate birthDate;
 
-    @NotNull
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
 
-    @NotBlank
+    @Column(nullable = false)
     private String zipcode;
 
-    @NotBlank
+    @Column(nullable = false)
     private String roadAddress;
 
-    @NotBlank
+    @Column(nullable = false)
     private String detailAddress;
 
-    @Column
+    @Column(nullable = false)
     private String bio;
 
     @Enumerated(EnumType.STRING)

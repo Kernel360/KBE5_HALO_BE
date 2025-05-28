@@ -23,10 +23,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-            doFilter((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, filterChain);
-    }
-
-    private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         //path and method verify
         String requestUri = request.getRequestURI();
@@ -43,11 +41,12 @@ public class CustomLogoutFilter extends GenericFilterBean {
         //get refresh token
         String refresh = null;
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-
-            if (cookie.getName().equals("refresh")) {
-
-                refresh = cookie.getValue();
+        if (cookies != null) {  // null 체크 추가
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refresh")) {
+                    refresh = cookie.getValue();
+                    break;  // 찾았으면 루프 종료
+                }
             }
         }
 
@@ -98,4 +97,5 @@ public class CustomLogoutFilter extends GenericFilterBean {
         response.addCookie(cookie);
         response.setStatus(HttpServletResponse.SC_OK);
     }
+
 }

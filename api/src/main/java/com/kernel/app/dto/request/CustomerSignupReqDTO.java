@@ -22,14 +22,14 @@ public class CustomerSignupReqDTO {
     @NotBlank(message = "핸드폰 번호는 필수 입력 값입니다.")
     private String phone;
 
-    @Email(message = "유효한 미에일 주소를 입력해주세요.")
+    @Email(message = "유효한 이에일 주소를 입력해주세요.")
     @Size(max = 100, message = "이메일은 100자 이내로 입력해주세요.")
     private String email;
 
     @NotBlank
     private String password;
     @NotBlank
-    private String username;
+    private String userName;
 
     @NotNull(message = "생년월일은 필수 입력 값입니다.")
     private LocalDate birthDate;
@@ -45,6 +45,8 @@ public class CustomerSignupReqDTO {
     @NotBlank
     private String detailAddress;
 
+    @NotBlank
+    @Builder.Default
     private Integer point = 0;
 
     @Enumerated(EnumType.STRING)
