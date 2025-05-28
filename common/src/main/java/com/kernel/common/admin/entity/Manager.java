@@ -27,43 +27,44 @@ public class Manager extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long managerId;
 
-    @Size(max = 50)
+    @Column(unique = true, length = 50)
     private String email;
 
-    @NotBlank
-    @Size(max = 100)
+    @Column(nullable = false, length = 100)
     private String password;
 
-    @Size(max = 100)
+    @Column(length = 100)
     private String userName;
 
     private LocalDateTime birthDate;
 
-    @NotBlank
-    @Size(max = 20)
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, length = 20)
     private String phone;
 
-    @Size(max = 10)
+    @Column(length = 10)
     private String zipcode;
 
-    @Size(max = 200)
+    @Column(length = 200)
     private String roadAddress;
 
-    @Size(max = 100)
+    @Column(length = 100)
     private String detailAddress;
 
+    @Column(columnDefinition = "Integer DEFAULT 0")
     private Integer reservationCount;
 
+    @Column(columnDefinition = "Integer DEFAULT 0")
     private Integer reviewCount;
 
-    @Size(max = 50)
+    @Column(length = 50)
     private String bio;
 
     private Long profileImageId;
 
+    @Column(columnDefinition = "Status DEFAULT 'INACTIVE'")
     private Status status;
 
+    @Column(columnDefinition = "Boolean DEFAULT false")
     private boolean isDeleted;
 
     public void updateStatus(Status status) {
