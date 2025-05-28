@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @SuperBuilder
 @ToString
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // application.yml에서 전역 설정했으므로 주석처리
 public class Manager extends BaseEntity {
     // TODO: Manager Entity로 매핑할 필드 정의
 
@@ -27,9 +27,7 @@ public class Manager extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long managerId;
 
-    @NotBlank
     @Size(max = 50)
-    @Column(unique = true)
     private String email;
 
     @NotBlank
@@ -41,7 +39,9 @@ public class Manager extends BaseEntity {
 
     private LocalDateTime birthDate;
 
+    @NotBlank
     @Size(max = 20)
+    @Column(unique = true)
     private String phone;
 
     @Size(max = 10)
@@ -53,8 +53,9 @@ public class Manager extends BaseEntity {
     @Size(max = 100)
     private String detailAddress;
 
-    @Column
     private Integer reservationCount;
+
+    private Integer reviewCount;
 
     @Size(max = 50)
     private String bio;

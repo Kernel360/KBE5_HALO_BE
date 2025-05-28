@@ -25,6 +25,7 @@ public class ManagerResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer reservationCount;
+    private Integer reviewCount;
     private String bio;
     private Long profileImageId;
     //private List<AvailableAreaResponseDTO> availableArea;   // AvailableArea는 Manager 패키지에서 정의된 DTO라고 가정

@@ -16,7 +16,7 @@ import java.sql.Time;
 @NoArgsConstructor
 @SuperBuilder
 @ToString
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)    // application.yml에서 전역 설정했으므로 주석처리
 public class ServiceCategory extends BaseEntity {
     // TODO: 서비스 카테고리 엔터티 정의
 

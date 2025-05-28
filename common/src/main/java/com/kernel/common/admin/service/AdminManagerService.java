@@ -2,21 +2,22 @@ package com.kernel.common.admin.service;
 
 
 
+import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
 import com.kernel.common.admin.dto.response.ManagerResponseDTO; // 추후에 ManagerResponseDTO가 정의된 위치로 변경 필요
 
 import java.util.List;
 
 public interface AdminManagerService {
 
-    List<ManagerResponseDTO> getManagers(String keyword);
+    List<AdminManagerSummaryResponseDTO> getManagers(String keyword);
 
     ManagerResponseDTO getManager(Long managerId);
 
-    List<ManagerResponseDTO> getApplyManagers(String keyword);
+    List<AdminManagerSummaryResponseDTO> getApplyManagers(String keyword);
 
     void processAppliedManager(Long managerId, String status);
 
-    List<ManagerResponseDTO> getReportedManagers(String keyword);
+    List<AdminManagerSummaryResponseDTO> getReportedManagers(String keyword);
 
     ManagerResponseDTO suspendManager(Long managerId);
 

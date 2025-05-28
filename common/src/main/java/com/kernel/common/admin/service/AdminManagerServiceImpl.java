@@ -2,6 +2,7 @@ package com.kernel.common.admin.service;
 
 
 import com.kernel.common.admin.dto.mapper.ManagerMapper;
+import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
 import com.kernel.common.admin.dto.response.ManagerResponseDTO;
 import com.kernel.common.admin.entity.Manager;
 import com.kernel.common.admin.entity.Status;
@@ -24,14 +25,14 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ManagerResponseDTO> getManagers(String keyword) {
+    public List<AdminManagerSummaryResponseDTO> getManagers(String keyword) {
         // TODO: 관리자 목록 조회 로직 구현
         List<Manager> managers;
 
         if (keyword == null || keyword.isEmpty()) managers = managerRepository.findAll();
         else managers = managerRepository.findByUserNameContaining(keyword); // 검색 쿼리는 이름 검색으로 임시 적용, 쿼리를 어떻게 작성할지는 논의 필요
 
-        return managerMapper.toResponseDTOList(managers);
+        return managerMapper.toAdminResponseDTOList(managers);
     }
 
     @Transactional(readOnly = true)
@@ -43,9 +44,9 @@ public class AdminManagerServiceImpl implements AdminManagerService {
     }
 
     @Transactional(readOnly = true)
-    public List<ManagerResponseDTO> getApplyManagers(String keyword) {
+    public List<AdminManagerSummaryResponseDTO> getApplyManagers(String keyword) {
         // TODO: 매니저 신청 목록 조회 로직 구현
-        return managerMapper.toResponseDTOList(managerRepository.findByStatus(Status.PENDING));
+        return managerMapper.toAdminResponseDTOList(managerRepository.findByStatus(Status.PENDING));
     }
 
     @Transactional
@@ -66,14 +67,14 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ManagerResponseDTO> getReportedManagers(String keyword) {
+    public List<AdminManagerSummaryResponseDTO> getReportedManagers(String keyword) {
         // TODO: 신고된 관리자 목록 조회 로직 구현
         List<Manager> managers;
 
         if (keyword == null || keyword.isEmpty()) managers = managerRepository.findByStatus(Status.SUSPENDED);
         else managers = managerRepository.findByUserNameContaining(keyword);
 
-        return managerMapper.toResponseDTOList(managers);
+        return managerMapper.toAdminResponseDTOList(managers);
     }
 
     @Transactional
