@@ -26,14 +26,10 @@ public class Admin extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long adminId;
 
-    @NotBlank
-    @Size(max=50)
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String id;
 
-    @NotBlank
-    @Size(max = 100)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String password;
 
     public Admin(String id, String password) {
