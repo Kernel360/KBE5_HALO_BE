@@ -29,14 +29,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         String userType = parts[0];
-        String email = parts[1];
+        String phone = parts[1];
 
         UserInfo userinfo = switch(userType){
-            case "customer" -> customerRepository.findByEmail(email)
+            case "customer" -> customerRepository.findByPhone(phone)
                     .orElseThrow(() -> new UsernameNotFoundException("Customer not found"));
-            case "manager" -> managerRepository.findByEmail(email)
+            case "manager" -> managerRepository.findByPhone(phone)
                     .orElseThrow(() -> new UsernameNotFoundException("Manager not found"));
-            case "admin" -> adminRepository.findByEmail(email)
+            case "admin" -> adminRepository.findByPhone(phone)
                     .orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
             default -> throw new UsernameNotFoundException("Invalid username format");
         };

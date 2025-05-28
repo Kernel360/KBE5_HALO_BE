@@ -1,6 +1,7 @@
 package com.kernel.app.controller;
 
 import com.kernel.app.entity.Refresh;
+import com.kernel.app.jwt.JwtProperties;
 import com.kernel.app.jwt.JwtTokenProvider;
 import com.kernel.app.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,6 +24,7 @@ public class ReissueController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshRepository refreshRepository;
+    private final JwtProperties jwtProperties;
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
@@ -62,16 +64,16 @@ public class ReissueController {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 
-        String username = jwtTokenProvider.getUsername(refresh);
+        String phone = jwtTokenProvider.getUsername(refresh);
         String role = jwtTokenProvider.getRole(refresh);
 
         //make new JWT
-        String newAccess = jwtTokenProvider.createToken("access", username, role, 600000L);
-        String newRefresh = jwtTokenProvider.createToken("refresh", username, role, 86400000L);
+        String newAccess = jwtTokenProvider.createToken("access", phone, role, jwtProperties.accessTokenValiditySeconds());
+        String newRefresh = jwtTokenProvider.createToken("refresh", phone, role, jwtProperties.refreshTokenValiditySeconds());
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshRepository.deleteByRefreshToken(refresh);
-        addRefreshEntity(username, newRefresh, 86400000L);
+        addRefreshEntity(phone, newRefresh, jwtProperties.accessTokenValiditySeconds());
 
         //response
         response.setHeader("Authorization", "Bearer " + newAccess);
@@ -91,12 +93,12 @@ public class ReissueController {
         return cookie;
     }
 
-    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+    private void addRefreshEntity(String phone, String refresh, Long expiredMs) {
 
         Date expiration = new Date(System.currentTimeMillis() + expiredMs);
 
         refreshRepository.save(Refresh.builder()
-                         .email(username)
+                         .phone(phone)
                          .refreshToken(refresh)
                          .expiration(expiration.toString())
                          .build());

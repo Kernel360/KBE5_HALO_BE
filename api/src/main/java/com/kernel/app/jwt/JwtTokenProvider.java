@@ -1,22 +1,24 @@
 package com.kernel.app.jwt;
 
 import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 
 @Component
 public class JwtTokenProvider {
 
-    private SecretKey secretKey;
+    private final SecretKey secretKey;
 
-    public JwtTokenProvider(@Value("${jwt.secret}")String secret) {
-        this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+    public JwtTokenProvider(JwtProperties jwtProperties) {
+        this.secretKey = new SecretKeySpec(
+                jwtProperties.secret().getBytes(StandardCharsets.UTF_8),
+                Jwts.SIG.HS256.key().build().getAlgorithm()
+        );
     }
 
     // user 겁증

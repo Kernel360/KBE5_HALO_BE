@@ -31,6 +31,8 @@ public class Manager extends BaseEntity implements UserInfo {
     private Long managerId;
 
     @NotBlank
+    private String phone;
+
     @Email
     private String email;
 
@@ -47,8 +49,6 @@ public class Manager extends BaseEntity implements UserInfo {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @NotBlank
-    private String phone;
 
     @NotBlank
     private String zipcode;

@@ -11,7 +11,7 @@ import lombok.*;
 public class UserLoginReqDTO {
 
     @NotBlank
-    private String email;
+    private String phone;
     @NotBlank
     private String password;
 

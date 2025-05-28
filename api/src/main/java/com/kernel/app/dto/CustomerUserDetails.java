@@ -36,7 +36,7 @@ public class CustomerUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userInfo.getEmail();
+        return userInfo.getPhone();
     }
 
     @Override

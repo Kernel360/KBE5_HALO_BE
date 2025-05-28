@@ -1,6 +1,5 @@
 package com.kernel.app.dto.mapper;
 
-import com.kernel.app.dto.reponse.UserLoginRspDTO;
 import com.kernel.app.dto.request.CustomerSignupReqDTO;
 import com.kernel.app.entity.Customer;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +28,4 @@ public class CustomerAuthMapper {
                 .build();
     }
 
-    // Entity -> ResponseDTO
-    public UserLoginRspDTO toResponseDTO(Customer customer){
-        return UserLoginRspDTO.builder()
-                .email(customer.getEmail())
-                .build();
-    }
 }
