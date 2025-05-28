@@ -69,11 +69,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
         // username, role 값을 획득
-        String username = jwtTokenProvider.getUsername(accessToken);
+        String phone = jwtTokenProvider.getUsername(accessToken);
         String role = jwtTokenProvider.getRole(accessToken);
 
         // role에 따라 userInfo 생성
-        UserInfo userInfo = createUserInfo(username, role);
+        UserInfo userInfo = createUserInfo(phone, role);
         CustomerUserDetails userDetails = new CustomerUserDetails(userInfo);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -86,19 +86,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
     }
 
-    private UserInfo createUserInfo(String username, String userType) {
+    private UserInfo createUserInfo(String phone, String userType) {
         return switch (userType) {
             case "ROLE_CUSTOMER" -> Customer.builder()
-                    .email(username)
-                    .password("temp")
+                    .phone(phone)
                     .build();
             case "ROLE_MANAGER" -> Manager.builder()
-                    .email(username)
-                    .password("temp")
+                    .phone(phone)
                     .build();
             case "ROLE_ADMIN" -> Admin.builder()
-                    .email(username)
-                    .password("temp")
+                    .phone(phone)
                     .build();
             default -> throw new IllegalArgumentException("Unknown user type: " + userType);
         };

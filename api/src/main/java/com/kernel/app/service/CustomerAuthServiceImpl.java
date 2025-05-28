@@ -1,7 +1,6 @@
 package com.kernel.app.service;
 
 import com.kernel.app.dto.mapper.CustomerAuthMapper;
-import com.kernel.app.dto.request.UserLoginReqDTO;
 import com.kernel.app.repository.CustomerAuthRepository;
 import com.kernel.app.dto.request.CustomerSignupReqDTO;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +20,9 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
     @Override
     public void join(CustomerSignupReqDTO joinDTO) {
 
-        String email = joinDTO.getEmail();
+        String phone = joinDTO.getPhone();
 
-        Boolean isExists = repository.existsByEmail(email);
+        Boolean isExists = repository.existsByPhone(phone);
 
         if (isExists) throw new NoSuchElementException("이미 존재하는 id 입니다.");
 
@@ -31,8 +30,4 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
 
     }
 
-    @Override
-    public void login(UserLoginReqDTO loginDTO) {
-
-    }
 }

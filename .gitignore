@@ -38,3 +38,5 @@ out/
 
 *application.yml
 *dev.env
+*logs
+*logback-spring.xml

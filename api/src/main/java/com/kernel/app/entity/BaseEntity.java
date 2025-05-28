@@ -37,8 +37,5 @@ public class BaseEntity { // 중복되는 엔티티들 모아놓음
     @LastModifiedBy
     private String updatedBy;
 
-    @Column(nullable = false)
-    private boolean deleted;
-
 
 }

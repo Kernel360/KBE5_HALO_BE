@@ -19,7 +19,9 @@ import java.time.LocalDate;
 @ToString
 public class CustomerSignupReqDTO {
 
-    @NotBlank(message = "이메일은 필수 입력 값입니다.")
+    @NotBlank(message = "핸드폰 번호는 필수 입력 값입니다.")
+    private String phone;
+
     @Email(message = "유효한 미에일 주소를 입력해주세요.")
     @Size(max = 100, message = "이메일은 100자 이내로 입력해주세요.")
     private String email;
@@ -36,8 +38,6 @@ public class CustomerSignupReqDTO {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @NotBlank
-    private String phone;
     @NotBlank
     private String zipcode;
     @NotBlank
