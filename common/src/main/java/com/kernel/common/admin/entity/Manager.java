@@ -6,6 +6,7 @@ import com.kernel.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -61,8 +62,10 @@ public class Manager extends BaseEntity {
 
     private Long profileImageId;
 
-    @Column(columnDefinition = "Status DEFAULT 'INACTIVE'")
-    private Status status;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.INACTIVE;
 
     @Column(columnDefinition = "Boolean DEFAULT false")
     private boolean isDeleted;
