@@ -74,7 +74,7 @@ public class NoticeController {
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .fileId(notice.getFileId())
-                .isDeleted(notice.getIsDeleted())
+                .Deleted(notice.getDeleted())
                 .createdAt(notice.getCreatedAt())
                 .createdBy(notice.getCreatedBy())
                 .updatedAt(notice.getUpdatedAt())
@@ -89,7 +89,7 @@ public class NoticeController {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        notice.setIsDeleted(true);
+        notice.setDeleted(true);
         return ResponseEntity.noContent().build();
     }
 

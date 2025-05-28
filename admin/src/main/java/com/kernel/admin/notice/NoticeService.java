@@ -23,7 +23,7 @@ public class NoticeService {
         notice.setContent(dto.getContent());
         // TODO:파일 첨부 구현 후 값 세팅 예정
         // notice.setFileId(null);
-        notice.setIsDeleted(false);
+        notice.setDeleted(false);
         notice.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         notice.setCreatedBy(adminId);
         notice.setUpdatedAt(null);

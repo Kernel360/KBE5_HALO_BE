@@ -21,7 +21,7 @@ public class Notice {
     @Lob
     private String content;
     private Long fileId;
-    private Boolean isDeleted;
+    private Boolean Deleted;
     private Timestamp createdAt;
     private Long createdBy;
     private Timestamp updatedAt;
@@ -36,9 +36,8 @@ public class Notice {
         this.updatedBy = updatedBy;
     }
 
-    // setter 안쓰는 방향으로 작성해봤는데 리뷰 부탁드립니다..
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
+    public void setDeleted(Boolean Deleted) {
+        this.Deleted = Deleted;
     }
 
 

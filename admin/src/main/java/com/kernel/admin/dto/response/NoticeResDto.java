@@ -20,7 +20,7 @@ public class NoticeResDto {
     private String title;
     private String content;
     private Long fileId;
-    private Boolean isDeleted;
+    private Boolean Deleted;
     private Timestamp createdAt;
     private Long createdBy;
     private Timestamp updatedAt;
@@ -34,7 +34,7 @@ public class NoticeResDto {
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .fileId(notice.getFileId())
-                .isDeleted(notice.getIsDeleted())
+                .Deleted(notice.getDeleted())
                 .createdAt(notice.getCreatedAt())
                 .createdBy(notice.getCreatedBy())
                 .updatedAt(notice.getUpdatedAt())
