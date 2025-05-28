@@ -47,7 +47,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
                 phone = requestMap.get("phone");
                 password = requestMap.get("password");
 
-                // username대신 email로 요청 보냈을 경우
+                // username대신 phone으로 요청 보냈을 경우
                 if(phone == null){
                     phone = requestMap.get("phone");
                 }

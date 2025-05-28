@@ -86,7 +86,7 @@ public class ReissueController {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);   // true 설정 시, HTTPS에서만 전송됨(http x) 테스트시 용이하게 주석처리. 배포시 설정해야함
+        //cookie.setSecure(true);   //TODO true 설정 시, HTTPS에서만 전송됨(http x) 테스트시 용이하게 주석처리. 배포시 설정해야함
         cookie.setPath("/");  // 쿠키의 적용 경로 설정. /로 설정하면 모든 경로에서 쿠키가 유효. 운영에선 보통 /로 지정해서 어디서든 쿠키 접근 가능하도록 하는 것이 일반적
         cookie.setHttpOnly(true);
 
