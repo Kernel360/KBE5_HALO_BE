@@ -2,9 +2,7 @@ package com.kernel.app.entity;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -24,19 +22,20 @@ import java.time.LocalDateTime;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
-    @Column(updatable = false)
+    @Column
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(updatable = false)
     @CreatedBy
-    private Long createdBy;
+    @Column(updatable = false)
+    private String createdBy;
 
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @Column
     @LastModifiedBy
-    private Long updatedBy;
+    private String updatedBy;
+
+
 }
