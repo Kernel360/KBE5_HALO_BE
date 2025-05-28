@@ -32,6 +32,8 @@ public class Customer extends BaseEntity implements UserInfo {
     private Long customerId;
 
     @NotBlank
+    private String phone;
+
     @Email
     private String email;
 
@@ -47,8 +49,6 @@ public class Customer extends BaseEntity implements UserInfo {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @NotBlank
-    private String phone;
 
     @NotBlank
     private String zipcode;

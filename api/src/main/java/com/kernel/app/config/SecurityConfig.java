@@ -1,10 +1,7 @@
 package com.kernel.app.config;
 
 import com.kernel.app.enums.UserType;
-import com.kernel.app.jwt.CustomLoginFilter;
-import com.kernel.app.jwt.CustomLogoutFilter;
-import com.kernel.app.jwt.JwtFilter;
-import com.kernel.app.jwt.JwtTokenProvider;
+import com.kernel.app.jwt.*;
 
 import com.kernel.app.repository.RefreshRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +31,9 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshRepository refreshRepository;
+    private final JwtProperties jwtProperties;
+
+
 
 
     @Bean
@@ -95,7 +95,7 @@ public class SecurityConfig {
         // loginFiilter전에 jwt 확인
         http.addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class);
 
-        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(authenticationConfiguration), refreshRepository);
+        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(authenticationConfiguration), refreshRepository, jwtProperties);
         loginFilter.setFilterProcessesUrl("/api/customers/login"); // LoginFilter는 기본적으로 '/login' 경로로만 동작하므로 url 설정을 해줘야한다.
 
         // 기존 권한확인filter 대신 custom한 loginFilter로 권한 확인 진행

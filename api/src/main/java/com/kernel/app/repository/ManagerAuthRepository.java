@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface ManagerAuthRepository extends JpaRepository<Manager, Long> {
 
-    Boolean existsByEmail(String email);
+    Boolean existsByPhone(String email);
 
-    Optional<Manager> findByEmail(String email);
+    Optional<Manager> findByPhone(String email);
 }

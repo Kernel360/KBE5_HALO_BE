@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.kernel.app.dto.UserInfo;
 import com.kernel.app.enums.UserType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,8 +25,7 @@ public class Admin extends BaseEntity implements UserInfo{
     private Long adminId;
 
     @NotBlank
-    @Email
-    private String email;
+    private String phone;
 
     @NotBlank
     private String password;

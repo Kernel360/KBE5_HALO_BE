@@ -31,11 +31,12 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final RefreshRepository refreshRepository;
+    private final JwtProperties jwtProperties;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        String username;
+        String phone;
         String password;
 
         //content-type이 Json인지 확인
@@ -43,12 +44,12 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             try{
                 // JSON 요청 처리
                 Map<String, String> requestMap = objectMapper.readValue(request.getInputStream(), Map.class);
-                username = requestMap.get("username");
+                phone = requestMap.get("phone");
                 password = requestMap.get("password");
 
                 // username대신 email로 요청 보냈을 경우
-                if(username == null){
-                    username = requestMap.get("email");
+                if(phone == null){
+                    phone = requestMap.get("phone");
                 }
 
             }catch (IOException e){
@@ -56,7 +57,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             }
         }else{
             // 요청이 form_data인 경우
-            username = obtainUsername(request);
+            phone = obtainUsername(request);
             password = obtainPassword(request);
         }
 
@@ -69,7 +70,8 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         }
 
         // username에 userType을 prefix로 추가
-        String prefixedUsername = userType + ":" + username;
+        String prefixedUsername = userType + ":" + phone;
+
 
         // 스프링 시큐리티에서 username과 password를 검증하기 위에서는 token에 담아야함
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(prefixedUsername, password, null);
@@ -84,7 +86,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         //유저 정보
         CustomerUserDetails customUserDetails = (CustomerUserDetails) authentication.getPrincipal();
 
-        String username = customUserDetails.getUsername();
+        String phone = customUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -92,11 +94,11 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         //토큰 생성
-        String access = jwtTokenProvider.createToken("access", username, role, 600000L);     // 10분
-        String refresh = jwtTokenProvider.createToken("refresh", username, role, 86400000L); // 24시간
+        String access = jwtTokenProvider.createToken("access", phone, role, jwtProperties.accessTokenValiditySeconds());
+        String refresh = jwtTokenProvider.createToken("refresh", phone, role, jwtProperties.refreshTokenValiditySeconds());
 
         //Refresh 토큰 저장
-        addRefreshEntity(username, refresh, 86400000L);
+        addRefreshEntity(phone, refresh, jwtProperties.refreshTokenValiditySeconds());
 
         //응답 설정
         response.setHeader("Authorization", "Bearer " + access);
@@ -122,12 +124,12 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         return cookie;
     }
 
-    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+    private void addRefreshEntity(String phone, String refresh, Long expiredMs) {
 
         Date expiration = new Date(System.currentTimeMillis() + expiredMs);
 
         refreshRepository.save(Refresh.builder()
-                                .email(username)
+                                .phone(phone)
                                 .refreshToken(refresh)
                                 .expiration(expiration.toString())
                                 .build());
@@ -135,14 +137,16 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
     private String extractUserTypeFromUri(String uri) {
-        // URI 예시: /api/customers/login, /api/managers/login, /api/admins/login
-        if (uri.contains("/customers/")) {
-            return "customer";
-        } else if (uri.contains("/managers/")) {
-            return "manager";
-        } else if (uri.contains("/admins/")) {
-            return "admin";
+        // URI 예시: /api/customers/login, /api/managers/login, /api/admin/login
+        String userType = null;
+
+        if (uri.contains("/customers")) {
+            userType =  "customer";
+        } else if (uri.contains("/managers")) {
+            userType = "manager";
+        } else if (uri.contains("/admin")) {
+            userType = "admin";
         }
-        return null;
+        return userType;
     }
 }
