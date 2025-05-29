@@ -1,17 +1,17 @@
 package com.kernel.common.admin.entity;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.kernel.common.entity.BaseEntity;
+import com.kernel.common.global.entity.BaseEntity;
+import com.kernel.common.global.enums.Gender;
+import com.kernel.common.global.enums.UserStatus;
+import com.kernel.common.global.enums.UserType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "manager")
@@ -27,6 +27,9 @@ public class Manager extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long managerId;
 
+    @Column(unique = true, nullable = false, length = 20)
+    private String phone;
+
     @Column(unique = true, length = 50)
     private String email;
 
@@ -36,10 +39,10 @@ public class Manager extends BaseEntity {
     @Column(length = 100)
     private String userName;
 
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
 
-    @Column(unique = true, nullable = false, length = 20)
-    private String phone;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(length = 10)
     private String zipcode;
@@ -61,17 +64,24 @@ public class Manager extends BaseEntity {
 
     private Long profileImageId;
 
-    @Column(columnDefinition = "Status DEFAULT 'INACTIVE'")
-    private Status status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private UserStatus status = UserStatus.PENDING;
 
     @Column(columnDefinition = "Boolean DEFAULT false")
     private boolean isDeleted;
 
-    public void updateStatus(Status status) {
+    public void updateStatus(UserStatus status) {
         this.status = status;
     }
 
     public void delete() {
         this.isDeleted = true;
     }
+
+    public String getUserType() {
+        return "ROLE_"+ UserType.MANAGER;
+    }
+
 }

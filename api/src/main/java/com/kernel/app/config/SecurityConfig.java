@@ -1,17 +1,18 @@
 package com.kernel.app.config;
 
-import com.kernel.app.enums.UserType;
+import com.kernel.common.global.enums.UserType;
 import com.kernel.app.jwt.*;
 
 import com.kernel.app.repository.RefreshRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,9 +34,6 @@ public class SecurityConfig {
     private final RefreshRepository refreshRepository;
     private final JwtProperties jwtProperties;
 
-
-
-
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -43,78 +41,127 @@ public class SecurityConfig {
 
     //AuthenticationManager Bean 등록
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager() throws Exception {
 
-        return configuration.getAuthenticationManager();
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
+    // 공통 Security 설정 분리
     @Bean
-    public SecurityFilterChain securityFilterchain(HttpSecurity http) throws Exception {
+    @Order(0)
+    public SecurityFilterChain commonFilterChain(HttpSecurity http) throws Exception {
 
-        //cors
-        http.cors((cors) -> cors
-                .configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                        CorsConfiguration config = new CorsConfiguration();
-                        // 허용할 프론트엔드 서버
-                        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        config.setAllowedMethods(Collections.singletonList("*"));
-                        config.setAllowCredentials(true);
-                        config.setAllowedHeaders(Collections.singletonList("*"));
-                        config.setMaxAge(3600L);
-
-                        config.setExposedHeaders(Collections.singletonList("Authorization"));
-
-                        return config;
-                    }
-                }));
-
-        //csrf disable : 세션을 stateless 상태로 관리하기 때문에 csrf 공격에 안전하다
-        http.csrf((auth) -> auth.disable());
-
-        //Login 방식을 커스텀 할 예정이기 때문에 기존 로그인 방식 두개 disable
-        http.formLogin((auth) -> auth.disable());
-        http.httpBasic((auth) -> auth.disable());
-
-        // 경로별 인가 작업
-        http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/customers/login", "/api/customers/signup",
-                                "/api/managers/**",
-                                "/api/admin/**",
-                                "/api/reissue",
-                                "/error",
-                                "/favicon.ico"
-                ).permitAll()
-                .requestMatchers("/api/customers/**").hasRole(UserType.CUSTOMER.name())
-                //.requestMatchers("/api/managers/**").hasRole(UserType.MANAGER.name())
-                //.requestMatchers("/api/admin/**").hasRole(UserType.ADMIN.name())
-                .anyRequest().anonymous()); //그 외 요청은 모드 접근 가능
-
-        // loginFiilter전에 jwt 확인
-        http.addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class);
-
-        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(authenticationConfiguration), refreshRepository, jwtProperties);
-        loginFilter.setFilterProcessesUrl("/api/customers/login"); // LoginFilter는 기본적으로 '/login' 경로로만 동작하므로 url 설정을 해줘야한다.
-
-        // 기존 권한확인filter 대신 custom한 loginFilter로 권한 확인 진행
-        http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // 기존 logoutFilter전에 custom한 logoutFilter로 로그아웃
-        http.addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
-
-        // 로그아웃 설정
-        http.logout(logout ->
-                            logout.logoutUrl("/api/logout")
-                            .logoutSuccessUrl("/")
-                            .deleteCookies("refresh"));
-
-        // 세션 설정
-        http.sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http
+                .securityMatcher("/api/logout", "/api/reissue")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/logout","/api/reissue").permitAll())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class)
+                .logout(logout -> logout
+                        .logoutUrl("/api/logout")
+                        .logoutSuccessUrl("/")
+                        .deleteCookies("refresh"));
 
         return http.build();
     }
 
+    // CUSTOMER 전용 필터체인
+    @Bean
+    @Order(1)
+    public SecurityFilterChain customerFilterChain(HttpSecurity http) throws Exception {
+
+        applyCommonSecurityConfig(http);
+
+        // 로그인 필터
+        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
+        loginFilter.setFilterProcessesUrl("/api/customers/login");
+
+        http
+                .securityMatcher("/api/customers/**", "/api/customers/login", "/api/reissue")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/customers/**").permitAll()) // TODO 테스트용
+                        /*
+                        .requestMatchers("/api/customers/login", "/api/customers/signup").permitAll()
+                        .requestMatchers("/api/customers/**").hasRole(UserType.CUSTOMER.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+                .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
+                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
+
+        return http.build();
+    }
+
+    // MANAGER 전용 필터체인
+    @Bean
+    @Order(2)
+    public SecurityFilterChain managerFilterChain(HttpSecurity http) throws Exception {
+
+        applyCommonSecurityConfig(http);
+
+        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
+        loginFilter.setFilterProcessesUrl("/api/managers/login");
+
+        http
+                .securityMatcher("/api/managers/**", "/api/managers/login")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/managers/**").permitAll()) // TODO 테스트용
+                        /*.requestMatchers("/api/managers/login", "/api/managers/signup").permitAll()
+                        .requestMatchers("/api/managers/**").hasRole(UserType.MANAGER.name()))*/ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+                .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
+                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
+
+        return http.build();
+    }
+
+    // ADMIN 전용 필터체인
+    @Bean
+    @Order(3)
+    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
+
+        applyCommonSecurityConfig(http);
+
+        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
+        loginFilter.setFilterProcessesUrl("/api/admin/login");
+
+        http
+                .securityMatcher("/api/admin/**", "/api/admin/login")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/admin/**").permitAll()) // TODO 테스트용
+                       /* .requestMatchers("/api/admin/login", "/api/admin/signup").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole(UserType.ADMIN.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+                .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
+                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
+
+
+        return http.build();
+    }
+
+    //cors 설정 분리
+    private CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowCredentials(true);
+            config.setExposedHeaders(Collections.singletonList("Authorization"));
+            config.setMaxAge(3600L);
+            return config;
+        };
+    }
+
+    // 공통 Security 설정 (private 메서드로 복원)
+    private HttpSecurity applyCommonSecurityConfig(HttpSecurity http) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+    }
 }

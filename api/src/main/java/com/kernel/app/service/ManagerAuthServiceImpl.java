@@ -1,8 +1,8 @@
 package com.kernel.app.service;
 
-import com.kernel.app.dto.mapper.CustomerAuthMapper;
-import com.kernel.app.repository.CustomerAuthRepository;
-import com.kernel.common.customer.dto.request.CustomerSignupReqDTO;
+import com.kernel.app.dto.mapper.ManagerAuthMapper;
+import com.kernel.app.repository.ManagerAuthRepository;
+import com.kernel.common.manager.dto.ManagerSignupReqDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,13 @@ import java.util.NoSuchElementException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CustomerAuthServiceImpl implements CustomerAuthService {
+public class ManagerAuthServiceImpl implements ManagerAuthService {
 
-    private final CustomerAuthRepository repository;
-    private final CustomerAuthMapper mapper;
+    private final ManagerAuthRepository repository;
+    private final ManagerAuthMapper mapper;
 
     @Override
-    public void join(CustomerSignupReqDTO joinDTO) {
+    public void join(ManagerSignupReqDTO joinDTO) {
 
         String phone = joinDTO.getPhone();
 
@@ -29,5 +29,4 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
         repository.save(mapper.toEntity(joinDTO));
 
     }
-
 }

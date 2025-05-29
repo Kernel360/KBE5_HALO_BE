@@ -1,8 +1,8 @@
-package com.kernel.app.dto.request;
+package com.kernel.common.customer.dto.request;
 
 
-import com.kernel.app.enums.Gender;
-import com.kernel.app.enums.UserStatus;
+import com.kernel.common.global.enums.Gender;
+import com.kernel.common.global.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +28,7 @@ public class CustomerSignupReqDTO {
 
     @NotBlank
     private String password;
+
     @NotBlank
     private String userName;
 
@@ -45,12 +46,11 @@ public class CustomerSignupReqDTO {
     @NotBlank
     private String detailAddress;
 
-    @NotBlank
     @Builder.Default
     private Integer point = 0;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.ACTIVE;
+    private UserStatus status;
 
 
 }

@@ -1,14 +1,13 @@
-package com.kernel.app.entity;
+package com.kernel.common.customer.entity;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.kernel.app.dto.UserInfo;
-import com.kernel.app.enums.Gender;
-import com.kernel.app.enums.UserStatus;
-import com.kernel.app.enums.UserType;
+import com.kernel.common.global.entity.BaseEntity;
+import com.kernel.common.global.enums.Gender;
+import com.kernel.common.global.enums.UserStatus;
+import com.kernel.common.global.enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -16,23 +15,21 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "manager")
+@Table(name = "customer")
 @Getter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class Manager extends BaseEntity implements UserInfo {
+public class Customer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long managerId;
+    private Long customerId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String phone;
 
     @Email
-    @Column(nullable = true)
     private String email;
 
     @Column(nullable = false)
@@ -48,7 +45,6 @@ public class Manager extends BaseEntity implements UserInfo {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-
     @Column(nullable = false)
     private String zipcode;
 
@@ -59,13 +55,15 @@ public class Manager extends BaseEntity implements UserInfo {
     private String detailAddress;
 
     @Column(nullable = false)
-    private String bio;
+    private int point;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    @Column(nullable = false)
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 
     public String getUserType() {
-        return "ROLE_"+ UserType.MANAGER;
+        return  "ROLE_"+ UserType.CUSTOMER;
     }
-}
 
+}
