@@ -64,7 +64,6 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
             return ManagerInquirySummaryRspDTO.builder()
                 .inquiryId(inquiry.getInquiryId())
                 .title(inquiry.getTitle())
-                .content(inquiry.getContent())
                 .createdAt(inquiry.getCreatedAt())
                 .isReplied(isReplied)
                 .build();

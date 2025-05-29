@@ -37,7 +37,6 @@ public class ManagerInquiryMapper {
         return ManagerInquirySummaryRspDTO.builder()
             .inquiryId(managerInquiry.getInquiryId())
             .title(managerInquiry.getTitle())
-            .content(managerInquiry.getContent())
             .createdAt(managerInquiry.getCreatedAt())
             .isReplied(managerInquiry.getManagerReply() != null)
             .build();

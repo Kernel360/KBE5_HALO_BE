@@ -18,9 +18,6 @@ public class ManagerInquirySummaryRspDTO {
     // 제목
     private String title;
 
-    // 내용
-    private String content;
-
     // 작성일시(= 생성일시)
     private LocalDateTime createdAt;
 
