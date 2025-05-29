@@ -1,10 +1,5 @@
 package com.kernel.app.jwt;
 
-import com.kernel.app.dto.CustomerUserDetails;
-import com.kernel.app.dto.UserInfo;
-import com.kernel.app.entity.Admin;
-import com.kernel.app.entity.Customer;
-import com.kernel.app.entity.Manager;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,11 +8,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -27,17 +26,14 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // 헤더에서 Authorization에 담긴 토큰을 꺼냄
-        String authorizationHeader = request.getHeader("Authorization");
+        // Bearer 접두사 제거하여 실제 토큰 추출
+        String accessToken = jwtTokenProvider.resolveToken(request);
 
-        // Authorization 헤더가 없거나 Bearer로 시작하지 않으면 다음 필터로 넘김
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (accessToken == null || accessToken.isBlank()) {
+            // 토큰이 없으면 인증 시도하지 않고 바로 다음 필터로 넘김
             filterChain.doFilter(request, response);
             return;
         }
-
-        // Bearer 접두사 제거하여 실제 토큰 추출
-        String accessToken = authorizationHeader.substring(7);
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
@@ -67,38 +63,21 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-
         // username, role 값을 획득
         String phone = jwtTokenProvider.getUsername(accessToken);
         String role = jwtTokenProvider.getRole(accessToken);
 
-        // role에 따라 userInfo 생성
-        UserInfo userInfo = createUserInfo(phone, role);
-        CustomerUserDetails userDetails = new CustomerUserDetails(userInfo);
+        // role이 "ROLE_CUSTOMER"형식이면 권한 컬렉션 생성
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
+        // 인증 객체 생성 (UserDetails 없이도 가능)
+        Authentication authentication = new UsernamePasswordAuthenticationToken(phone, null, authorities);
 
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
 
-    }
-
-    private UserInfo createUserInfo(String phone, String userType) {
-        return switch (userType) {
-            case "ROLE_CUSTOMER" -> Customer.builder()
-                    .phone(phone)
-                    .build();
-            case "ROLE_MANAGER" -> Manager.builder()
-                    .phone(phone)
-                    .build();
-            case "ROLE_ADMIN" -> Admin.builder()
-                    .phone(phone)
-                    .build();
-            default -> throw new IllegalArgumentException("Unknown user type: " + userType);
-        };
     }
 }
 

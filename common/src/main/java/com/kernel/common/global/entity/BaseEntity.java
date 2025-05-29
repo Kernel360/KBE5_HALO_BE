@@ -1,7 +1,5 @@
-package com.kernel.app.entity;
+package com.kernel.common.global.entity;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +17,6 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @SuperBuilder
 @NoArgsConstructor
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
     @Column

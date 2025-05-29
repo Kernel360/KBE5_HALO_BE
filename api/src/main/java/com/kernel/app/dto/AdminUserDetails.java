@@ -1,6 +1,6 @@
 package com.kernel.app.dto;
 
-import com.kernel.common.customer.entity.Customer;
+import com.kernel.common.admin.entity.Admin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class CustomerUserDetails implements UserDetails {
+public class AdminUserDetails implements UserDetails {
 
-    private final Customer customer;
+    private final Admin admin;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-        String role = customer.getUserType();
+        String role = admin.getUserType();
 
         authorities.add(new GrantedAuthority() {
             @Override
@@ -32,12 +32,12 @@ public class CustomerUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return customer.getPassword();
+        return admin.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return customer.getPhone();
+        return admin.getPhone();
     }
 
     @Override

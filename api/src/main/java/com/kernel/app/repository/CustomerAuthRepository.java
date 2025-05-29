@@ -1,6 +1,6 @@
 package com.kernel.app.repository;
 
-import com.kernel.app.entity.Customer;
+import com.kernel.common.customer.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

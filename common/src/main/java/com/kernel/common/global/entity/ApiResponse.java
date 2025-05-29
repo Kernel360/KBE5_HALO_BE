@@ -1,4 +1,4 @@
-package com.kernel.app.entity;
+package com.kernel.common.global.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

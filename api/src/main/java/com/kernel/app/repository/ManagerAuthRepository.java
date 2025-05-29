@@ -1,6 +1,6 @@
 package com.kernel.app.repository;
 
-import com.kernel.app.entity.Manager;
+import com.kernel.common.admin.entity.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

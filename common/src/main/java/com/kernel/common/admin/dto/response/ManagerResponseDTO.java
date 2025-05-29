@@ -3,6 +3,7 @@ package com.kernel.common.admin.dto.response;
 
 import com.kernel.common.admin.entity.Status;   // 추후에 Status entity가 정의된 위치로 변경 필요
 
+import com.kernel.common.global.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class ManagerResponseDTO {
     private String userName;
     private String email;
     private String phone;
-    private Status status;  // manager 패키지나 global 패키지에서 Status는 enum으로 정의되어 있다고 가정
+    private UserStatus status;  // manager 패키지나 global 패키지에서 Status는 enum으로 정의되어 있다고 가정
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer reservationCount;
