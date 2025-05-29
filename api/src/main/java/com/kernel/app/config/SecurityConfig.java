@@ -1,6 +1,5 @@
 package com.kernel.app.config;
 
-import com.kernel.common.global.enums.UserType;
 import com.kernel.app.jwt.*;
 
 import com.kernel.app.repository.RefreshRepository;
