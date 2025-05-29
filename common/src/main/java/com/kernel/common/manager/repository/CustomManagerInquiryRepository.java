@@ -1,5 +1,6 @@
 package com.kernel.common.manager.repository;
 
+import com.kernel.common.enums.ReplyStatus;
 import com.querydsl.core.Tuple;
 import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,7 @@ public interface CustomManagerInquiryRepository {
         Long authorId,
         LocalDateTime fromCreatedAt,
         LocalDateTime toCreatedAt,
-        String replyStatus,
+        ReplyStatus replyStatus,
         String titleKeyword,
         String contentKeyword,
         Pageable pageable

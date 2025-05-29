@@ -1,5 +1,6 @@
 package com.kernel.common.manager.service;
 
+import com.kernel.common.enums.ReplyStatus;
 import com.kernel.common.manager.dto.mapper.ManagerInquiryMapper;
 import com.kernel.common.manager.dto.reponse.ManagerInquiryRspDTO;
 import com.kernel.common.manager.dto.reponse.ManagerInquirySummaryRspDTO;
@@ -41,7 +42,7 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
     @Override
     public Page<ManagerInquirySummaryRspDTO> searchManagerinquiriesWithPaging(
         Long authorId,
-        LocalDateTime fromCreatedAt, LocalDateTime toCreatedAt, String replyStatus, String titleKeyword, String contentKeyword,
+        LocalDateTime fromCreatedAt, LocalDateTime toCreatedAt, ReplyStatus replyStatus, String titleKeyword, String contentKeyword,
         Pageable pageable
     ) {
 

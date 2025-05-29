@@ -1,6 +1,7 @@
 package com.kernel.common.manager.controller;
 
 import com.kernel.common.entity.ApiResponse;
+import com.kernel.common.enums.ReplyStatus;
 import com.kernel.common.manager.dto.reponse.ManagerInquiryRspDTO;
 import com.kernel.common.manager.dto.reponse.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryCreateReqDTO;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +46,7 @@ public class ManagerInquiryController {
     public ResponseEntity<ApiResponse<Page<ManagerInquirySummaryRspDTO>>> searchManagerInquiries(
         @RequestParam(value = "fromCreatedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromDate,
         @RequestParam(value = "toCreatedAt", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate toDate,
-        @RequestParam(value = "replyStatus", required = false) String replyStatus,
+        @RequestParam(value = "replyStatus", required = false) ReplyStatus replyStatus,
         @RequestParam(value = "titleKeyword", required = false) String titleKeyword,
         @RequestParam(value = "contentKeyword", required = false) String contentKeyword,
         Pageable pageable
@@ -89,13 +91,10 @@ public class ManagerInquiryController {
     }
 
     /**
-     * 매니저 상담 게시글 수정 및 삭제 API
-     * - 삭제의 경우, isDeleted=true 처리
+     * 매니저 상담 게시글 수정 API
      * @param inquiryId 게시글 ID
      * @param requestDTO 게시글 수정 및 삭제 요청 데이터
-     * @return
-     *  - 삭제: null
-     *  - 수정: 수정된 게시글 정보를 담은 응답
+     * @return 수정된 게시글 정보를 담은 응답
      */
     @PatchMapping("/{inquiry_id}")
     public ResponseEntity<ApiResponse<ManagerInquirySummaryRspDTO>> updateManagerInquiry(
@@ -103,15 +102,21 @@ public class ManagerInquiryController {
             @Valid @RequestBody ManagerInquiryUpdateReqDTO requestDTO
     ) {
         // TODO: @AuthenticationPrincipal 사용이 가능해지면 1L이 아닌 실제 id 넘길 예정
-
-        // delete: 삭제
-        if ("delete".equalsIgnoreCase(requestDTO.getAction())) {
-            managerInquiryService.deleteManagerInquiry(1L, inquiryId);
-            return ResponseEntity.ok(new ApiResponse<>(true, "매니저 상담 게시글 삭제 성공", null));
-        }
-
-        // update: 수정
         ManagerInquirySummaryRspDTO summaryRspDTO = managerInquiryService.updateManagerInquiry(1L, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 상담 게시글 수정 성공", summaryRspDTO));
+    }
+
+    /**
+     * 매니저 상담 게시글 삭제 API
+     * @param inquiryId 게시글 ID
+     * @return null
+     */
+    @DeleteMapping("/{inquiry_id}")
+    public ResponseEntity<ApiResponse<ManagerInquirySummaryRspDTO>> updateManagerInquiry(
+        @PathVariable("inquiry_id") Long inquiryId
+    ) {
+        // TODO: @AuthenticationPrincipal 사용이 가능해지면 1L이 아닌 실제 id 넘길 예정
+        managerInquiryService.deleteManagerInquiry(1L, inquiryId);
+        return ResponseEntity.ok(new ApiResponse<>(true, "매니저 상담 게시글 삭제 성공", null));
     }
 }
