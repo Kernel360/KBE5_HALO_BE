@@ -26,10 +26,6 @@ repositories {
 dependencies {
     // Project dependencies
     implementation project(':common')
-    implementation project(':manager')
-    implementation project(':matching')
-    implementation project(':reservation')
-    implementation project(':payment')
 
     // Spring Boot dependencies
     implementation 'org.springframework.boot:spring-boot-starter-web'
