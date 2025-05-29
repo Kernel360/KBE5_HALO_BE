@@ -3,7 +3,7 @@ package com.kernel.common.admin.controller;
 import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
 import com.kernel.common.admin.dto.response.ManagerResponseDTO;
 import com.kernel.common.admin.service.AdminManagerService;
-import com.kernel.common.entity.ApiResponse;
+import com.kernel.common.global.entity.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

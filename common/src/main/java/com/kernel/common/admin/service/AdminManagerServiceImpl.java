@@ -7,6 +7,7 @@ import com.kernel.common.admin.dto.response.ManagerResponseDTO;
 import com.kernel.common.admin.entity.Manager;
 import com.kernel.common.admin.entity.Status;
 import com.kernel.common.admin.repository.ManagerRepository;
+import com.kernel.common.global.enums.UserStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -57,9 +58,9 @@ public class AdminManagerServiceImpl implements AdminManagerService {
                 .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));
 
         if (status.equalsIgnoreCase("ACTIVE")) {
-            manager.updateStatus(Status.ACTIVE);
+            manager.updateStatus(UserStatus.ACTIVE);
         } else if (status.equalsIgnoreCase("REJECTED")) {
-            manager.updateStatus(Status.REJECTED);
+            manager.updateStatus(UserStatus.REJECTED);
         } else {
             throw new IllegalArgumentException("유효하지 않은 상태입니다.");
         }
@@ -84,7 +85,7 @@ public class AdminManagerServiceImpl implements AdminManagerService {
         Manager manager = managerRepository.findById(managerId)
                 .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));
 
-        manager.updateStatus(Status.SUSPENDED);
+        manager.updateStatus(UserStatus.SUSPENDED);
 
         return managerMapper.toResponseDTO(manager);
     }

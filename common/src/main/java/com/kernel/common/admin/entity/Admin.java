@@ -1,15 +1,10 @@
 package com.kernel.common.admin.entity;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.kernel.common.entity.BaseEntity;
+import com.kernel.common.global.entity.BaseEntity;
+import com.kernel.common.global.enums.UserStatus;
+import com.kernel.common.global.enums.UserType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -27,15 +22,17 @@ public class Admin extends BaseEntity {
     private Long adminId;
 
     @Column(unique = true, nullable = false)
-    private String id;
+    private String phone;
 
     @Column(nullable = false, length = 100)
     private String password;
 
-    public Admin(String id, String password) {
-        this.id = id;
-        this.password = password;
-    }
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 
     public void updatePassword(String password) { this.password = password; }
+    public String getUserType() {
+        return "ROLE_"+ UserType.ADMIN;
+    }
 }

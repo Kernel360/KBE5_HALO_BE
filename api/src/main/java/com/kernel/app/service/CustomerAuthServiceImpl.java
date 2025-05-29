@@ -1,0 +1,33 @@
+package com.kernel.app.service;
+
+import com.kernel.app.dto.mapper.CustomerAuthMapper;
+import com.kernel.app.repository.CustomerAuthRepository;
+import com.kernel.common.customer.dto.request.CustomerSignupReqDTO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class CustomerAuthServiceImpl implements CustomerAuthService {
+
+    private final CustomerAuthRepository repository;
+    private final CustomerAuthMapper mapper;
+
+    @Override
+    public void join(CustomerSignupReqDTO joinDTO) {
+
+        String phone = joinDTO.getPhone();
+
+        Boolean isExists = repository.existsByPhone(phone);
+
+        if (isExists) throw new NoSuchElementException("이미 존재하는 사용자입니다.");
+
+        repository.save(mapper.toEntity(joinDTO));
+
+    }
+
+}
