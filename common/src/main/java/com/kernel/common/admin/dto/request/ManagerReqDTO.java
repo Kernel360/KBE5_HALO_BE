@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ManagerRequestDTO {
+public class ManagerReqDTO {
     // TODO: Request로 받을 필드 정의
 
     @NotBlank(message = "상태 변경값은 필수입니다.")

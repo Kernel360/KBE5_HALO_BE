@@ -61,6 +61,7 @@ public class Manager extends BaseEntity {
 
     private Long profileImageId;
 
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "Status DEFAULT 'INACTIVE'")
     private Status status;
 

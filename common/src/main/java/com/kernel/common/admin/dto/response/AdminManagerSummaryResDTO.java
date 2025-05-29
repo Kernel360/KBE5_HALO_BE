@@ -9,6 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminResponseDTO {
-    private Long adminId;
+public class AdminManagerSummaryResDTO {
+
+    private Long managerId;
+    private String userName;
+    private String status;
+    private Integer reservationCount;
+    private Integer reviewCount;
+
 }
