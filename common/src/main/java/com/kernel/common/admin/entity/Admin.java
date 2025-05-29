@@ -1,16 +1,10 @@
 package com.kernel.common.admin.entity;
 
-import com.kernel.common.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.kernel.common.global.entity.BaseEntity;
+import com.kernel.common.global.enums.UserStatus;
+import com.kernel.common.global.enums.UserType;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -27,15 +21,17 @@ public class Admin extends BaseEntity {
     private Long adminId;
 
     @Column(unique = true, nullable = false)
-    private String id;
+    private String phone;
 
     @Column(nullable = false, length = 100)
     private String password;
 
-    public Admin(String id, String password) {
-        this.id = id;
-        this.password = password;
-    }
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 
     public void updatePassword(String password) { this.password = password; }
+    public String getUserType() {
+        return "ROLE_"+ UserType.ADMIN;
+    }
 }
