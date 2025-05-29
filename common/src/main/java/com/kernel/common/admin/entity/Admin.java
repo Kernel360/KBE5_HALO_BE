@@ -1,16 +1,13 @@
 package com.kernel.common.admin.entity;
-
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.kernel.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+
+import static com.kernel.common.admin.util.RandomPasswordUtil.generatePassword;
 
 @Entity
 @Table(name = "admin")
@@ -32,10 +29,12 @@ public class Admin extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String password;
 
-    public Admin(String id, String password) {
-        this.id = id;
-        this.password = password;
-    }
+    @Column(nullable = false, columnDefinition = "Boolean DEFAULT false")
+    private Boolean isDeleted;
 
-    public void updatePassword(String password) { this.password = password; }
+    public String resetPassword() {
+        this.password = generatePassword(8);
+
+        return this.password;
+    }
 }

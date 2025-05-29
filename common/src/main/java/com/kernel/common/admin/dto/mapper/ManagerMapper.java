@@ -1,8 +1,8 @@
 package com.kernel.common.admin.dto.mapper;
 
 
-import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
-import com.kernel.common.admin.dto.response.ManagerResponseDTO; // 추후에 ManagerResponseDTO가 정의된 위치로 변경 필요
+import com.kernel.common.admin.dto.response.AdminManagerSummaryResDTO;
+import com.kernel.common.admin.dto.response.ManagerResDTO; // 추후에 ManagerResponseDTO가 정의된 위치로 변경 필요
 import com.kernel.common.admin.entity.Manager;  // 추후에 Manager entity가 정의된 위치로 변경 필요
 import org.springframework.stereotype.Component;
 
@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 public class ManagerMapper {
 
     // Entity -> ResponseDTO
-    public ManagerResponseDTO toResponseDTO(Manager manager) {    // Manager는 manager 패키지에서 정의된 Entity 클래스라고 가정
+    public ManagerResDTO toResponseDTO(Manager manager) {    // Manager는 manager 패키지에서 정의된 Entity 클래스라고 가정
         // TODO: Entity를 Response DTO로 변환하는 로직 구현
-        return ManagerResponseDTO.builder()
+        return ManagerResDTO.builder()
                 .managerId(manager.getManagerId())
                 .userName(manager.getUserName())
                 .email(manager.getEmail())
@@ -34,8 +34,8 @@ public class ManagerMapper {
     }
 
     // Entity -> List의 ResponseDTO
-    public AdminManagerSummaryResponseDTO toAdminSummeryResponseDTO(Manager manager) {
-        return AdminManagerSummaryResponseDTO.builder()
+    public AdminManagerSummaryResDTO toAdminSummeryResponseDTO(Manager manager) {
+        return AdminManagerSummaryResDTO.builder()
                 .managerId(manager.getManagerId())
                 .userName(manager.getUserName())
                 .status(manager.getStatus().name())  // Status는 enum으로 정의되어 있다고 가정
@@ -45,11 +45,11 @@ public class ManagerMapper {
     }
 
     // Entity 리스트 -> ResponseDTO 리스트
-    public List<AdminManagerSummaryResponseDTO> toAdminResponseDTOList(List<Manager> managers) {   // managers는 manager 모듈에서 정의된 Entity 리스트라고 가정
+    public List<AdminManagerSummaryResDTO> toAdminResponseDTOList(List<Manager> managers) {   // managers는 manager 모듈에서 정의된 Entity 리스트라고 가정
         // TODO: List 조회에 필요한 정보만 추출하여 리스트로 변환하는 로직 구현
         return managers.stream()
                 .map(manager -> {
-                    AdminManagerSummaryResponseDTO dto = toAdminSummeryResponseDTO(manager);
+                    AdminManagerSummaryResDTO dto = toAdminSummeryResponseDTO(manager);
                     return dto;
                 })
                 .collect(Collectors.toList());

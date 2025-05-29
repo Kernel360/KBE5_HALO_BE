@@ -2,8 +2,8 @@ package com.kernel.common.admin.service;
 
 
 import com.kernel.common.admin.dto.mapper.ManagerMapper;
-import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
-import com.kernel.common.admin.dto.response.ManagerResponseDTO;
+import com.kernel.common.admin.dto.response.AdminManagerSummaryResDTO;
+import com.kernel.common.admin.dto.response.ManagerResDTO;
 import com.kernel.common.admin.entity.Manager;
 import com.kernel.common.admin.entity.Status;
 import com.kernel.common.admin.repository.ManagerRepository;
@@ -25,7 +25,7 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<AdminManagerSummaryResponseDTO> getManagers(String keyword) {
+    public List<AdminManagerSummaryResDTO> getManagers(String keyword) {
         // TODO: 관리자 목록 조회 로직 구현
         List<Manager> managers;
 
@@ -37,14 +37,14 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     @Transactional(readOnly = true)
     @Override
-    public ManagerResponseDTO getManager(Long managerId) {
+    public ManagerResDTO getManager(Long managerId) {
         // TODO: 관리자 상세 조회 로직 구현
         return managerMapper.toResponseDTO(managerRepository.findById(managerId)
             .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다.")));
     }
 
     @Transactional(readOnly = true)
-    public List<AdminManagerSummaryResponseDTO> getApplyManagers(String keyword) {
+    public List<AdminManagerSummaryResDTO> getApplyManagers(String keyword) {
         // TODO: 매니저 신청 목록 조회 로직 구현
         return managerMapper.toAdminResponseDTOList(managerRepository.findByStatus(Status.PENDING));
     }
@@ -67,7 +67,7 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<AdminManagerSummaryResponseDTO> getReportedManagers(String keyword) {
+    public List<AdminManagerSummaryResDTO> getReportedManagers(String keyword) {
         // TODO: 신고된 관리자 목록 조회 로직 구현
         List<Manager> managers;
 
@@ -79,7 +79,7 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     @Transactional
     @Override
-    public ManagerResponseDTO suspendManager(Long managerId) {
+    public ManagerResDTO suspendManager(Long managerId) {
         // TODO: 블랙리스트 관리자 설정 로직 구현
         Manager manager = managerRepository.findById(managerId)
                 .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));

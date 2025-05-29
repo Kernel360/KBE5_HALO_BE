@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ManagerResponseDTO {
+public class ManagerResDTO {
     // TODO: Response로 반환할 필드 정의
 
     private Long managerId;
