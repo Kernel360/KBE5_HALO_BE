@@ -1,10 +1,10 @@
 package com.kernel.common.manager.repository;
 
-import com.kernel.common.enums.ReplyStatus;
+import com.kernel.common.global.enums.ReplyStatus;
 import com.kernel.common.manager.entity.QManagerInquiry;
 import com.kernel.common.manager.entity.QManagerReply;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,48 +29,21 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
 
         QManagerInquiry managerInquiry = QManagerInquiry.managerInquiry;
         QManagerReply managerReply = QManagerReply.managerReply;
-        BooleanBuilder builder = new BooleanBuilder();
-
-        // 작성자 ID(= 매니저 ID)로 작성된 게시글만
-        builder.and(managerInquiry.authorId.eq(authorId));
-
-        // 삭제되지 않은 게시글만
-        builder.and(managerInquiry.isDeleted.isFalse());
-
-        // 작성일시 시작일
-        if (fromCreatedAt != null) {
-            builder.and(managerInquiry.createdAt.goe(fromCreatedAt));
-        }
-
-        // 작성일시 종료일
-        if (toCreatedAt != null) {
-            builder.and(managerInquiry.createdAt.loe(toCreatedAt));
-        }
-
-        // 답변상태
-        if (replyStatus != null) {
-            switch (replyStatus) {
-                case ANSWERED -> builder.and(managerReply.inquiryId.isNotNull());   // 답변완료
-                case PENDING -> builder.and(managerReply.inquiryId.isNull());       // 대기중(=미답변)
-            }
-        }
-
-        // 제목 검색
-        if (titleKeyword != null && !titleKeyword.isBlank()) {
-            builder.and(managerInquiry.title.containsIgnoreCase(titleKeyword));
-        }
-
-        // 내용 검색
-        if (contentKeyword != null && !contentKeyword.isBlank()) {
-            builder.and(managerInquiry.content.containsIgnoreCase(contentKeyword));
-        }
 
         // 전체 개수 조회
         long total = Optional.ofNullable(
             jpaQueryFactory
                 .select(managerInquiry.count())
                 .from(managerInquiry)
-                .where(builder)
+                .where(
+                    authorEq(authorId),             // 작성자 ID 일치
+                    notDeleted(),                   // 삭제되지 않은 게시글
+                    createdAtGoe(fromCreatedAt),    // 작성일 ≥ 시작일
+                    createdAtLoe(toCreatedAt),      // 작성일 ≤ 종료일
+                    replyStatusCond(replyStatus),   // 답변 상태 필터
+                    titleContains(titleKeyword),    // 제목 검색어 포함
+                    contentContains(contentKeyword) // 내용 검색어 포함
+                )
                 .fetchOne()
         ).orElse(0L);
 
@@ -80,12 +53,64 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
             .select(managerInquiry,managerReply.inquiryId)
             .from(managerInquiry)
             .leftJoin(managerInquiry.managerReply, managerReply)
-            .where(builder)
+            .where(
+                authorEq(authorId),             // 작성자 ID 일치
+                notDeleted(),                   // 삭제되지 않은 게시글
+                createdAtGoe(fromCreatedAt),    // 작성일 >= 시작일
+                createdAtLoe(toCreatedAt),      // 작성일 <= 종료일
+                replyStatusCond(replyStatus),   // 답변 상태 필터
+                titleContains(titleKeyword),    // 제목 검색어 포함
+                contentContains(contentKeyword) // 내용 검색어 포함
+            )
             .offset(pageable.getOffset())               // 시작 위치
             .limit(pageable.getPageSize())              // 페이지 사이즈
             .orderBy(managerInquiry.inquiryId.desc())   // 정렬(게시글ID 기준 내림차순)
             .fetch();
 
         return new PageImpl<>(results, pageable, total);
+    }
+
+    // 작성자 ID 일치
+    private BooleanExpression authorEq(Long authorId) {
+        return QManagerInquiry.managerInquiry.authorId.eq(authorId);
+    }
+
+    // 삭제되지 않은 게시글
+    private BooleanExpression notDeleted() {
+        return QManagerInquiry.managerInquiry.isDeleted.isFalse();
+    }
+
+    // 작성일 >= 시작일
+    private BooleanExpression createdAtGoe(LocalDateTime from) {
+        return from != null ? QManagerInquiry.managerInquiry.createdAt.goe(from) : null;
+    }
+
+    // 작성일시 <= 종료일
+    private BooleanExpression createdAtLoe(LocalDateTime to) {
+        return to != null ? QManagerInquiry.managerInquiry.createdAt.loe(to) : null;
+    }
+
+    // 답변 상태 필터
+    private BooleanExpression replyStatusCond(ReplyStatus status) {
+        QManagerReply reply = QManagerReply.managerReply;
+        if (status == null) return null;
+        return switch (status) {
+            case ANSWERED -> reply.inquiryId.isNotNull();
+            case PENDING -> reply.inquiryId.isNull();
+        };
+    }
+
+    // 제목 검색어 포함
+    private BooleanExpression titleContains(String keyword) {
+        return keyword != null && !keyword.isBlank()
+            ? QManagerInquiry.managerInquiry.title.containsIgnoreCase(keyword)
+            : null;
+    }
+
+    // 내용 검색어 포함
+    private BooleanExpression contentContains(String keyword) {
+        return keyword != null && !keyword.isBlank()
+            ? QManagerInquiry.managerInquiry.content.containsIgnoreCase(keyword)
+            : null;
     }
 }

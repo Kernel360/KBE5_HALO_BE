@@ -1,4 +1,4 @@
-package com.kernel.common.enums;
+package com.kernel.common.global.enums;
 
 import lombok.Getter;
 
