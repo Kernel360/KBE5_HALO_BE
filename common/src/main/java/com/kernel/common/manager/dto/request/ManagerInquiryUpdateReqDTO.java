@@ -14,10 +14,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ManagerInquiryUpdateReqDTO {
 
-    // 행위 구분 (update, delete)
-    @NotBlank
-    private String action;
-
     // 매니저 게시글ID
     @NotNull
     private Long inquiryId;

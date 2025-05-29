@@ -1,5 +1,6 @@
 package com.kernel.common.manager.repository;
 
+import com.kernel.common.enums.ReplyStatus;
 import com.kernel.common.manager.entity.QManagerInquiry;
 import com.kernel.common.manager.entity.QManagerReply;
 import com.querydsl.core.BooleanBuilder;
@@ -23,7 +24,7 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
     @Override
     public Page<Tuple> searchManagerinquiriesWithPaging(
         Long authorId,
-        LocalDateTime fromCreatedAt, LocalDateTime toCreatedAt, String replyStatus, String titleKeyword, String contentKeyword,
+        LocalDateTime fromCreatedAt, LocalDateTime toCreatedAt, ReplyStatus replyStatus, String titleKeyword, String contentKeyword,
         Pageable pageable) {
 
         QManagerInquiry managerInquiry = QManagerInquiry.managerInquiry;
@@ -44,6 +45,14 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
         // 작성일시 종료일
         if (toCreatedAt != null) {
             builder.and(managerInquiry.createdAt.loe(toCreatedAt));
+        }
+
+        // 답변상태
+        if (replyStatus != null) {
+            switch (replyStatus) {
+                case ANSWERED -> builder.and(managerReply.inquiryId.isNotNull());   // 답변완료
+                case PENDING -> builder.and(managerReply.inquiryId.isNull());       // 대기중(=미답변)
+            }
         }
 
         // 제목 검색

@@ -1,5 +1,6 @@
 package com.kernel.common.manager.service;
 
+import com.kernel.common.enums.ReplyStatus;
 import com.kernel.common.manager.dto.reponse.ManagerInquiryRspDTO;
 import com.kernel.common.manager.dto.reponse.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryCreateReqDTO;
@@ -25,7 +26,7 @@ public interface ManagerInquiryService {
         Long authorId,
         LocalDateTime fromCreatedAt,
         LocalDateTime toCreatedAt,
-        String replyStatus,
+        ReplyStatus replyStatus,
         String titleKeyword,
         String contentKeyword,
         Pageable pageable
