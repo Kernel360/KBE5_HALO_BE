@@ -1,17 +1,16 @@
 package com.kernel.common.manager.service;
 
-import com.kernel.common.enums.ReplyStatus;
 import com.kernel.common.manager.dto.mapper.ManagerInquiryMapper;
 import com.kernel.common.manager.dto.reponse.ManagerInquiryRspDTO;
 import com.kernel.common.manager.dto.reponse.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryCreateReqDTO;
+import com.kernel.common.manager.dto.request.ManagerInquirySearchCondDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryUpdateReqDTO;
 import com.kernel.common.manager.entity.ManagerInquiry;
 import com.kernel.common.manager.entity.QManagerInquiry;
 import com.kernel.common.manager.entity.QManagerReply;
 import com.kernel.common.manager.repository.ManagerInquiryRepository;
 import com.querydsl.core.Tuple;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -31,23 +30,29 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
 
     /**
      * 매니저 상담 게시글 목록 조회 (검색 조건 및 페이징 처리)
-     * @param fromCreatedAt 작성일시 시작일
-     * @param toCreatedAt 작성일시 종료일
-     * @param replyStatus 답변 상태
-     * @param titleKeyword 제목 키워드
-     * @param contentKeyword 내용 키워드
+     * @param authorId 작성자ID(=매니저ID)
+     * @param searchCondDTO 검색조건DTO
      * @param pageable 페이징
      * @return 조건에 맞는 게시글 정보를 담은 Page 객체
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<ManagerInquirySummaryRspDTO> searchManagerinquiriesWithPaging(
         Long authorId,
-        LocalDateTime fromCreatedAt, LocalDateTime toCreatedAt, ReplyStatus replyStatus, String titleKeyword, String contentKeyword,
+        ManagerInquirySearchCondDTO searchCondDTO,
         Pageable pageable
     ) {
 
         // 조건 및 페이징 포함된 게시글 목록 조회
-        Page<Tuple> searchedInquiryPage = managerInquiryRepository.searchManagerinquiriesWithPaging(authorId, fromCreatedAt, toCreatedAt, replyStatus, titleKeyword, contentKeyword, pageable);
+        Page<Tuple> searchedInquiryPage = managerInquiryRepository.searchManagerinquiriesWithPaging(
+            authorId,
+            searchCondDTO.getFromDateTime(),
+            searchCondDTO.getToDateTime(),
+            searchCondDTO.getReplyStatus(),
+            searchCondDTO.getTitleKeyword(),
+            searchCondDTO.getContentKeyword(),
+            pageable
+        );
 
         // Tuple -> SummaryResponseDTO 변환
         QManagerInquiry qManagerInquiry = QManagerInquiry.managerInquiry;
@@ -82,6 +87,7 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
      * @return 게시글 상세 정보를 담은 응답
      */
     @Override
+    @Transactional(readOnly = true)
     public ManagerInquiryRspDTO getManagerInquiry(Long authorId, Long inquiryId) {
 
         // Entity 조회 (게시글ID, 작성자ID(=매니저ID)로 조회)
@@ -137,7 +143,7 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
 
             // 매니저 상담 게시글 삭제 여부 확인
             if (foundInquiry.getIsDeleted()) {
-                throw new IllegalStateException("이미 삭제된 게시글은 수정할 수 없습니다.");
+                throw new IllegalStateException("삭제된 게시글입니다.");
             }
 
             // 답변 여부 확인 - 답변있으면 수정 불가
@@ -170,7 +176,7 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
 
         // 매니저 상담 게시글 삭제 여부 확인
         if (foundInquiry.getIsDeleted()) {
-            throw new IllegalStateException("이미 삭제된 게시글은 삭제할 수 없습니다.");
+            throw new IllegalStateException("삭제된 게시글입니다.");
         }
 
         // 답변 여부 확인 - 답변있으면 삭제 불가

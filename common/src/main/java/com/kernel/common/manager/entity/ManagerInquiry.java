@@ -1,6 +1,6 @@
 package com.kernel.common.manager.entity;
 
-import com.kernel.common.entity.BaseEntity;
+import com.kernel.common.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
