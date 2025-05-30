@@ -1,5 +1,7 @@
 package com.kernel.app.config;
 
+import com.kernel.app.exception.handler.JwtAccessDeniedHandler;
+import com.kernel.app.exception.handler.JwtAuthenticationEntryPoint;
 import com.kernel.app.jwt.*;
 
 import com.kernel.app.repository.RefreshRepository;
@@ -32,6 +34,9 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshRepository refreshRepository;
     private final JwtProperties jwtProperties;
+    // 예외 처리
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -58,6 +63,11 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 예외 핸들러 추가
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class)
                 .logout(logout -> logout
