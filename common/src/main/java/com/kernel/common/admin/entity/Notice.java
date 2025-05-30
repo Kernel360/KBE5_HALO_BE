@@ -37,6 +37,4 @@ public class Notice {
     public void setDeleted(Boolean Deleted) {
         this.Deleted = Deleted;
     }
-
-
 }
