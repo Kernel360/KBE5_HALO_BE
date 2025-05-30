@@ -6,7 +6,7 @@ import com.kernel.common.admin.entity.Notice;
 import com.kernel.common.admin.entity.NoticeType;
 import com.kernel.common.admin.repository.NoticeRepository;
 import com.kernel.common.admin.service.NoticeService;
-import com.kernel.common.entity.ApiResponse;
+import com.kernel.common.global.entity.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
