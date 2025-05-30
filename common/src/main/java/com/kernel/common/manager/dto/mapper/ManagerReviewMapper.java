@@ -13,7 +13,7 @@ public class ManagerReviewMapper {
     public Review toEntity(Long authorId, Long reservationId, ManagerReviewReqDTO requestDTO) {
         return Review.builder()
             .reservationId(reservationId)       // 예약ID
-            .authorType(AuthorType.CUSTOMER)    // 작성자유형
+            .authorType(AuthorType.MANAGER)     // 작성자유형
             .authorId(authorId)                 // 작성자ID
             .rating(requestDTO.getRating())     // 리뷰 평점
             .content(requestDTO.getContent())   // 리뷰 내용
