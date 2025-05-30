@@ -1,6 +1,6 @@
 package com.kernel.app.dto;
 
-import com.kernel.common.admin.entity.Manager;
+import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.global.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,4 +1,4 @@
-package com.kernel.common.admin.entity;
+package com.kernel.common.manager.entity;
 
 import com.kernel.common.global.entity.BaseEntity;
 import com.kernel.common.global.enums.Gender;

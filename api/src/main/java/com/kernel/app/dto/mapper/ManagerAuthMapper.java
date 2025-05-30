@@ -1,6 +1,6 @@
 package com.kernel.app.dto.mapper;
 
-import com.kernel.common.admin.entity.Manager;
+import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.manager.dto.ManagerSignupReqDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
