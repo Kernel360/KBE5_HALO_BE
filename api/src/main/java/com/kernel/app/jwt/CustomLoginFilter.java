@@ -5,16 +5,18 @@ import com.kernel.app.dto.AdminUserDetails;
 import com.kernel.app.dto.CustomerUserDetails;
 import com.kernel.app.dto.ManagerUserDetails;
 import com.kernel.app.entity.Refresh;
+import com.kernel.app.exception.ErrorCode;
+import com.kernel.app.exception.dto.ErrorResponse;
 import com.kernel.app.repository.RefreshRepository;
+import com.kernel.common.global.entity.ApiResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
 public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -40,17 +43,23 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
     // 로그인 시도
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try {
+            Credentials credentials = extractCredentials(request);
+            String userType = extractUserTypeFromUri(request.getRequestURI());
 
-        Credentials credentials = extractCredentials(request);
-        String userType = extractUserTypeFromUri(request.getRequestURI());
+            if (userType == null) {
+                throw new AuthenticationServiceException("로그인 URL이 올바르지 않습니다.");
+            }
 
-        if (userType == null) {
-            throw new AuthenticationServiceException("Invalid login URL: User type could not be determined.");
+            String prefixedUsername = userType + ":" + credentials.phone;
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(prefixedUsername, credentials.password);
+
+            return authenticationManager.authenticate(authToken);
+        }catch (Exception e) {
+            log.error("Unexpected error during authentication attempt", e);
+            throw new AuthenticationServiceException("로그인 처리 중 오류가 발생했습니다.", e);
         }
-
-        String prefixedUsername = userType + ":" + credentials.phone;
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(prefixedUsername, credentials.password);
-        return authenticationManager.authenticate(authToken);
     }
 
     // 로그인 성공 시
@@ -59,51 +68,78 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authentication) {
+        try{
+            String userType = extractUserTypeFromUri(request.getRequestURI());
 
-        String userType = extractUserTypeFromUri(request.getRequestURI());
+            String phone;
+            String role;
 
-        String phone;
-        String role;
+            // role 권한에서 추출
+            role = authentication.getAuthorities().stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .orElseThrow(() -> new IllegalStateException("지원하지 않는 사용자 타입: " + userType));
 
-        // role 권한에서 추출
-        role = authentication.getAuthorities().stream()
-                .findFirst()
-                .map(GrantedAuthority::getAuthority)
-                .orElseThrow(() -> new IllegalStateException("No authority found for authenticated user."));
-
-        // userType에 따라 캐스팅 분기
-        switch (userType) {
-            case "customer" -> {
-                CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
-                phone = userDetails.getUsername();
+            // userType에 따라 캐스팅 분기
+            switch (userType) {
+                case "customer" -> {
+                    CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
+                    phone = userDetails.getUsername();
+                }
+                case "manager" -> {
+                    ManagerUserDetails userDetails = (ManagerUserDetails) authentication.getPrincipal();
+                    phone = userDetails.getUsername();
+                }
+                case "admin" -> {
+                    AdminUserDetails userDetails = (AdminUserDetails) authentication.getPrincipal();
+                    phone = userDetails.getUsername();
+                }
+                default -> throw new IllegalStateException("Unsupported user type: " + userType);
             }
-            case "manager" -> {
-                ManagerUserDetails userDetails = (ManagerUserDetails) authentication.getPrincipal();
-                phone = userDetails.getUsername();
-            }
-            case "admin" -> {
-                AdminUserDetails userDetails = (AdminUserDetails) authentication.getPrincipal();
-                phone = userDetails.getUsername();
-            }
-            default -> throw new IllegalStateException("Unsupported user type: " + userType);
+
+            String accessToken = jwtTokenProvider.createToken("access", phone, role, jwtProperties.accessTokenValiditySeconds());
+            String refreshToken = jwtTokenProvider.createToken("refresh", phone, role, jwtProperties.refreshTokenValiditySeconds());
+
+            saveRefreshToken(phone, refreshToken, jwtProperties.refreshTokenValiditySeconds());
+
+            // 성공 응답
+            response.setHeader("Authorization", BEARER_PREFIX + accessToken);
+            response.addCookie(createHttpOnlyCookie("refresh", refreshToken));
+            response.setStatus(HttpStatus.OK.value());
+            response.setContentType("application/json;charset=UTF-8");
+
+            ApiResponse<Void> successResponse = new ApiResponse<>(true, "로그인이 완료되었습니다.", null);
+            objectMapper.writeValue(response.getWriter(), successResponse);
+
+            log.info("User logged in successfully: {}", phone);
+
+        }catch (Exception e) {
+            log.error("Error during successful authentication processing", e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-
-        String accessToken = jwtTokenProvider.createToken("access", phone, role, jwtProperties.accessTokenValiditySeconds());
-        String refreshToken = jwtTokenProvider.createToken("refresh", phone, role, jwtProperties.refreshTokenValiditySeconds());
-
-        saveRefreshToken(phone, refreshToken, jwtProperties.refreshTokenValiditySeconds());
-
-        response.setHeader("Authorization", BEARER_PREFIX + accessToken);
-        response.addCookie(createHttpOnlyCookie("refresh", refreshToken));
-        response.setStatus(HttpStatus.OK.value());
     }
 
     // 로그인 실패 시
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,
                                               HttpServletResponse response,
-                                              AuthenticationException failed) {
+                                              AuthenticationException failed) throws IOException {
+
+        log.warn("Authentication failed: {}", failed.getMessage());
+
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json;charset=UTF-8");
+
+        ErrorResponse errorResponse;
+        if (failed instanceof BadCredentialsException) {
+            errorResponse = new ErrorResponse(ErrorCode.INVALID_CREDENTIALS);
+        } else if (failed instanceof AccountExpiredException) {
+            errorResponse = new ErrorResponse(ErrorCode.ACCOUNT_LOCKED);
+        } else {
+            errorResponse = new ErrorResponse(ErrorCode.INVALID_CREDENTIALS);
+        }
+
+        objectMapper.writeValue(response.getWriter(), errorResponse);
     }
 
     /*** 클래스 내 메서드 ***/

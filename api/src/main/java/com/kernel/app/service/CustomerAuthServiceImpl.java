@@ -1,13 +1,13 @@
 package com.kernel.app.service;
 
 import com.kernel.app.dto.mapper.CustomerAuthMapper;
+import com.kernel.app.exception.custom.DuplicateUserException;
 import com.kernel.app.repository.CustomerAuthRepository;
 import com.kernel.common.customer.dto.request.CustomerSignupReqDTO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -18,16 +18,21 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
     private final CustomerAuthMapper mapper;
 
     @Override
+    @Transactional
     public void join(CustomerSignupReqDTO joinDTO) {
+        try{
+            String phone = joinDTO.getPhone();
 
-        String phone = joinDTO.getPhone();
+            if(repository.existsByPhone(phone))
+                throw new DuplicateUserException();
 
-        Boolean isExists = repository.existsByPhone(phone);
-
-        if (isExists) throw new NoSuchElementException("이미 존재하는 사용자입니다.");
-
-        repository.save(mapper.toEntity(joinDTO));
-
+            repository.save(mapper.toEntity(joinDTO));
+        }catch (DuplicateUserException e){
+            log.warn("Attempted to register duplicate user: {}", joinDTO.getPhone());
+            throw e; // 글로벌 핸들러에서 처리
+        }catch (Exception e) {
+            log.error("Unexpected error during customer registration: {}", e.getMessage(), e);
+            throw new RuntimeException("회원가입 처리 중 오류가 발생했습니다.", e);
+        }
     }
-
 }
