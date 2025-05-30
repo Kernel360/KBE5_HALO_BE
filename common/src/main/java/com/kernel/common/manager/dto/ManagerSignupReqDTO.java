@@ -1,6 +1,5 @@
 package com.kernel.common.manager.dto;
 
-
 import com.kernel.common.global.enums.Gender;
 import com.kernel.common.global.enums.UserStatus;
 import jakarta.persistence.EnumType;
