@@ -3,7 +3,7 @@ package com.kernel.common.admin.dto.mapper;
 
 import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
 import com.kernel.common.admin.dto.response.ManagerResponseDTO; // 추후에 ManagerResponseDTO가 정의된 위치로 변경 필요
-import com.kernel.common.admin.entity.Manager;  // 추후에 Manager entity가 정의된 위치로 변경 필요
+import com.kernel.common.manager.entity.Manager;  // 추후에 Manager entity가 정의된 위치로 변경 필요
 import org.springframework.stereotype.Component;
 
 import java.util.List;
