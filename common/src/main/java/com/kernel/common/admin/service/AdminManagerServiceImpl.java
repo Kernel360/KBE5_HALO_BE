@@ -4,10 +4,11 @@ package com.kernel.common.admin.service;
 import com.kernel.common.admin.dto.mapper.ManagerMapper;
 import com.kernel.common.admin.dto.response.AdminManagerSummaryRspDTO;
 import com.kernel.common.admin.dto.response.ManagerRspDTO;
-import com.kernel.common.admin.entity.Manager;
+
 import com.kernel.common.admin.entity.Status;
 import com.kernel.common.admin.repository.ManagerRepository;
 import com.kernel.common.global.enums.UserStatus;
+import com.kernel.common.manager.entity.Manager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
