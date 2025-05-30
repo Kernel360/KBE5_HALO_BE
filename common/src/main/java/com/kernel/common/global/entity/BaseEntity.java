@@ -1,6 +1,7 @@
 package com.kernel.common.global.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
     @Column

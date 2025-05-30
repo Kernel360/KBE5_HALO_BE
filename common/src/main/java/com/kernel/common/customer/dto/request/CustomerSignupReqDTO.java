@@ -50,7 +50,8 @@ public class CustomerSignupReqDTO {
     private Integer point = 0;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 
 
 }

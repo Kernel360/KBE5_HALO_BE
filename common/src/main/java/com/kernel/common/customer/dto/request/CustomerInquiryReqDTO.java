@@ -1,24 +1,20 @@
-package com.kernel.common.customer.dto.response;
+package com.kernel.common.customer.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-
-@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InquiryRspDTO {
-    // id, authorId, title, content, createdAt
+@Builder
+public class CustomerInquiryReqDTO {
+    // categoryId, title, content
 
-    private Long id;
     private Long authorId;
     private String title;
     private String content;
-    private LocalDateTime createdAt;
+
 
 }
