@@ -1,5 +1,4 @@
-package com.kernel.common.manager.dto;
-
+package com.kernel.common.manager.dto.request;
 
 import com.kernel.common.global.enums.Gender;
 import com.kernel.common.global.enums.UserStatus;
