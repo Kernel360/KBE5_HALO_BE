@@ -1,11 +1,17 @@
 package com.kernel.common.admin.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "notice")
-@Data
+@Getter
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice {
 
     @Id
