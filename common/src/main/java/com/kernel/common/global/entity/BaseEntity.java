@@ -17,22 +17,22 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @SuperBuilder
 @NoArgsConstructor
+// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // application.yml에서 전역 설정했으므로 주석처리
 public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
-    @Column
+    @Column(updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @CreatedBy
     @Column(updatable = false)
-    private String createdBy;
+    @CreatedBy
+    private Long createdBy;
 
     @Column
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column
     @LastModifiedBy
-    private String updatedBy;
-
-
+    private Long updatedBy;
 }

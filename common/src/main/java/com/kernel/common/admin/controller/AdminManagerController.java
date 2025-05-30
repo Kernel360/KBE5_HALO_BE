@@ -73,5 +73,4 @@ public class AdminManagerController {
        ManagerResponseDTO response = adminManagerService.suspendManager(managerId);
        return ResponseEntity.ok(new ApiResponse<>(true, "success", response));
     }
-
 }
