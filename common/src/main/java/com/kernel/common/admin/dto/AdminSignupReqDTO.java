@@ -21,6 +21,7 @@ public class AdminSignupReqDTO {
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
 
