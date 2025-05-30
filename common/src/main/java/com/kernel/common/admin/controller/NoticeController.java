@@ -6,11 +6,13 @@ import com.kernel.common.admin.entity.Notice;
 import com.kernel.common.admin.entity.NoticeType;
 import com.kernel.common.admin.repository.NoticeRepository;
 import com.kernel.common.admin.service.NoticeService;
+import com.kernel.common.entity.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -26,41 +28,44 @@ public class NoticeController {
 
     // 공지사항 / 이벤트 등록
     @PostMapping("/notices")
-    public ResponseEntity<NoticeResDto> createNotice(
+    public ResponseEntity<ApiResponse<NoticeResDto>> createNotice(
             @RequestBody @Valid NoticeReqDto requestDto
-            // 스프링 시큐리티에서 로그인 정보 받아오 것
-            // @AuthenticationPrincipal Admin admin
     ) {
-        // 임의로 어드민 아이디 1L 설정, 시큐리티 설정 후 admin.getId()로 수정하기
         Notice notice = noticeService.createNotice(requestDto, 1L);
-        return ResponseEntity.ok(NoticeResDto.from(notice));
+        NoticeResDto dto = NoticeResDto.from(notice);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "success", dto));
     }
 
     // 공지사항 / 이벤트 목록 조회
     @GetMapping("/notices")
-    public List<Notice> getNoticeList(@RequestParam("type") NoticeType type) {
-        return noticeRepository.findByNoticeType(type);
+    public ResponseEntity<ApiResponse<List<NoticeResDto>>> getNoticeList(@RequestParam("type") NoticeType type) {
+        List<Notice> noticeList = noticeRepository.findByNoticeType(type);
+        List<NoticeResDto> dtoList = noticeList.stream()
+                .map(NoticeResDto::from)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "success", dtoList));
     }
 
     // 공지사항 / 이벤트 상세 조회
     @GetMapping("/notices/{noticeId}")
-    public ResponseEntity<NoticeResDto> getNoticeDetail(@PathVariable Long noticeId) {
+    public ResponseEntity<ApiResponse<NoticeResDto>> getNoticeDetail(@PathVariable Long noticeId) {
+
         return noticeRepository.findById(noticeId)
-                .map(notice -> ResponseEntity.ok(NoticeResDto.from(notice)))
-                .orElse(ResponseEntity.notFound().build());
+                .map(notice -> ResponseEntity.ok(new ApiResponse<>(true, "success", NoticeResDto.from(notice))))
+                .orElse(ResponseEntity.ok(new ApiResponse<>(false, "게시글이 없습니다.", null)));
     }
 
     // 공지사항 / 이벤트 수정
     @PatchMapping("/notices/{noticeId}")
-    public ResponseEntity<NoticeResDto> updateNotice(
+    public ResponseEntity<ApiResponse<NoticeResDto>> updateNotice(
             @PathVariable Long noticeId,
             @RequestBody NoticeReqDto requestDto
-            // @AuthenticationPrincipal Admin admin
     ) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        // 수정하는 관리자 ID를 1L로 고정, 추후 로그인 정보에서 받아와서 사용
         notice.update(
                 requestDto.getTitle(),
                 requestDto.getContent(),
@@ -68,7 +73,7 @@ public class NoticeController {
                 1L
         );
 
-        return ResponseEntity.ok(NoticeResDto.builder()
+        NoticeResDto dto = NoticeResDto.builder()
                 .noticeId(notice.getNoticeId())
                 .noticeType(notice.getNoticeType())
                 .title(notice.getTitle())
@@ -76,16 +81,18 @@ public class NoticeController {
                 .fileId(notice.getFileId())
                 .deleted(notice.getDeleted())
                 .views(notice.getViews())
-                .build());
+                .build();
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "success", dto));
     }
 
     // 공지사항 / 이벤트 삭제
     @DeleteMapping("/notices/{noticeId}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId) {
+    public ResponseEntity<ApiResponse<Void>> deleteNotice(@PathVariable Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
         notice.setDeleted(true);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ApiResponse<>(true, "success", null));
     }
 }
