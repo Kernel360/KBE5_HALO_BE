@@ -1,8 +1,6 @@
 package com.kernel.common.admin.dto.response;
 
 
-import com.kernel.common.admin.entity.Status;   // 추후에 Status entity가 정의된 위치로 변경 필요
-
 import com.kernel.common.global.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ManagerResponseDTO {
+public class ManagerRspDTO {
     // TODO: Response로 반환할 필드 정의
 
     private Long managerId;

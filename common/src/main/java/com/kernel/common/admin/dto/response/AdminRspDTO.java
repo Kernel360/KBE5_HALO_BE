@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminResponseDTO {
+public class AdminRspDTO {
     private Long adminId;
 }
