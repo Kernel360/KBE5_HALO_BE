@@ -2,7 +2,7 @@ package com.kernel.common.admin.controller;
 
 import com.kernel.common.admin.dto.response.AdminCustomerResDto;
 import com.kernel.common.admin.service.AdminCustomerService;
-import com.kernel.common.entity.ApiResponse;
+import com.kernel.common.global.entity.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,5 +40,5 @@ public class AdminCustomerController {
 //        List<AdminCustomerResDto> result = adminCustomerService.getReportCustomers();
 //
 //        return ResponseEntity.ok(new ApiResponse<>(true, "success", result));
-    }
+//}
 }
