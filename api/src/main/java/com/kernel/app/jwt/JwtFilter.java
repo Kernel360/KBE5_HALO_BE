@@ -1,5 +1,11 @@
 package com.kernel.app.jwt;
 
+import com.kernel.app.dto.AdminUserDetails;
+import com.kernel.app.dto.CustomerUserDetails;
+import com.kernel.app.dto.ManagerUserDetails;
+import com.kernel.common.admin.entity.Admin;
+import com.kernel.common.admin.entity.Manager;
+import com.kernel.common.customer.entity.Customer;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,15 +14,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -66,18 +69,48 @@ public class JwtFilter extends OncePerRequestFilter {
         // username, role 값을 획득
         String phone = jwtTokenProvider.getUsername(accessToken);
         String role = jwtTokenProvider.getRole(accessToken);
+        String userId = jwtTokenProvider.getUserId(accessToken);
 
-        // role이 "ROLE_CUSTOMER"형식이면 권한 컬렉션 생성
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+        // 역할에 따라 적절한 UserDetails 객체 생성
+        UserDetails userDetails = createUserDetailsFromToken(phone, role, userId);
 
         // 인증 객체 생성 (UserDetails 없이도 가능)
-        Authentication authentication = new UsernamePasswordAuthenticationToken(phone, null, authorities);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
 
+    }
+    private UserDetails createUserDetailsFromToken(String phone, String role, String userId) {
+        // 역할에 따라 적절한 UserDetails 생성
+        // 실제로는 최소한의 정보만으로 객체를 생성
+        switch (role) {
+            case "ROLE_CUSTOMER":
+                Customer customer = Customer.builder()
+                        .customerId(Long.parseLong(userId))
+                        .phone(phone)
+                        .build();
+                return new CustomerUserDetails(customer);
+
+            case "ROLE_MANAGER":
+                Manager manager = Manager.builder()
+                        .managerId(Long.parseLong(userId))
+                        .phone(phone)
+                        .build();
+                return new ManagerUserDetails(manager);
+
+            case "ROLE_ADMIN":
+                Admin admin = Admin.builder()
+                        .adminId(Long.parseLong(userId))
+                        .phone(phone)
+                        .build();
+                return new AdminUserDetails(admin);
+
+            default:
+                throw new IllegalArgumentException("Unknown role: " + role);
+        }
     }
 }
 

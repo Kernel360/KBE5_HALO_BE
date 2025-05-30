@@ -71,36 +71,40 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         try{
             String userType = extractUserTypeFromUri(request.getRequestURI());
 
-            String phone;
-            String role;
+        String phone;
+        String role;
+        String userId;
 
-            // role 권한에서 추출
-            role = authentication.getAuthorities().stream()
-                    .findFirst()
-                    .map(GrantedAuthority::getAuthority)
-                    .orElseThrow(() -> new IllegalStateException("지원하지 않는 사용자 타입: " + userType));
+        // role 권한에서 추출
+        role = authentication.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElseThrow(() -> new IllegalStateException("No authority found for authenticated user."));
 
-            // userType에 따라 캐스팅 분기
-            switch (userType) {
-                case "customer" -> {
-                    CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
-                    phone = userDetails.getUsername();
-                }
-                case "manager" -> {
-                    ManagerUserDetails userDetails = (ManagerUserDetails) authentication.getPrincipal();
-                    phone = userDetails.getUsername();
-                }
-                case "admin" -> {
-                    AdminUserDetails userDetails = (AdminUserDetails) authentication.getPrincipal();
-                    phone = userDetails.getUsername();
-                }
-                default -> throw new IllegalStateException("Unsupported user type: " + userType);
+        // userType에 따라 캐스팅 분기
+        switch (userType) {
+            case "customer" -> {
+                CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
+                phone = userDetails.getUsername();
+                userId = userDetails.getUserId();
             }
+            case "manager" -> {
+                ManagerUserDetails userDetails = (ManagerUserDetails) authentication.getPrincipal();
+                phone = userDetails.getUsername();
+                userId = userDetails.getUserId();
+            }
+            case "admin" -> {
+                AdminUserDetails userDetails = (AdminUserDetails) authentication.getPrincipal();
+                phone = userDetails.getUsername();
+                userId = userDetails.getUserId();
+            }
+            default -> throw new IllegalStateException("Unsupported user type: " + userType);
+        }
 
-            String accessToken = jwtTokenProvider.createToken("access", phone, role, jwtProperties.accessTokenValiditySeconds());
-            String refreshToken = jwtTokenProvider.createToken("refresh", phone, role, jwtProperties.refreshTokenValiditySeconds());
+        String accessToken = jwtTokenProvider.createToken("access", phone, userId, role, jwtProperties.accessTokenValiditySeconds());
+        String refreshToken = jwtTokenProvider.createToken("refresh", phone, userId, role, jwtProperties.refreshTokenValiditySeconds());
 
-            saveRefreshToken(phone, refreshToken, jwtProperties.refreshTokenValiditySeconds());
+        saveRefreshToken(phone, refreshToken, jwtProperties.refreshTokenValiditySeconds());
 
             // 성공 응답
             response.setHeader("Authorization", BEARER_PREFIX + accessToken);
