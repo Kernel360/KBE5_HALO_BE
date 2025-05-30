@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name="cleaning_log")
@@ -30,28 +32,27 @@ public class CleaningLog extends BaseEntity {
     @Column(nullable = false)
     private Long reservationId;
 
-    // 체크인 일시
+    // 체크인 일시 (INSERT 시 자동 생성)
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime inTime;
 
     // 체크인 첨부파일
     private Long inFileId;
 
-    // 체크아웃 일시
+    // 체크아웃 일시 (UPDATE 시 자동 갱신)
+    @UpdateTimestamp
     private LocalDateTime outTime;
 
     // 체크아웃 첨부파일
     private Long outFileId;
 
-    @PrePersist
-    public void prePersist() {
-        // 체크인할때 Entity가 생성됨
-        if (this.inTime == null) {
-            this.inTime = LocalDateTime.now();
-        }
-    }
-
+    /**
+     * 체크아웃 처리
+     *  - outTime은 @UpdateTimestamp로 자동 갱신됨
+     * @param outFileId
+     */
     public void checkOut(Long outFileId) {
-        this.outTime = LocalDateTime.now(); // 현재 시간으로 설정
         this.outFileId = outFileId;
     }
 }
