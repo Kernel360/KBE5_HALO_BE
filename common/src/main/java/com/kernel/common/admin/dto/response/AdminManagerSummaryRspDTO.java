@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminManagerSummaryResponseDTO {
+public class AdminManagerSummaryRspDTO {
 
     private Long managerId;
     private String userName;
