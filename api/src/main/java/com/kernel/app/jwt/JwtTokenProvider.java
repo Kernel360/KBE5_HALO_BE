@@ -4,11 +4,10 @@ import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
@@ -32,12 +31,13 @@ public class JwtTokenProvider {
     }
 
     // token 생성
-    public String createToken(String category, String username, String role, Long expiredMs) {
+    public String createToken(String category, String phone, String userId, String role, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category)
-                .claim("username", username)
+                .claim("username", phone)
                 .claim("role", role)
+                .claim("userId",userId)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
@@ -45,6 +45,10 @@ public class JwtTokenProvider {
     }
 
     // user 검증
+    public String getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", String.class);
+    }
+
     public String getUsername(String token){
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }

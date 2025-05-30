@@ -1,6 +1,7 @@
 package com.kernel.app.dto;
 
 import com.kernel.common.customer.entity.Customer;
+import com.kernel.common.global.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class CustomerUserDetails implements UserDetails {
+public class CustomerUserDetails implements UserDetails, AuthenticatedUser {
 
     private final Customer customer;
 
@@ -38,6 +39,11 @@ public class CustomerUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         return customer.getPhone();
+    }
+
+    @Override
+    public String getUserId() {
+        return customer.getCustomerId().toString();
     }
 
     @Override
