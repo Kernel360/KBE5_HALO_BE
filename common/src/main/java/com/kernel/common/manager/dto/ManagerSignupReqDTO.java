@@ -52,7 +52,8 @@ public class ManagerSignupReqDTO {
     //TODO 프로필사진ID 추가
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    @Builder.Default
+    private UserStatus status = UserStatus.PENDING;
 
 
 }

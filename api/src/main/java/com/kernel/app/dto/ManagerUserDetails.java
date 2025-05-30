@@ -1,6 +1,7 @@
 package com.kernel.app.dto;
 
-import com.kernel.common.admin.entity.Manager;
+import com.kernel.common.manager.entity.Manager;
+import com.kernel.common.global.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class ManagerUserDetails implements UserDetails {
+public class ManagerUserDetails implements UserDetails, AuthenticatedUser {
 
     private final Manager manager;
 
@@ -28,6 +29,11 @@ public class ManagerUserDetails implements UserDetails {
         });
 
         return authorities;
+    }
+
+    @Override
+    public String getUserId() {
+        return manager.getManagerId().toString();
     }
 
     @Override
