@@ -17,5 +17,4 @@ public enum AccountStatus {
     public String getMemberStatus() {
         return MemberStatus;
     }
-
 }
