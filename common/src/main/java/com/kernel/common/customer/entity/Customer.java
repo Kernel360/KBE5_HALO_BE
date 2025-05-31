@@ -6,10 +6,7 @@ import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.global.enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
@@ -18,7 +15,7 @@ import java.time.LocalDate;
 @Table(name = "customer")
 @Getter
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Customer extends BaseEntity {
 
@@ -57,8 +54,8 @@ public class Customer extends BaseEntity {
     @Column(nullable = false)
     private int point;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
