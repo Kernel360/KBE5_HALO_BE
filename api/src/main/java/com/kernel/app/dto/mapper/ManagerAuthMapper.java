@@ -1,7 +1,14 @@
 package com.kernel.app.dto.mapper;
 
+import com.kernel.common.global.enums.DayOfWeek;
+import com.kernel.common.global.enums.UserStatus;
+import com.kernel.common.manager.dto.request.ManagerSignupReqDTO;
+import com.kernel.common.manager.dto.request.ManagerTerminationReqDTO;
+import com.kernel.common.manager.dto.response.AvailableTimeRspDTO;
+import com.kernel.common.manager.dto.response.ManagerInfoRspDTO;
+import com.kernel.common.manager.entity.AvailableTime;
 import com.kernel.common.manager.entity.Manager;
-import com.kernel.common.manager.dto.ManagerSignupReqDTO;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -10,23 +17,85 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ManagerAuthMapper {
 
-   private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    // 암호화
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    // RequestDTO -> Entity
-    public Manager toEntity(ManagerSignupReqDTO dto){
-        return Manager.builder()
-                .phone(dto.getPhone())
-                .email(dto.getEmail())
-                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-                .userName(dto.getUserName())
-                .birthDate(dto.getBirthDate())
-                .gender(dto.getGender())
-                .zipcode(dto.getZipcode())
-                .roadAddress(dto.getRoadAddress())
-                .detailAddress(dto.getDetailAddress())
-                .bio(dto.getBio())
-                .status(dto.getStatus())
-                .build();
+    // AvailableTime 엔티티 생성 메서드
+    private AvailableTime toAvailableTime(Manager manager, DayOfWeek dayOfWeek, LocalTime time) {
+        return AvailableTime.builder()
+            .manager(manager)       // 매니저
+            .dayOfWeek(dayOfWeek)   // 가능 요일
+            .time(time)             // 가능 시간
+            .build();
     }
 
+    // AvailableTime → AvailableTimeRspDTO
+    private AvailableTimeRspDTO toAvailableTimeRspDTO(AvailableTime time) {
+        return AvailableTimeRspDTO.builder()
+            .timeId(time.getTimeId())       // 시간ID
+            .dayOfWeek(time.getDayOfWeek()) // 가능 요일
+            .time(time.getTime())           // 가능 시간
+            .build();
+    }
+
+    // RequestDTO -> Entity
+    public Manager toEntity(ManagerSignupReqDTO requestDTO){
+
+        // Manager 객체 생성
+        Manager manager = Manager.builder()
+            .phone(requestDTO.getPhone())                   // 연락처
+            .email(requestDTO.getEmail())                   // 이메일
+            .password(bCryptPasswordEncoder.encode(requestDTO.getPassword()))   // 비밀번호(암호화)
+            .userName(requestDTO.getUserName())             // 이름
+            .birthDate(requestDTO.getBirthDate())           // 생년월일
+            .gender(requestDTO.getGender())                 // 성별
+            .zipcode(requestDTO.getZipcode())               // 우편번호 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+            .roadAddress(requestDTO.getRoadAddress())       // 도로명주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+            .detailAddress(requestDTO.getDetailAddress())   // 상세주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+            .bio(requestDTO.getBio())                       // 한줄소개
+            .profileImageId(requestDTO.getProfileImageId()) // 프로필이미지ID
+            .fileId(requestDTO.getFileId())                 // 첨부파일ID
+            .status(UserStatus.PENDING)                     // 계정 상태(승인대기)
+            .build();
+
+        // AvailableTime 리스트 추가
+        if (requestDTO.getAvailableTimes() != null) {
+            requestDTO.getAvailableTimes().forEach(timeDTO -> {
+                manager.addAvailableTime(
+                    toAvailableTime(
+                        manager,
+                        timeDTO.getDayOfWeek(), // 가능 요일
+                        timeDTO.getTime()       // 가능 시간
+                    )
+                );
+            });
+        }
+
+        return manager;
+    }
+
+    // Entity -> ResponseDTO
+    public ManagerInfoRspDTO toMangerInfoRspDTO(Manager manager) {
+        return  ManagerInfoRspDTO.builder()
+            .managerId(manager.getManagerId())              // 매니저ID
+            .phone(manager.getPhone())                      // 연락처
+            .email(manager.getEmail())                      // 이메일
+            .userName(manager.getUserName())                // 이름
+            .birthDate(manager.getBirthDate())              // 생년월일
+            .gender(manager.getGender())                    // 성별
+            .zipcode(manager.getZipcode())                  // 우편번호 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+            .roadAddress(manager.getRoadAddress())          // 도로명주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+            .detailAddress(manager.getDetailAddress())      // 상세주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+            .bio(manager.getBio())                          // 한줄소개
+            .profileImageId(manager.getProfileImageId())    // 프로필이미지ID
+            .fileId(manager.getFileId())                    // 첨부파일ID
+            .status(manager.getStatus())                    // 계정 상태
+            .availableTimes(                                // 매니저 가능 시간
+                manager.getAvailableTimes().stream()
+                    .map(this::toAvailableTimeRspDTO)
+                    .toList()
+            )
+            .isDeleted(manager.getIsDeleted())              // 삭제여부
+            .build();
+    }
 }

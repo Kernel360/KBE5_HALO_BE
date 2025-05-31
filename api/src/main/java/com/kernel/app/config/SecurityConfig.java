@@ -5,6 +5,7 @@ import com.kernel.app.exception.handler.JwtAuthenticationEntryPoint;
 import com.kernel.app.jwt.*;
 
 import com.kernel.app.repository.RefreshRepository;
+import com.kernel.common.global.enums.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,24 +57,24 @@ public class SecurityConfig {
     public SecurityFilterChain commonFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .securityMatcher("/api/logout", "/api/reissue")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/logout","/api/reissue").permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // 예외 핸들러 추가
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                        .accessDeniedHandler(jwtAccessDeniedHandler)
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class)
-                .logout(logout -> logout
-                        .logoutUrl("/api/logout")
-                        .logoutSuccessUrl("/")
-                        .deleteCookies("refresh"));
+            .securityMatcher("/api/logout", "/api/reissue")
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/logout","/api/reissue").permitAll())
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            // 예외 핸들러 추가
+            .exceptionHandling(exceptions -> exceptions
+                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                    .accessDeniedHandler(jwtAccessDeniedHandler)
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class)
+            .logout(logout -> logout
+                    .logoutUrl("/api/logout")
+                    .logoutSuccessUrl("/")
+                    .deleteCookies("refresh"));
 
         return http.build();
     }
@@ -87,18 +88,18 @@ public class SecurityConfig {
 
         // 로그인 필터
         CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
-        loginFilter.setFilterProcessesUrl("/api/customers/login");
+        loginFilter.setFilterProcessesUrl("/api/customers/auth/login");
 
         http
-                .securityMatcher("/api/customers/**", "/api/customers/login", "/api/reissue")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/customers/**").permitAll()) // TODO 테스트용
-                        /*
-                        .requestMatchers("/api/customers/login", "/api/customers/signup").permitAll()
-                        .requestMatchers("/api/customers/**").hasRole(UserType.CUSTOMER.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
-                .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
-                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
+            .securityMatcher("/api/customers/**", "/api/customers/auth/login", "/api/reissue")
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/customers/auth/**").permitAll()) // TODO 테스트용
+                    /*
+                    .requestMatchers("/api/customers/auth/login", "/api/customers/auth/signup").permitAll()
+                    .requestMatchers("/api/customers/**").hasRole(UserType.CUSTOMER.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+            .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
+            .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
 
         return http.build();
     }
@@ -111,17 +112,17 @@ public class SecurityConfig {
         applyCommonSecurityConfig(http);
 
         CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
-        loginFilter.setFilterProcessesUrl("/api/managers/login");
+        loginFilter.setFilterProcessesUrl("/api/managers/auth/login");
 
         http
-                .securityMatcher("/api/managers/**", "/api/managers/login")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/managers/**").permitAll()) // TODO 테스트용
-                        /*.requestMatchers("/api/managers/login", "/api/managers/signup").permitAll()
-                        .requestMatchers("/api/managers/**").hasRole(UserType.MANAGER.name()))*/ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
-                .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
-                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
+            .securityMatcher("/api/managers/**", "/api/managers/auth/login")
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/managers/**").permitAll()) // TODO 테스트용
+                    /*.requestMatchers("/api/managers/auth/login", "/api/managers/auth/signup").permitAll()
+                    .requestMatchers("/api/managers/**").hasRole(UserType.MANAGER.name()))*/ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+            .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
+            .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
 
         return http.build();
     }
@@ -134,17 +135,17 @@ public class SecurityConfig {
         applyCommonSecurityConfig(http);
 
         CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
-        loginFilter.setFilterProcessesUrl("/api/admin/login");
+        loginFilter.setFilterProcessesUrl("/api/admins/auth/login");
 
         http
-                .securityMatcher("/api/admin/**", "/api/admin/login")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/**").permitAll()) // TODO 테스트용
-                       /* .requestMatchers("/api/admin/login", "/api/admin/signup").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole(UserType.ADMIN.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
-                .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
-                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
+            .securityMatcher("/api/admins/**", "/api/admins/auth/login")
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/admins/**").permitAll()) // TODO 테스트용
+                   /* .requestMatchers("/api/admins/auth/login", "/api/admins/auth/signup").permitAll()
+                    .requestMatchers("/api/admins/**").hasRole(UserType.ADMIN.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+            .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
+            .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
 
 
         return http.build();
