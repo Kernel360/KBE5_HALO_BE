@@ -2,10 +2,14 @@ package com.kernel.common.customer.service;
 
 
 import com.kernel.common.customer.dto.mapper.CustomerInquiryMapper;
+import com.kernel.common.customer.dto.request.CustomerInquiryCreateReqDTO;
+import com.kernel.common.customer.dto.request.CustomerInquiryUpdateReqDTO;
 import com.kernel.common.customer.dto.response.CustomerInquiryDetailRspDTO;
 import com.kernel.common.customer.dto.response.CustomerInquiryRspDTO;
 import com.kernel.common.customer.entity.CustomerInquiry;
+import com.kernel.common.customer.entity.InquiryCategory;
 import com.kernel.common.customer.repository.CustomerInquiryRepository;
+import com.kernel.common.customer.repository.InquiryCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,15 +27,16 @@ import java.util.NoSuchElementException;
 public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
 
 
-    private final CustomerInquiryRepository inquiryRepository;
-    private final CustomerInquiryMapper inquiryMapper;
+    private final CustomerInquiryRepository customerInquiryRepository;
+    private final InquiryCategoryRepository inquiryCategoryRepository;
+    private final CustomerInquiryMapper customerInquiryMapper;
 
     /*
      * 수요자 문의사항 목록 조회
      * @Param 수요자ID
      * @Param 검색 키워드
      * @Param Pageable 페이징
-     * @Return 검색 키워드에 맞는 게시글 목록
+     * @Return 검색 게시글, 페이징
      */
     @Override
     @Transactional(readOnly = true)
@@ -40,10 +45,10 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
             String keyword,
             Pageable pageable
     ) {
-        Page<CustomerInquiry> inquiryPage = inquiryRepository.searchByCustomerIdAndKeyword(customerId, keyword, pageable);
+        Page<CustomerInquiry> inquiryPage = customerInquiryRepository.searchByAuthorIdAndKeyword(customerId, keyword, pageable);
 
         List<CustomerInquiryRspDTO> dtoList = inquiryPage.getContent().stream()
-                .map(inquiryMapper::toRspDTO)
+                .map(customerInquiryMapper::toRspDTO)
                 .toList();
 
         return new PageImpl<>(dtoList, pageable, inquiryPage.getTotalElements());
@@ -52,47 +57,115 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
     /*
      * 수요자 문의사항 상세 조회
      * @Param 수요자ID
-     * @Return 수요자가 작성한 게시글
+     * @Param 게시글ID
+     * @Return 조회 게시글
      */
     @Override
     @Transactional(readOnly = true)
     public CustomerInquiryDetailRspDTO getCustomerInquiryDetails(Long customerId, Long inquiryId) {
 
-        CustomerInquiry inquiryRsp = inquiryRepository.getCustomerInquiryDetails(customerId, inquiryId)
-                .orElseThrow(() -> new NoSuchElementException("게시글이 존재하지 않습니다."));
+        // 문의사항 조회
+        CustomerInquiry inquiryRsp = customerInquiryRepository.getCustomerInquiryDetails(customerId, inquiryId)
+                .orElseThrow(() -> new NoSuchElementException("문의사항이 존재하지 않습니다."));
 
-        if(inquiryRsp.getIsDeleted()) throw new NoSuchElementException("이미 삭제된 게시글 입니다.");
+        // 삭제 여부 확인
+        inquiryRsp.validateDelete();
 
-        return inquiryMapper.toDetailRspDTO(inquiryRsp);
+        return customerInquiryMapper.toDetailRspDTO(inquiryRsp);
     }
 
-/*
-    @Transactional
+    /*
+     * 수요자 문의사항 등록
+     * @Param 수요자ID
+     * @Param requestDTO
+     * @Return 작성 게시글
+     */
     @Override
-    public InquiryResponseDTO createInquiry(InquiryRequestDTO inquiryRequestDTO) {
-
-        Inquiry inquiry = inquiryMapper.toEntity(inquiryRequestDTO);
-        Inquiry saved = inquiryRepository.save(inquiry);
-
-
-        return inquiryMapper.toResponseDTO(saved);
-
-    }
-
     @Transactional
-    @Override
-    public InquiryResponseDTO updateInquiry(InquiryRequestDTO inquiryRequestDTO, Long inquiryId) {
-        Inquiry inquiry = inquiryRepository.findById(inquiryId).orElseThrow(() -> new NoSuchElementException("문의글을 찾을 수 없습니다"));
+    public CustomerInquiryDetailRspDTO createCustomerInquiry(Long customerId, CustomerInquiryCreateReqDTO inquiryRequestDTO) {
 
-        inquiry.update(inquiryRequestDTO.getTitle(), inquiryRequestDTO.getContent());
+        // category 조회
+        InquiryCategory findCategory = findCategory(inquiryRequestDTO.getCategoryId());
 
-        return inquiryMapper.toResponseDTO(inquiry);
+        //RequestDTO -> entity
+        CustomerInquiry makeEntity = customerInquiryMapper.toEntity(customerId, inquiryRequestDTO, findCategory);
+
+        // 저장
+        CustomerInquiry saveEntity = customerInquiryRepository.save(makeEntity);
+
+        return getCustomerInquiryDetails(saveEntity.getAuthorId(), saveEntity.getInquiryId());
     }
 
+    /*
+     * 수요자 문의사항 수정
+     * @Param requestDTO
+     * @Return 수정 게시글
+     */
+    @Override
     @Transactional
-    @Override
-    public void deleteInquiry(Long inquiryId) {
-        inquiryRepository.deleteById(inquiryId);
+    public CustomerInquiryDetailRspDTO updateCustomerInquiry(Long customerId, CustomerInquiryUpdateReqDTO inquiryRequestDTO) {
+
+        // 게시글 조회
+        CustomerInquiry findInquiry = findCustomerInquiry(inquiryRequestDTO.getInquiryId(), customerId);
+
+        // 삭제 여부 확인
+        findInquiry.validateDelete();
+
+        // 답변 여부 확인
+        findInquiry.validateReply();
+
+        // 카테고리 조회
+        InquiryCategory findCategory = findCategory(inquiryRequestDTO.getCategoryId());
+
+        // 수정
+        findInquiry.update(
+                inquiryRequestDTO.getTitle(),       // 제목
+                inquiryRequestDTO.getContent(),     // 내용
+                findCategory);                      // 카테고리
+
+        return customerInquiryMapper.toDetailRspDTO(findInquiry);
     }
-*/
+
+    /*
+     * 수요자 문의사항 삭제
+     * @Param requestDTO
+     */
+    @Override
+    @Transactional
+    public void deleteCustomerInquiry(Long customerId, Long inquiryId) {
+
+        // 조회
+        CustomerInquiry findInquiry = findCustomerInquiry(inquiryId, customerId);
+
+        // 삭제 여부 확인
+        findInquiry.validateDelete();
+
+        // 답변 여부 확인
+        findInquiry.validateReply();
+
+        // 삭제
+        findInquiry.delete();
+    }
+
+    /*
+     * 카테고리 조회
+     * @Param 카테고리ID
+     * @For 문의사항 등록, 수정
+     */
+    private InquiryCategory findCategory(Long categoryId) {
+        return inquiryCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 카테고리 입니다."));
+    }
+
+    /*
+     * 문의사항 조회
+     * @Param 수요자ID
+     * @Param 문의사항ID
+     * @For 문의사항 수정, 삭제
+     */
+    private CustomerInquiry findCustomerInquiry(Long inquiryId, Long customerId) {
+        return customerInquiryRepository.findByInquiryIdAndAuthorId(inquiryId, customerId)
+                .orElseThrow(() -> new NoSuchElementException("문의사항이 존재하지 않거나 권한이 없습니다."));
+    }
+
 }

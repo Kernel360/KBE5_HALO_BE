@@ -28,15 +28,15 @@ public class CustomerInquiryRepositoryImpl implements CustomerInquiryRepositoryC
     @Param : 페이징
     */
     @Override
-    public Page<CustomerInquiry> searchByCustomerIdAndKeyword(Long customerId, String keyword, Pageable pageable) {
+    public Page<CustomerInquiry> searchByAuthorIdAndKeyword(Long customerId, String keyword, Pageable pageable) {
 
         // 공통 조건 추출
-        BooleanExpression byCustomerIdAndKeyword = buildConditions(customerId, keyword);
+        BooleanExpression byAuthorIdAndKeywordAndNotDeleted = authorIdAndKeywordAndNotDeleted(customerId, keyword);
 
         // 게시글 검색
         List<CustomerInquiry> content = queryFactory
                 .selectFrom(inquiry)
-                .where(byCustomerIdAndKeyword)
+                .where(byAuthorIdAndKeywordAndNotDeleted)
                 .orderBy(inquiry.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -47,7 +47,7 @@ public class CustomerInquiryRepositoryImpl implements CustomerInquiryRepositoryC
                 queryFactory
                 .select(inquiry.count())
                 .from(inquiry)
-                .where(byCustomerIdAndKeyword)
+                .where(byAuthorIdAndKeywordAndNotDeleted)
                 .fetchOne()
         ).orElse(0L);
 
@@ -69,20 +69,27 @@ public class CustomerInquiryRepositoryImpl implements CustomerInquiryRepositoryC
                 .leftJoin(inquiry.customerReply, reply).fetchJoin()
                 .where(
                         inquiry.inquiryId.eq(inquiryId),
-                        inquiry.authorId.eq(customerId))
+                        inquiry.authorId.eq(customerId),
+                        inquiry.isDeleted.eq(false)
+                )
                 .fetchOne();
 
         return Optional.ofNullable(result);
     }
 
     // authorId, keyword 조건 체크
-    private BooleanExpression buildConditions(Long customerId, String keyword) {
+    private BooleanExpression authorIdAndKeywordAndNotDeleted(Long customerId, String keyword) {
 
+        // 문의사항 작성자ID
         BooleanExpression condition = inquiry.authorId.eq(customerId);
 
+        // 검색 keyword
         if(keyword != null && !keyword.isBlank()){
             condition = condition.and(inquiry.title.containsIgnoreCase(keyword));
         }
+
+        // 삭제되지 않은 게시글
+        condition = condition.and(inquiry.isDeleted.eq(false));
 
         return condition;
     }

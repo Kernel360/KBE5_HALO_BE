@@ -54,8 +54,8 @@ public class Customer extends BaseEntity {
     @Column(nullable = false)
     private int point;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 

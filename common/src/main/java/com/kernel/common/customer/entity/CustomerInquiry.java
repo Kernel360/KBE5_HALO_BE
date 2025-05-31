@@ -18,12 +18,12 @@ public class CustomerInquiry extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inquiryId;
 
-    // 카테고리ID
+    // 카테고리 조회용
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id", insertable = false, updatable = false)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private InquiryCategory category;
 
-    // 게시글ID
+    // 문의사항ID
     @Column(nullable = false)
     private Long authorId;
 
@@ -42,22 +42,38 @@ public class CustomerInquiry extends BaseEntity {
     */
 
     // 삭제 여부
-    @Column(nullable = false, columnDefinition = "Boolean DEFAULT false")
-    private Boolean isDeleted;
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = Boolean.FALSE;
 
-    // 게시글 답변
+    // 문의사항 답변
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inquiry_id", referencedColumnName = "inquiry_id", insertable = false, updatable = false)
     private CustomerReply customerReply;
 
-    public void update(String title, String content) {
+    // 문의사항 수정
+    public void update(String title, String content, InquiryCategory category) {
         this.title = title;
         this.content = content;
+        this.category = category;
         //this.fileId = fileId; TODO 첨부파일 추가
     }
 
+    // 문의사항 삭제
     public void delete() {
         this.isDeleted = true;
+    }
+
+    // 삭제 여부 확인
+    public void validateDelete(){
+        if(this.isDeleted)
+            throw new IllegalStateException("이미 삭제된 문의사항 입니다.");
+    }
+
+    // 답변 여부 확인
+    public void validateReply(){
+        if(this.customerReply != null)
+            throw new IllegalStateException("답변이 달린 문의사항은 삭제/수정할 수 없습니다.");
     }
 
 }
