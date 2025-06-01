@@ -45,6 +45,8 @@ jobs:
         if: github.event.action == 'synchronize'
         run: |
             curl -X POST -H "Content-Type: application/json" \
-              -d "{
-                \"content\": \"**🔄 Pull Request가 업데이트되었습니다!**\\n**제목**: ${{ github.event.pull_request.title }}\\n**작성자**: ${{ github.actor }}\\n**URL**: <${{ github.event.pull_request.html_url }}>\\n**📦 변경 사항 커밋:**\\n${{ steps.get_commits.outputs.commits }}\\n👉 변경된 내용을 다시 확인해주세요!\"
-              }" ${{ secrets.DISCORD_WEBHOOK_URL }}
+              -d @- "${{ secrets.DISCORD_WEBHOOK_URL }}" <<EOF
+          {
+         "content": "**🔄 Pull Request가 업데이트되었습니다!**\\n**제목**: ${{ github.event.pull_request.title }}\\n**작성자**: ${{ github.actor }}\\n**URL**: <${{ github.event.pull_request.html_url }}>\\n**📦 변경 사항 커밋:**\\n${{ steps.get_commits.outputs.commits }}\\n👉 변경된 내용을 다시 확인해주세요!"
+          }
+          EOF
