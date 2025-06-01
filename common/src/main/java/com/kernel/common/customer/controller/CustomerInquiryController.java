@@ -24,7 +24,6 @@ public class CustomerInquiryController {
 
     /**
      * 수요자 문의사항 조회
-     *
      * @param keyword  검색 키워드 (선택)
      * @param pageable 페이징 정보
      * @return 검색된 문의사항 목록
@@ -44,7 +43,6 @@ public class CustomerInquiryController {
 
     /**
      * 수요자 문의사항 상세 조회
-     *
      * @param inquiryId 문의사항 ID
      * @return 상세 문의사항 정보
      */
@@ -60,7 +58,6 @@ public class CustomerInquiryController {
 
     /**
      * 수요자 문의사항 등록
-     *
      * @param inquiryRequestDTO 문의사항 등록 요청 데이터
      * @return 등록된 문의사항 응답
      */
@@ -76,7 +73,6 @@ public class CustomerInquiryController {
 
     /**
      * 수요자 문의사항 수정
-     *
      * @param inquiryRequestDTO 문의사항 수정 요청 데이터
      * @return 수정된 문의사항 응답
      */
@@ -92,7 +88,6 @@ public class CustomerInquiryController {
 
     /**
      * 수요자 문의사항 삭제
-     *
      * @param inquiryId 문의사항 ID
      * @return 성공 응답
      */
