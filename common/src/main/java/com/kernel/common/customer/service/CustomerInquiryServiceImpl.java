@@ -31,12 +31,12 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
     private final InquiryCategoryRepository inquiryCategoryRepository;
     private final CustomerInquiryMapper customerInquiryMapper;
 
-    /*
+    /**
      * 수요자 문의사항 목록 조회
-     * @Param 수요자ID
-     * @Param 검색 키워드
-     * @Param Pageable 페이징
-     * @Return 검색 게시글, 페이징
+     * @param customerId 수요자 ID
+     * @param keyword 검색 키워드
+     * @param pageable 페이징 정보
+     * @return 검색된 문의사항 목록 (페이징 포함)
      */
     @Override
     @Transactional(readOnly = true)
@@ -54,118 +54,96 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
         return new PageImpl<>(dtoList, pageable, inquiryPage.getTotalElements());
     }
 
-    /*
+    /**
      * 수요자 문의사항 상세 조회
-     * @Param 수요자ID
-     * @Param 게시글ID
-     * @Return 조회 게시글
+     * @param customerId 수요자 ID
+     * @param inquiryId 문의사항 ID
+     * @return 상세 조회된 문의사항 정보
      */
     @Override
     @Transactional(readOnly = true)
     public CustomerInquiryDetailRspDTO getCustomerInquiryDetails(Long customerId, Long inquiryId) {
-
-        // 문의사항 조회
         CustomerInquiry inquiryRsp = customerInquiryRepository.getCustomerInquiryDetails(customerId, inquiryId)
                 .orElseThrow(() -> new NoSuchElementException("문의사항이 존재하지 않습니다."));
 
-        // 삭제 여부 확인
         inquiryRsp.validateDelete();
 
         return customerInquiryMapper.toDetailRspDTO(inquiryRsp);
     }
 
-    /*
+    /**
      * 수요자 문의사항 등록
-     * @Param 수요자ID
-     * @Param requestDTO
-     * @Return 작성 게시글
+     * @param customerId 수요자 ID
+     * @param inquiryRequestDTO 문의사항 등록 요청 데이터
+     * @return 등록된 문의사항 정보
      */
     @Override
     @Transactional
     public CustomerInquiryDetailRspDTO createCustomerInquiry(Long customerId, CustomerInquiryCreateReqDTO inquiryRequestDTO) {
-
-        // category 조회
         InquiryCategory findCategory = findCategory(inquiryRequestDTO.getCategoryId());
-
-        //RequestDTO -> entity
         CustomerInquiry makeEntity = customerInquiryMapper.toEntity(customerId, inquiryRequestDTO, findCategory);
-
-        // 저장
         CustomerInquiry saveEntity = customerInquiryRepository.save(makeEntity);
 
         return getCustomerInquiryDetails(saveEntity.getAuthorId(), saveEntity.getInquiryId());
     }
 
-    /*
+    /**
      * 수요자 문의사항 수정
-     * @Param requestDTO
-     * @Return 수정 게시글
+     * @param customerId 수요자 ID
+     * @param inquiryRequestDTO 문의사항 수정 요청 데이터
+     * @return 수정된 문의사항 정보
      */
     @Override
     @Transactional
     public CustomerInquiryDetailRspDTO updateCustomerInquiry(Long customerId, CustomerInquiryUpdateReqDTO inquiryRequestDTO) {
-
-        // 게시글 조회
         CustomerInquiry findInquiry = findCustomerInquiry(inquiryRequestDTO.getInquiryId(), customerId);
-
-        // 삭제 여부 확인
         findInquiry.validateDelete();
-
-        // 답변 여부 확인
         findInquiry.validateReply();
-
-        // 카테고리 조회
         InquiryCategory findCategory = findCategory(inquiryRequestDTO.getCategoryId());
 
-        // 수정
         findInquiry.update(
-                inquiryRequestDTO.getTitle(),       // 제목
-                inquiryRequestDTO.getContent(),     // 내용
-                findCategory);                      // 카테고리
+                inquiryRequestDTO.getTitle(),
+                inquiryRequestDTO.getContent(),
+                findCategory
+        );
 
         return customerInquiryMapper.toDetailRspDTO(findInquiry);
     }
 
-    /*
+    /**
      * 수요자 문의사항 삭제
-     * @Param requestDTO
+     * @param customerId 수요자 ID
+     * @param inquiryId 문의사항 ID
      */
     @Override
     @Transactional
     public void deleteCustomerInquiry(Long customerId, Long inquiryId) {
-
-        // 조회
         CustomerInquiry findInquiry = findCustomerInquiry(inquiryId, customerId);
-
-        // 삭제 여부 확인
         findInquiry.validateDelete();
-
-        // 답변 여부 확인
         findInquiry.validateReply();
-
-        // 삭제
         findInquiry.delete();
     }
 
-    /*
-     * 카테고리 조회
-     * @Param 카테고리ID
-     * @For 문의사항 등록, 수정
+    /**
+     * 카테고리 조회 (등록/수정 시 사용)
+     * @param categoryId 카테고리 ID
+     * @return 조회된 카테고리
      */
     private InquiryCategory findCategory(Long categoryId) {
         return inquiryCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 카테고리 입니다."));
     }
 
-    /*
-     * 문의사항 조회
-     * @Param 수요자ID
-     * @Param 문의사항ID
-     * @For 문의사항 수정, 삭제
+    /**
+     * 문의사항 조회 (수정/삭제 시 사용)
+     * @param inquiryId 문의사항 ID
+     * @param customerId 수요자 ID
+     * @return 조회된 문의사항
      */
     private CustomerInquiry findCustomerInquiry(Long inquiryId, Long customerId) {
         return customerInquiryRepository.findByInquiryIdAndAuthorId(inquiryId, customerId)
                 .orElseThrow(() -> new NoSuchElementException("문의사항이 존재하지 않거나 권한이 없습니다."));
     }
+
 
 }

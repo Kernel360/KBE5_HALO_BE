@@ -22,18 +22,18 @@ public class CustomerInquiryRepositoryImpl implements CustomerInquiryRepositoryC
     private final QInquiryCategory category = QInquiryCategory.inquiryCategory;
     private final QCustomerReply reply = QCustomerReply.customerReply;
 
-    /* 수요자 게시글 조회 및 검색
-    @Param : 수요자ID
-    @Param : 검색키워드(제목)
-    @Param : 페이징
-    */
+    /**
+     * 수요자 게시글 조회 및 검색
+     * @param customerId 수요자 ID
+     * @param keyword 검색 키워드 (제목 기준)
+     * @param pageable 페이징 정보
+     * @return 검색된 문의사항 목록 (페이징 적용)
+     */
     @Override
     public Page<CustomerInquiry> searchByAuthorIdAndKeyword(Long customerId, String keyword, Pageable pageable) {
 
-        // 공통 조건 추출
         BooleanExpression byAuthorIdAndKeywordAndNotDeleted = authorIdAndKeywordAndNotDeleted(customerId, keyword);
 
-        // 게시글 검색
         List<CustomerInquiry> content = queryFactory
                 .selectFrom(inquiry)
                 .where(byAuthorIdAndKeywordAndNotDeleted)
@@ -42,27 +42,25 @@ public class CustomerInquiryRepositoryImpl implements CustomerInquiryRepositoryC
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // 전체 개수 조회
         long total = Optional.ofNullable(
                 queryFactory
-                .select(inquiry.count())
-                .from(inquiry)
-                .where(byAuthorIdAndKeywordAndNotDeleted)
-                .fetchOne()
+                        .select(inquiry.count())
+                        .from(inquiry)
+                        .where(byAuthorIdAndKeywordAndNotDeleted)
+                        .fetchOne()
         ).orElse(0L);
-
-
 
         return new PageImpl<>(content, pageable, total);
     }
 
-    /* 수요자 게시글 상세 조회
-    * @Param : 수요자ID
-    * @Param : 게시글ID
-    */
+    /**
+     * 수요자 게시글 상세 조회
+     * @param customerId 수요자 ID
+     * @param inquiryId 문의사항 ID
+     * @return 조회된 문의사항 (Optional)
+     */
     @Override
     public Optional<CustomerInquiry> getCustomerInquiryDetails(Long customerId, Long inquiryId) {
-
         CustomerInquiry result = queryFactory
                 .selectFrom(inquiry)
                 .leftJoin(inquiry.category, category).fetchJoin()
@@ -77,18 +75,19 @@ public class CustomerInquiryRepositoryImpl implements CustomerInquiryRepositoryC
         return Optional.ofNullable(result);
     }
 
-    // authorId, keyword 조건 체크
+    /**
+     * 문의사항 검색 조건 (작성자 ID + 키워드 + 삭제 여부)
+     * @param customerId 수요자 ID
+     * @param keyword 검색 키워드
+     * @return BooleanExpression 조건
+     */
     private BooleanExpression authorIdAndKeywordAndNotDeleted(Long customerId, String keyword) {
-
-        // 문의사항 작성자ID
         BooleanExpression condition = inquiry.authorId.eq(customerId);
 
-        // 검색 keyword
-        if(keyword != null && !keyword.isBlank()){
+        if (keyword != null && !keyword.isBlank()) {
             condition = condition.and(inquiry.title.containsIgnoreCase(keyword));
         }
 
-        // 삭제되지 않은 게시글
         condition = condition.and(inquiry.isDeleted.eq(false));
 
         return condition;
