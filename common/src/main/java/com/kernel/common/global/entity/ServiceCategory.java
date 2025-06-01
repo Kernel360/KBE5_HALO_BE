@@ -1,53 +1,65 @@
 package com.kernel.common.global.entity;
 
-import com.kernel.common.admin.dto.request.AdminServiceCatReqDTO;
+import com.kernel.common.admin.dto.request.AdminServiceCategoryReqDTO;
+
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "service_categories")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder
 @ToString
-// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)    // application.yml에서 전역 설정했으므로 주석처리
 public class ServiceCategory extends BaseEntity {
-    // TODO: 서비스 카테고리 엔터티 정의
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long serviceId;
 
+    // 서비스 카테고리 이름
     @Column(nullable = false, length = 100)
     private String serviceName;
 
     // 서비스 제공 여부
-    @Column(nullable = false, columnDefinition = "Boolean DEFAULT true")
-    private Boolean isActive;
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
 
     // 서비스 제공 최소 시간
     @Column(nullable = false)
     private Integer serviceTime;
 
-    // 카테로리 분류 깊이 -> 대분류, 중분류, 소분류 순으로 숫자가 커지도록 설정
+    // 카테로리 분류 깊이 -> 대분류, 중분류, 소분류 순으로 depth 증가 설정
     @Column(nullable = false)
-    private Integer depth;
+    @Builder.Default
+    private Integer depth = 0;
 
-    // 관리자가 직접 표시 우선 순위를 정하도록 -> 가능하면 나중에 사용패턴을 자동화 계획
-    @Column(nullable = false, columnDefinition = "Integer DEFAULT 0")
-    private Integer sortOrder;
+    // 관리자가 직접 표시 우선 순위 설정
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer sortOrder = 0;
 
     // 부모 카테고리와의 관계 설정 -> 1:N
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private ServiceCategory parentId;
 
+
+    // 엔터티 생성시 depth를 계산 및 기본값 설정을 위한 메서드
+    // Prepersist 어노테이션은 한 클래스에 하나만 사용할 수 있는 제약 조건이 있어서 하나의 메서드로 구현
     @PrePersist
     @PreUpdate
-    private void calculateDepth() {
+    private void perPersist() {
+        // default 값 설정
+        if (this.isActive == null) {
+            this.isActive = true;
+        }
+        if (this.sortOrder == null) {
+            this.sortOrder = 0;
+        }
+
+        // depth
         if (parentId == null) {
             this.depth = 0; // 최상위 카테고리
         } else {
@@ -55,8 +67,9 @@ public class ServiceCategory extends BaseEntity {
         }
     }
 
-    public void update(AdminServiceCatReqDTO request) {
-        // 서비스 카테고리 정보 업데이트 메서드
+    // 서비스 카테고리 정보 업데이트 메서드
+    public void update(AdminServiceCategoryReqDTO request, ServiceCategory parentCategory) {
+
         if (request.getServiceName() != null) {
             this.serviceName = request.getServiceName();
         }
@@ -70,12 +83,13 @@ public class ServiceCategory extends BaseEntity {
             this.serviceTime = request.getServiceTime();
         }
         if (request.getParentId() != null) {
-            this.parentId = request.getParentId();
+            this.parentId = parentCategory;
         }
     }
 
+    // 서비스 카테고리 삭제 메서드
     public void delete() {
-        // 서비스 카테고리 삭제 메서드
-        this.isActive = false; // 실제로는 삭제하지 않고, isActive를 false로 설정하여 비활성화 처리
+
+        this.isActive = false; // 상태 관리로 삭제 처리
     }
 }

@@ -1,21 +1,22 @@
 package com.kernel.common.admin.dto.mapper;
-import com.kernel.common.admin.dto.response.AdminManagerSummaryRspDTO;
-import com.kernel.common.admin.dto.response.ManagerRspDTO; // 추후에 ManagerResponseDTO가 정의된 위치로 변경 필요
-import com.kernel.common.manager.entity.Manager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
+import com.kernel.common.admin.dto.response.AdminManagerSummaryRspDTO;
+import com.kernel.common.admin.dto.response.AdminManagerRspDTO;
+import com.kernel.common.manager.entity.Manager;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class ManagerMapper {
+public class AdminManagerMapper {
 
-    // Entity -> ResponseDTO
-    public ManagerRspDTO toResponseDTO(Manager manager) {    // Manager는 manager 패키지에서 정의된 Entity 클래스라고 가정
-        // TODO: Entity를 Response DTO로 변환하는 로직 구현
-        return ManagerRspDTO.builder()
+    // Manager Entity -> AdminManagerRspDTO
+    public AdminManagerRspDTO toAdminManagerRspDTO(Manager manager) {
+        return AdminManagerRspDTO.builder()
                 .managerId(manager.getManagerId())
                 .userName(manager.getUserName())
                 .email(manager.getEmail())
@@ -31,25 +32,19 @@ public class ManagerMapper {
                 .build();
     }
 
-    // Entity -> List의 ResponseDTO
+    // Manager Entity -> AdminManagerSummeryDTO
     public AdminManagerSummaryRspDTO toAdminSummeryResponseDTO(Manager manager) {
         return AdminManagerSummaryRspDTO.builder()
                 .managerId(manager.getManagerId())
                 .userName(manager.getUserName())
-                .status(manager.getStatus().name())  // Status는 enum으로 정의되어 있다고 가정
+                .status(manager.getStatus())
                 .reservationCount(manager.getReservationCount())
                 .reviewCount(manager.getReviewCount())
                 .build();
     }
 
-    // Entity 리스트 -> ResponseDTO 리스트
-    public List<AdminManagerSummaryRspDTO> toAdminResponseDTOList(List<Manager> managers) {   // managers는 manager 모듈에서 정의된 Entity 리스트라고 가정
-        // TODO: List 조회에 필요한 정보만 추출하여 리스트로 변환하는 로직 구현
-        return managers.stream()
-                .map(manager -> {
-                    AdminManagerSummaryRspDTO dto = toAdminSummeryResponseDTO(manager);
-                    return dto;
-                })
-                .collect(Collectors.toList());
+    // AdminManagerSummaryRspDTO ->  AdminManagerSummaryRspDTO 리스트
+    public Page<AdminManagerSummaryRspDTO> toAdminManagerSummaryDTOList(Page<Manager> managers) {
+        return managers.map(this::toAdminSummeryResponseDTO);
     }
 }

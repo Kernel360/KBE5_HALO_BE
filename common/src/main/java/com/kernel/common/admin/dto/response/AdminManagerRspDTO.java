@@ -1,26 +1,21 @@
 package com.kernel.common.admin.dto.response;
 
-
 import com.kernel.common.global.enums.UserStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ManagerRspDTO {
-    // TODO: Response로 반환할 필드 정의
+public class AdminManagerRspDTO {
 
     private Long managerId;
     private String userName;
     private String email;
     private String phone;
-    private UserStatus status;  // manager 패키지나 global 패키지에서 Status는 enum으로 정의되어 있다고 가정
+    private UserStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer reservationCount;

@@ -1,6 +1,7 @@
 package com.kernel.common.global.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,10 +10,9 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "extra_services")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder
 @ToString
-// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // application.yml에서 전역 설정했으므로 주석처리
 public class ExtraService extends BaseEntity {
     // 추가 서비스 예약 엔터티 정의
 
