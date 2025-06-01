@@ -23,6 +23,6 @@ public interface CustomerInquiryService {
     // 수요자 문의사항 수정
     CustomerInquiryDetailRspDTO updateCustomerInquiry(Long customerId, @Valid CustomerInquiryUpdateReqDTO inquiryRequestDTO);
 
-    // 수여자 문의사항 삭제
+    // 수요자 문의사항 삭제
     void deleteCustomerInquiry(Long customerId, Long inquiryId);
 }
