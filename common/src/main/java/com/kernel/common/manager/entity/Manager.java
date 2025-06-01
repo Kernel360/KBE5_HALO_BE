@@ -1,87 +1,213 @@
 package com.kernel.common.manager.entity;
 
+import static com.kernel.common.manager.entity.QManager.manager;
+
 import com.kernel.common.global.entity.BaseEntity;
 import com.kernel.common.global.enums.Gender;
 import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.global.enums.UserType;
-import jakarta.persistence.*;
+import com.kernel.common.manager.dto.request.ManagerTerminationReqDTO;
+import com.kernel.common.manager.dto.request.ManagerUpdateReqDTO;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "manager")
 @Getter
-@NoArgsConstructor
 @SuperBuilder
-@ToString
-// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // application.yml에서 전역 설정했으므로 주석처리
+@NoArgsConstructor
 public class Manager extends BaseEntity {
-    // TODO: Manager Entity로 매핑할 필드 정의
 
+    // 매니저ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long managerId;
 
-    @Column(unique = true, nullable = false, length = 20)
+    // 연락처(=계정ID)
+    @Column(length = 20, nullable = false, unique = true)
     private String phone;
 
-    @Column(unique = true, length = 50)
+    // 이메일
+    @Column(length = 50, nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, length = 100)
+    // 비밀번호
+    @Column(length = 100, nullable = false)
     private String password;
 
-    @Column(length = 100)
+    // 이름
+    @Column(length = 100, nullable = false)
     private String userName;
 
+    // 생년월일
+    @Column(nullable = false)
     private LocalDate birthDate;
 
+    // 성별
     @Enumerated(EnumType.STRING)
+    @Column(length = 10, nullable = false)
     private Gender gender;
 
-    @Column(length = 10)
+    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+    // 우편번호
+    @Column(length = 10, nullable = false)
     private String zipcode;
 
-    @Column(length = 200)
+    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+    // 도로명 주소
+    @Column(length = 200, nullable = false)
     private String roadAddress;
 
-    @Column(length = 100)
+    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+    // 상세 주소
+    @Column(length = 100, nullable = false)
     private String detailAddress;
 
-    @Column(columnDefinition = "Integer DEFAULT 0")
-    private Integer reservationCount;
-
-    @Column(columnDefinition = "Integer DEFAULT 0")
-    private Integer reviewCount;
-
-    @Column(length = 50)
+    // 한줄소개
+    @Column(length = 50, nullable = false)
     private String bio;
 
+    // 프로필사진ID
+    @Column(nullable = false)
     private Long profileImageId;
 
-    @Enumerated(EnumType.STRING)
+    // 첨부파일ID
     @Column(nullable = false)
+    private Long fileId;
+
+    // 계정 상태
+    // 매니저는 회원가입 시 바로 활성화되지 않고, 지원서 제출 상태이므로 초기값은 Status.PENDING(승인대기)
+    // TODO: 종은님 확인 필요, Status -> UserStatus로 변경
     @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
     private UserStatus status = UserStatus.PENDING;
 
-    @Column(columnDefinition = "Boolean DEFAULT false")
-    private boolean isDeleted;
+    // 매니저 업무 가능 시간
+    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<AvailableTime> availableTimes = new ArrayList<>();
 
+    // 삭제 여부
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    // 계약해지사유
+    @Column(length = 50)
+    private String terminationReason;
+
+    // 계약해지일시
+    @Column
+    private LocalDateTime terminatedAt;
+
+    // TODO: 컬럼으로 관리할 것인지, 저장하여 관리할 것인지 결정 필요
+    // 예약건수
+    // 예약이 완료되면 UPDATE
+    @Column
+    @Builder.Default
+    private Integer reservationCount = 0;
+
+    // TODO: 컬럼으로 관리할 것인지, 저장하여 관리할 것인지 결정 필요
+    // 리뷰건수
+    // 리뷰가 등록되면 계산하여 UPDATE
+    @Column
+    @Builder.Default
+    private Integer reviewCount = 0;
+
+    // TODO: 컬럼으로 관리할 것인지, 저장하여 관리할 것인지 결정 필요
+    // 리뷰평균평점
+    // 리뷰가 등록되면 계산하여 UPDATE
+    @Column(precision = 2, scale = 1)
+    @Builder.Default
+    private BigDecimal 	averageRating = BigDecimal.ZERO;
+
+
+    @PrePersist
+    public void prePersist() {
+        // 계정 상태(대기중)
+        if (status == null) status = UserStatus.PENDING;
+        
+        // 삭제 여부
+        if (isDeleted == null) isDeleted = false;
+        
+        // 예약 건수
+        if (reservationCount == null) reservationCount = 0;
+        
+        // 리뷰 건수
+        if (reviewCount == null) reviewCount = 0;
+        
+        // 리뷰평균평점
+        if (averageRating == null) averageRating = BigDecimal.ZERO;
+    }
+
+    // 매니저 업무 가능 시간 추가
+    public void addAvailableTime(AvailableTime time) {
+        availableTimes.add(time);
+    }
+
+    // 매니저 정보 수정
+    public void updateManager(ManagerUpdateReqDTO updateReqDTO, String encodedPassword ) {
+        this.email = updateReqDTO.getEmail();                   // 이메일
+        this.password = encodedPassword;                        // 비밀번호
+        this.zipcode = updateReqDTO.getZipcode();               // 우편번호 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+        this.roadAddress = updateReqDTO.getRoadAddress();       // 도로명주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+        this.detailAddress = updateReqDTO.getDetailAddress();   // 상세주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+        this.bio = updateReqDTO.getBio();                       // 한줄소개
+        this.profileImageId = updateReqDTO.getProfileImageId(); // 프로필이미지ID
+        this.fileId = updateReqDTO.getFileId();                 // 첨부파일ID
+
+        // 업무 가능 시간 수정
+        if (updateReqDTO.getAvailableTimes() != null) {
+            this.availableTimes.clear(); // 기존 전체 삭제
+            updateReqDTO.getAvailableTimes().forEach(timeDTO -> {
+                this.addAvailableTime(AvailableTime.builder()
+                    .manager(this)
+                    .dayOfWeek(timeDTO.getDayOfWeek())  // 가능 요일
+                    .time(timeDTO.getTime())            // 가능 시간
+                    .build());
+            });
+        }
+    }
+    
+    // 매니저 계정 상태 변경
     public void updateStatus(UserStatus status) {
         this.status = status;
     }
 
-    public void delete() {
-        this.isDeleted = true;
+    // 매니저 계약 해지 요청
+    public void requestTermination(ManagerTerminationReqDTO terminationReqDTO) {
+        this.status = UserStatus.TERMINATION_PENDING;                      // 계약해지대기
+        this.terminationReason = terminationReqDTO.getTerminationReason(); // 계약해지사유
     }
 
+    // 매니저 계정 삭제
+    public void delete() {
+        this.isDeleted = true;
+        this.status = UserStatus.DELETED; // TODO: 종은님 확인 필요, 삭제 시 status 추가
+    }
+
+
+    // 매니저의 권한 타입 반환(ROLE_MANAGER)
     public String getUserType() {
         return "ROLE_"+ UserType.MANAGER;
     }
-
 }
