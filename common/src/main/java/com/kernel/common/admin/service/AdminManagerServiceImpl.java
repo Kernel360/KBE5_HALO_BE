@@ -4,7 +4,7 @@ package com.kernel.common.admin.service;
 import com.kernel.common.admin.dto.mapper.ManagerMapper;
 import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
 import com.kernel.common.admin.dto.response.ManagerResponseDTO;
-import com.kernel.common.admin.entity.Manager;
+import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.admin.entity.Status;
 import com.kernel.common.admin.repository.ManagerRepository;
 import com.kernel.common.global.enums.UserStatus;

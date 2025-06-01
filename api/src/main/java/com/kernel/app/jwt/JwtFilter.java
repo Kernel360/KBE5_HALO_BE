@@ -4,7 +4,7 @@ import com.kernel.app.dto.AdminUserDetails;
 import com.kernel.app.dto.CustomerUserDetails;
 import com.kernel.app.dto.ManagerUserDetails;
 import com.kernel.common.admin.entity.Admin;
-import com.kernel.common.admin.entity.Manager;
+import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.customer.entity.Customer;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
