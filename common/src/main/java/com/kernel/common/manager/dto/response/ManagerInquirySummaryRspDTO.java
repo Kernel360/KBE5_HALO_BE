@@ -1,4 +1,4 @@
-package com.kernel.common.manager.dto.reponse;
+package com.kernel.common.manager.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

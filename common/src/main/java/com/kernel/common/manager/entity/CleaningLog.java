@@ -1,11 +1,15 @@
 package com.kernel.common.manager.entity;
 
 import com.kernel.common.global.entity.BaseEntity;
+import com.kernel.common.reservation.entity.Reservation;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -27,10 +31,10 @@ public class CleaningLog extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long checkId;
 
-    // 예약ID
-    // TODO: 예약 테이블과 추후 연결 필요
-    @Column(nullable = false)
-    private Long reservationId;
+    // 예약
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private Reservation reservation;
 
     // 체크인 일시 (INSERT 시 자동 생성)
     @CreationTimestamp
