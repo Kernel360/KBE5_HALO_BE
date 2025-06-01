@@ -165,9 +165,9 @@ public class Manager extends BaseEntity {
     }
 
     // 매니저 정보 수정
-    public void updateManager(ManagerUpdateReqDTO updateReqDTO) {
+    public void updateManager(ManagerUpdateReqDTO updateReqDTO, String encodedPassword ) {
         this.email = updateReqDTO.getEmail();                   // 이메일
-        this.password = updateReqDTO.getNewPassword();          // 비밀번호
+        this.password = encodedPassword;                        // 비밀번호
         this.zipcode = updateReqDTO.getZipcode();               // 우편번호 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
         this.roadAddress = updateReqDTO.getRoadAddress();       // 도로명주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
         this.detailAddress = updateReqDTO.getDetailAddress();   // 상세주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요

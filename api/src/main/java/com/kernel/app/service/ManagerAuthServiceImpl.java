@@ -86,11 +86,8 @@ public class ManagerAuthServiceImpl implements ManagerAuthService {
             throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
         }
 
-        // 새 비밀번호 암호화
-        updateReqDTO.setNewPassword(bCryptPasswordEncoder.encode(updateReqDTO.getNewPassword()));
-
-        // 수정
-        foundManager.updateManager(updateReqDTO);
+        // 암호화된 새 비밀번호와 함께 매니저 정보 수정
+        foundManager.updateManager(updateReqDTO, bCryptPasswordEncoder.encode(updateReqDTO.getNewPassword()));
     }
 
     /**
