@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/api/customers/auth")
 @RequiredArgsConstructor
 public class CustomerAuthController {
 
