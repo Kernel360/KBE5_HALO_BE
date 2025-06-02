@@ -33,8 +33,8 @@ public class NoticeResDto {
                 .noticeType(notice.getNoticeType())
                 .title(notice.getTitle())
                 .content(notice.getContent())
-                .fileId(notice.getFileId())
-                .deleted(notice.getDeleted())
+                .fileId(notice.getFile_Id())
+                .deleted(notice.getIs_Deleted())
                 .views(notice.getViews())
                 .build();
     }

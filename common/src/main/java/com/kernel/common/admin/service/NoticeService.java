@@ -28,7 +28,7 @@ public class NoticeService {
                 .content(dto.getContent())
                 // .fileId(null)
                 // TODO:파일 첨부 구현 후 주석 해제
-                .isDeleted(false)
+                .is_Deleted(false)
                 .views(0L)
                 .build();
 
