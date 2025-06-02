@@ -1,8 +1,8 @@
 package com.kernel.app.jwt;
 
-import com.kernel.app.dto.AdminUserDetails;
-import com.kernel.app.dto.CustomerUserDetails;
-import com.kernel.app.dto.ManagerUserDetails;
+import com.kernel.common.global.security.AdminUserDetails;
+import com.kernel.common.global.security.CustomerUserDetails;
+import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.common.admin.entity.Admin;
 import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.customer.entity.Customer;

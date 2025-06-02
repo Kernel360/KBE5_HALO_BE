@@ -1,6 +1,7 @@
 package com.kernel.common.manager.controller;
 
 import com.kernel.common.global.entity.ApiResponse;
+import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.common.manager.dto.request.CleaningLogCheckInReqDTO;
 import com.kernel.common.manager.dto.request.CleaningLogCheckOutReqDTO;
 import com.kernel.common.manager.dto.response.CleaningLogCheckInRspDTO;
@@ -9,6 +10,8 @@ import com.kernel.common.manager.service.CleaningLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,11 +33,11 @@ public class CleaningLogController {
      */
     @PostMapping("/{reservation_id}/check-in")
     public ResponseEntity<ApiResponse<CleaningLogCheckInRspDTO>> checkIn(
+        @AuthenticationPrincipal ManagerUserDetails manager,
         @PathVariable("reservation_id") Long reservationId,
         @Valid @RequestBody CleaningLogCheckInReqDTO requestDTO
     ) {
-        // TODO: @AuthenticationPrincipal 사용이 가능해지면 1L이 아닌 실제 id 넘길 예정
-        CleaningLogCheckInRspDTO responseDTO = cleaningLogService.checkIn(1L, reservationId, requestDTO);
+        CleaningLogCheckInRspDTO responseDTO = cleaningLogService.checkIn(manager.getManagerId(), reservationId, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "체크인 성공", responseDTO));
     }
 
@@ -46,11 +49,11 @@ public class CleaningLogController {
      */
     @PostMapping("/{reservation_id}/check-out")
     public ResponseEntity<ApiResponse<CleaningLogCheckOutRspDTO>> checkOut(
+        @AuthenticationPrincipal ManagerUserDetails manager,
         @PathVariable("reservation_id") Long reservationId,
         @Valid @RequestBody CleaningLogCheckOutReqDTO requestDTO
     ) {
-        // TODO: @AuthenticationPrincipal 사용이 가능해지면 1L이 아닌 실제 id 넘길 예정
-        CleaningLogCheckOutRspDTO responseDTO = cleaningLogService.checkOut(1L, reservationId, requestDTO);
+        CleaningLogCheckOutRspDTO responseDTO = cleaningLogService.checkOut(manager.getManagerId(), reservationId, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "체크아웃 성공", responseDTO));
     }
 }

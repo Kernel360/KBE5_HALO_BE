@@ -1,4 +1,4 @@
-package com.kernel.app.dto;
+package com.kernel.common.global.security;
 
 import com.kernel.common.customer.entity.Customer;
 import com.kernel.common.global.AuthenticatedUser;
@@ -67,4 +67,6 @@ public class CustomerUserDetails implements UserDetails, AuthenticatedUser {
     }
 
     public String getName() { return customer.getUserName(); }
+
+    public Long getCustomerId() { return customer.getCustomerId(); }
 }
