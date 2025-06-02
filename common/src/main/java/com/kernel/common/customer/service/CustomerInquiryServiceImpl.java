@@ -45,6 +45,7 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
             String keyword,
             Pageable pageable
     ) {
+
         // 페이지 포함 수요자 문의사항 검색
         Page<CustomerInquiry> inquiryPage = customerInquiryRepository.searchByAuthorIdAndKeyword(customerId, keyword, pageable);
 
@@ -173,5 +174,4 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
         return customerInquiryRepository.findByInquiryIdAndAuthorId(inquiryId, customerId)
                 .orElseThrow(() -> new NoSuchElementException("문의사항이 존재하지 않거나 권한이 없습니다."));
     }
-
 }

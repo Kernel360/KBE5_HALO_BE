@@ -53,5 +53,4 @@ public class CustomerSignupReqDTO {
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
-
 }
