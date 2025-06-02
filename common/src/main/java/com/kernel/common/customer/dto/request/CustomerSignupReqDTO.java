@@ -52,4 +52,6 @@ public class CustomerSignupReqDTO {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
+
+
 }
