@@ -2,10 +2,14 @@ package com.kernel.app.config;
 
 import com.kernel.app.exception.handler.JwtAccessDeniedHandler;
 import com.kernel.app.exception.handler.JwtAuthenticationEntryPoint;
-import com.kernel.app.jwt.*;
-
+import com.kernel.app.jwt.CustomLoginFilter;
+import com.kernel.app.jwt.CustomLogoutFilter;
+import com.kernel.app.jwt.JwtFilter;
+import com.kernel.app.jwt.JwtProperties;
+import com.kernel.app.jwt.JwtTokenProvider;
 import com.kernel.app.repository.RefreshRepository;
-import com.kernel.common.global.enums.UserType;
+import java.util.Arrays;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -155,7 +157,7 @@ public class SecurityConfig {
     private CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+            config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173")); // 3000: React (CRA), 5173: Vite (Vue, React 지원)
             config.setAllowedMethods(Collections.singletonList("*"));
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowCredentials(true);
