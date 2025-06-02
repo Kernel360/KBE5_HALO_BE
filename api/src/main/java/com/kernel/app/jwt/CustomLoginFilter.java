@@ -13,6 +13,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -74,6 +75,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         String phone;
         String role;
         String userId;
+        String name;
 
         // role 권한에서 추출
         role = authentication.getAuthorities().stream()
@@ -87,16 +89,19 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
                 CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
                 phone = userDetails.getUsername();
                 userId = userDetails.getUserId();
+                name = userDetails.getName();
             }
             case "manager" -> {
                 ManagerUserDetails userDetails = (ManagerUserDetails) authentication.getPrincipal();
                 phone = userDetails.getUsername();
                 userId = userDetails.getUserId();
+                name = userDetails.getName();
             }
             case "admin" -> {
                 AdminUserDetails userDetails = (AdminUserDetails) authentication.getPrincipal();
                 phone = userDetails.getUsername();
                 userId = userDetails.getUserId();
+                name = null;
             }
             default -> throw new IllegalStateException("Unsupported user type: " + userType);
         }
@@ -112,7 +117,11 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             response.setStatus(HttpStatus.OK.value());
             response.setContentType("application/json;charset=UTF-8");
 
-            ApiResponse<Void> successResponse = new ApiResponse<>(true, "로그인이 완료되었습니다.", null);
+            // Map 생성해서 name 담기
+            Map<String, Object> bodyMap = new HashMap<>();
+            bodyMap.put("userName", name);
+
+            ApiResponse<Map<String, Object>> successResponse = new ApiResponse<>(true, "로그인이 완료되었습니다.", bodyMap);
             objectMapper.writeValue(response.getWriter(), successResponse);
 
             log.info("User logged in successfully: {}", phone);
