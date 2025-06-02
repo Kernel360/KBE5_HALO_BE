@@ -25,7 +25,7 @@ public class Notice {
     @Column(columnDefinition = "TEXT")
     private String content;
     private Long file_Id;
-    private Boolean isDeleted;
+    private Boolean is_Deleted;
     private Long views;
 
     public void update(String title, String content, Long fileId, Long updatedBy) {
@@ -35,6 +35,6 @@ public class Notice {
     }
 
     public void Deleted(Boolean Deleted) {
-        this.isDeleted = Deleted;
+        this.is_Deleted = Deleted;
     }
 }
