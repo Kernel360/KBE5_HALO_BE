@@ -1,11 +1,11 @@
 package com.kernel.common.manager.service;
 
 import com.kernel.common.manager.dto.mapper.ManagerInquiryMapper;
-import com.kernel.common.manager.dto.reponse.ManagerInquiryRspDTO;
-import com.kernel.common.manager.dto.reponse.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryCreateReqDTO;
 import com.kernel.common.manager.dto.request.ManagerInquirySearchCondDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryUpdateReqDTO;
+import com.kernel.common.manager.dto.response.ManagerInquiryRspDTO;
+import com.kernel.common.manager.dto.response.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.entity.ManagerInquiry;
 import com.kernel.common.manager.entity.QManagerInquiry;
 import com.kernel.common.manager.entity.QManagerReply;

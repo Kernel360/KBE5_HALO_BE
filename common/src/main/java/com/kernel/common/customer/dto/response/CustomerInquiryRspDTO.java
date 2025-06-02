@@ -12,13 +12,18 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InquiryRspDTO {
-    // id, authorId, title, content, createdAt
+public class CustomerInquiryRspDTO {
 
-    private Long id;
-    private Long authorId;
+    // 수요자 게시글ID
+    private Long inquiryId;
+
+    // 제목
     private String title;
-    private String content;
+
+    // 작성일시
     private LocalDateTime createdAt;
+
+    // 답변 여부
+    private Boolean isReplied;
 
 }
