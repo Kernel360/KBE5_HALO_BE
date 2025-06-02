@@ -23,7 +23,7 @@ public class CustomerInquiry extends BaseEntity {
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private InquiryCategory category;
 
-    // 문의사항ID
+    // 작성자ID(수요자ID)
     @Column(nullable = false)
     private Long authorId;
 
