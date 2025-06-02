@@ -70,7 +70,7 @@ public class CleaningLogServiceImpl implements CleaningLogService {
         // Entity 조회 (= 예약ID로 조회)
         CleaningLog foundCleaningLog = cleaningLogRepository.findByReservation_ReservationId(reservationId);
         if (foundCleaningLog == null) {
-            throw new NoSuchElementException("체크인이 되지 않았습니다.");
+            throw new NoSuchElementException("체크인을 먼저 진행해주세요.");
         }
 
         // 체크아웃

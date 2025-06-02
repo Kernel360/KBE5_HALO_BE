@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class ManagerReservationRspDTO {
 
@@ -26,7 +25,7 @@ public class ManagerReservationRspDTO {
     private ReservationStatus status;
 
     // 상태명
-    private String statusName;
+//    private String statusName;
 
 
     /* 고객 정보 **************************************/
@@ -36,7 +35,7 @@ public class ManagerReservationRspDTO {
     // 고객 연락처
     private String customerPhone;
 
-    // 고객 주소
+    // 고객 주소(도로명 주소 + 상세 주소)
     private String customerAddress;
 
 

@@ -46,7 +46,7 @@ public class ManagerReservationController {
      * @return 매니저에게 할당된 예약 상세 정보를 담은 응답
      */
     @GetMapping("/{reservation_id}")
-    public ResponseEntity<ApiResponse<ManagerReservationRspDTO>> searchManagerReservations(
+    public ResponseEntity<ApiResponse<ManagerReservationRspDTO>> getManagerReservation(
         @PathVariable("reservation_id") Long reservationId
     ) {
         // TODO: @AuthenticationPrincipal 사용이 가능해지면 1L이 아닌 실제 id 넘길 예정

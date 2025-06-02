@@ -45,9 +45,9 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 .select(reservation.count())
                 .from(reservation)
                 .where(
-                    managerEq(managerId),                             // 매니저 ID 일치
-                    RequestDateGeo(searchCondDTO.getFromRequestDate()),         // 청소 예약 날짜 >= 시작일
-                    RequestDateLeo(searchCondDTO.getToRequestDate()),           // 청소 예약 날짜 <= 종료일
+                    managerEq(managerId),                                       // 매니저 ID 일치
+                    RequestDateGoe(searchCondDTO.getFromRequestDate()),         // 청소 예약 날짜 >= 시작일
+                    RequestDateLoe(searchCondDTO.getToRequestDate()),           // 청소 예약 날짜 <= 종료일
                     reservationStatus(searchCondDTO.getReservationStatus()),    // 예약 상태
                     isCheckedIn(searchCondDTO.getIsCheckedIn()),                // 체크인 여부
                     isCheckedOut(searchCondDTO.getIsCheckedOut()),              // 체크아웃 여부
@@ -121,8 +121,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             )
             .where(
                 managerEq(managerId),
-                RequestDateGeo(searchCondDTO.getFromRequestDate()),
-                RequestDateLeo(searchCondDTO.getToRequestDate()),
+                RequestDateGoe(searchCondDTO.getFromRequestDate()),
+                RequestDateLoe(searchCondDTO.getToRequestDate()),
                 reservationStatus(searchCondDTO.getReservationStatus()),
                 isCheckedIn(searchCondDTO.getIsCheckedIn()),
                 isCheckedOut(searchCondDTO.getIsCheckedOut()),
@@ -224,14 +224,14 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
     }
 
     // 청소 예약 날짜 >= 시작일
-    private BooleanExpression RequestDateGeo(LocalDate from) {
+    private BooleanExpression RequestDateGoe(LocalDate from) {
         return from != null
             ? QReservation.reservation.requestDate.goe(from)
             : null;
     }
 
     // 청소 예약 날짜 <= 종료일
-    private BooleanExpression RequestDateLeo(LocalDate to) {
+    private BooleanExpression RequestDateLoe(LocalDate to) {
         return to != null
             ? QReservation.reservation.requestDate.loe(to)
             : null;

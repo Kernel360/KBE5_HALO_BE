@@ -7,7 +7,6 @@ import com.kernel.common.manager.dto.response.ManagerReservationSummaryRspDTO;
 import com.kernel.common.manager.repository.CustomManagerReservationRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -82,9 +81,9 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         ManagerReservationRspDTO responseDTO = customManagerReservationRepository.findByManagerIdAndReservationId(managerId, reservationId);
 
         // 상태명(statusName) 추가 처리
-        if (responseDTO != null && responseDTO.getStatus() != null) {
-            responseDTO.setStatusName(responseDTO.getStatus().getLabel());
-        }
+//        if (responseDTO != null && responseDTO.getStatus() != null) {
+//            responseDTO.setStatusName(responseDTO.getStatus().getLabel());
+//        }
 
         return responseDTO;
     }
