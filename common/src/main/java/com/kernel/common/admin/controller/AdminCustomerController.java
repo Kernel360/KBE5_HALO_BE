@@ -23,7 +23,7 @@ public class AdminCustomerController {
     public ResponseEntity<ApiResponse<List<AdminCustomerResDto>>> getCustomers(@RequestParam(required = false) String keyword) {
         List<AdminCustomerResDto> result = adminCustomerService.getAllCustomers(keyword);
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "success", result));
+        return ResponseEntity.ok(new ApiResponse<>(true, "전체 수요자 정보 조회 완료", result));
     }
 
     // 상세 조회
@@ -31,7 +31,7 @@ public class AdminCustomerController {
     public ResponseEntity<ApiResponse<AdminCustomerResDto>> getCustomer(@PathVariable Long customerId) {
         AdminCustomerResDto result = adminCustomerService.getCustomerDetail(customerId);
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "success", result));
+        return ResponseEntity.ok(new ApiResponse<>(true, "전체 수요자 상세 정보 조회 완료", result));
     }
 
     // 신고 조회
