@@ -19,14 +19,20 @@ public class AdminServiceCategoryServiceImpl implements AdminServiceCategoryServ
     private final ServiceCategoryRepository serviceCategoryRepository;
     private final ServiceCategoryMapper serviceCategoryMapper;
 
-    // 서비스 카테고리 목록 조회
+    /**
+     * 서비스 카테고리 목록 조회
+     * @return List<AdminServiceCategoryRspDTO>
+     */
     @Transactional(readOnly = true)
     @Override
     public List<AdminServiceCategoryRspDTO>  getServiceCategories() {
         return serviceCategoryMapper.toServiceCategoriesRspDTO(serviceCategoryRepository.findAll());
     }
 
-    // 서비스 카테고리 생성
+    /**
+     * 서비스 카테고리 생성
+     * @param request AdminServiceCategoryReqDTO
+     */
     @Transactional
     @Override
     public void createServiceCategory(AdminServiceCategoryReqDTO request) {
@@ -36,7 +42,11 @@ public class AdminServiceCategoryServiceImpl implements AdminServiceCategoryServ
         serviceCategoryRepository.save(serviceCategoryMapper.toServiceCategory(request, parentCategory));
     }
 
-    // 서비스 카테고리 수정
+    /**
+     * 서비스 카테고리 수정
+     * @param serviceCategoryId Long
+     * @param request AdminServiceCategoryReqDTO
+     */
     @Transactional
     @Override
     public void updateServiceCategory(Long serviceCategoryId, AdminServiceCategoryReqDTO request) {
@@ -49,7 +59,10 @@ public class AdminServiceCategoryServiceImpl implements AdminServiceCategoryServ
         serviceCategory.update(request, parentCategory);
     }
 
-    // 서비스 카테고리 삭제
+    /**
+     * 서비스 카테고리 삭제
+     * @param serviceCategoryId Long
+     */
     @Transactional
     @Override
     public void deleteServiceCategory(Long serviceCategoryId) {
