@@ -21,12 +21,7 @@ public class AdminCustomerService {
         List<AdminCustomer> customers;
 
         if (keyword != null && !keyword.isEmpty()) {
-            try {
-                Long customerId = Long.parseLong(keyword);
-                customers = repository.findByCustomerId(customerId);
-            } catch (NumberFormatException e) {
-                customers = repository.findAll();
-            }
+            customers = repository.findByCustomerNameContaining(keyword);
         } else {
             customers = repository.findAll();
         }
@@ -37,9 +32,10 @@ public class AdminCustomerService {
     }
 
 
+
     public AdminCustomerResDto getCustomerDetail(Long customerId) {
         AdminCustomer customer = repository.findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException("수요자 없음"));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 수요자입니다."));
         return AdminCustomerResDto.from(customer);
     }
 }
