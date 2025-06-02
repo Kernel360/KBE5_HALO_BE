@@ -37,7 +37,7 @@ public class AdminManagerMapper {
         return AdminManagerSummaryRspDTO.builder()
                 .managerId(manager.getManagerId())
                 .userName(manager.getUserName())
-                .status(manager.getStatus())
+                .userstatus(manager.getStatus())
                 .reservationCount(manager.getReservationCount())
                 .reviewCount(manager.getReviewCount())
                 .build();

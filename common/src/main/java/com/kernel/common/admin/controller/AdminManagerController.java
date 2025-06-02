@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -55,9 +57,9 @@ public class AdminManagerController {
     @PatchMapping("/applies/{manager_id}")
     public ResponseEntity<ApiResponse<Void>> processAppliedManager(
             @PathVariable("manager_id") Long managerId,
-            @RequestParam String status
-    ) {
-        adminManagerService.processAppliedManager(managerId, status);
+            @RequestBody Map<String, String> userStatus
+            ) {
+        adminManagerService.processAppliedManager(managerId, userStatus.get("status"));
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 신청 처리 성공", null));
     }
 

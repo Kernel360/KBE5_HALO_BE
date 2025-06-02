@@ -6,14 +6,12 @@ import com.kernel.common.admin.dto.response.AdminServiceCategoryRspDTO;
 import com.kernel.common.repository.ServiceCategoryRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminServiceCategoryServiceImpl implements AdminServiceCategoryService {
@@ -43,7 +41,7 @@ public class AdminServiceCategoryServiceImpl implements AdminServiceCategoryServ
     @Override
     public void updateServiceCategory(Long serviceCategoryId, AdminServiceCategoryReqDTO request) {
         var serviceCategory = serviceCategoryRepository.findById(serviceCategoryId)
-                .orElseThrow(() -> new NoSuchElementException("서비스 카테고리를 찾을 수 없습니다. ID: " + serviceCategoryId));
+                .orElseThrow(() -> new NoSuchElementException("서비스 카테고리를 찾을 수 없습니다."));
 
         var parentCategory = serviceCategoryRepository.findById(request.getParentId())
                         .orElse(null);
@@ -56,7 +54,7 @@ public class AdminServiceCategoryServiceImpl implements AdminServiceCategoryServ
     @Override
     public void deleteServiceCategory(Long serviceCategoryId) {
         var serviceCategory = serviceCategoryRepository.findById(serviceCategoryId)
-                .orElseThrow(() -> new NoSuchElementException("서비스 카테고리를 찾을 수 없습니다. ID: " + serviceCategoryId));
+                .orElseThrow(() -> new NoSuchElementException("서비스 카테고리를 찾을 수 없습니다."));
 
         serviceCategory.delete();
     }

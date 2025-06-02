@@ -12,7 +12,7 @@ public class AdminManagerSummaryRspDTO {
 
     private Long managerId;
     private String userName;
-    private UserStatus status;
+    private UserStatus userstatus;
     private Integer reservationCount;
     private Integer reviewCount;
 
