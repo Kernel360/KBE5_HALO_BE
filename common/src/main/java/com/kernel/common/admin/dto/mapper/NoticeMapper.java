@@ -11,7 +11,7 @@ public class NoticeMapper {
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .fileId(notice.getFile_Id())
-                .deleted(notice.getIsDeleted())
+                .deleted(notice.getIs_Deleted())
                 .views(notice.getViews())
                 .build();
     }
