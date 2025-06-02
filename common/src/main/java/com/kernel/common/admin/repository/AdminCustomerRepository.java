@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AdminCustomerRepository extends JpaRepository<AdminCustomer, Long> {
-    List<AdminCustomer> findByCustomerNameContaining(String keyword);
+    List<AdminCustomer> findByUserName(String keyword);
 }
