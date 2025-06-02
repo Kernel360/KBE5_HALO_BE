@@ -24,17 +24,17 @@ public class Notice {
 
     @Column(columnDefinition = "TEXT")
     private String content;
-    private Long fileId;
-    private Boolean Deleted;
+    private Long file_Id;
+    private Boolean isDeleted;
     private Long views;
 
     public void update(String title, String content, Long fileId, Long updatedBy) {
         this.title = title;
         this.content = content;
-        this.fileId = fileId;
+        this.file_Id = fileId;
     }
 
     public void Deleted(Boolean Deleted) {
-        this.Deleted = Deleted;
+        this.isDeleted = Deleted;
     }
 }
