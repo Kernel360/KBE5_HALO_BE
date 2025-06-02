@@ -45,8 +45,10 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
             String keyword,
             Pageable pageable
     ) {
+        // 페이지 포함 수요자 문의사항 검색
         Page<CustomerInquiry> inquiryPage = customerInquiryRepository.searchByAuthorIdAndKeyword(customerId, keyword, pageable);
 
+        // entity -> dtoList
         List<CustomerInquiryRspDTO> dtoList = inquiryPage.getContent().stream()
                 .map(customerInquiryMapper::toRspDTO)
                 .toList();
@@ -63,9 +65,12 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
     @Override
     @Transactional(readOnly = true)
     public CustomerInquiryDetailRspDTO getCustomerInquiryDetails(Long customerId, Long inquiryId) {
+
+        // 문의사항 상세 조회
         CustomerInquiry inquiryRsp = customerInquiryRepository.getCustomerInquiryDetails(customerId, inquiryId)
                 .orElseThrow(() -> new NoSuchElementException("문의사항이 존재하지 않습니다."));
 
+        // 삭제 여부 확인
         inquiryRsp.validateDelete();
 
         return customerInquiryMapper.toDetailRspDTO(inquiryRsp);
@@ -80,9 +85,15 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
     @Override
     @Transactional
     public CustomerInquiryDetailRspDTO createCustomerInquiry(Long customerId, CustomerInquiryCreateReqDTO inquiryRequestDTO) {
-        InquiryCategory findCategory = findCategory(inquiryRequestDTO.getCategoryId());
-        CustomerInquiry makeEntity = customerInquiryMapper.toEntity(customerId, inquiryRequestDTO, findCategory);
-        CustomerInquiry saveEntity = customerInquiryRepository.save(makeEntity);
+
+        // 문의사항 카테고리 조회
+        InquiryCategory foundCategory = findCategory(inquiryRequestDTO.getCategoryId());
+
+        // reqDTO -> entity
+        CustomerInquiry madeEntity = customerInquiryMapper.toEntity(customerId, inquiryRequestDTO, foundCategory);
+
+        // 저장
+        CustomerInquiry saveEntity = customerInquiryRepository.save(madeEntity);
 
         return getCustomerInquiryDetails(saveEntity.getAuthorId(), saveEntity.getInquiryId());
     }
@@ -96,18 +107,28 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
     @Override
     @Transactional
     public CustomerInquiryDetailRspDTO updateCustomerInquiry(Long customerId, CustomerInquiryUpdateReqDTO inquiryRequestDTO) {
-        CustomerInquiry findInquiry = findCustomerInquiry(inquiryRequestDTO.getInquiryId(), customerId);
-        findInquiry.validateDelete();
-        findInquiry.validateReply();
-        InquiryCategory findCategory = findCategory(inquiryRequestDTO.getCategoryId());
 
-        findInquiry.update(
+        // 문의내역 존재 여부 확인
+        CustomerInquiry foundInquriy = findCustomerInquiry(inquiryRequestDTO.getInquiryId(), customerId);
+
+        // 삭제 여부 확인
+        foundInquriy.validateDelete();
+
+        // 답변 여부 확인
+        foundInquriy.validateReply();
+
+        // 카테고리 존재 여부 확인
+        InquiryCategory foundCategory = findCategory(inquiryRequestDTO.getCategoryId());
+
+        // 수정
+        foundInquriy.update(
                 inquiryRequestDTO.getTitle(),
                 inquiryRequestDTO.getContent(),
-                findCategory
+                foundCategory
         );
 
-        return customerInquiryMapper.toDetailRspDTO(findInquiry);
+        // 수정된 내역 반환
+        return customerInquiryMapper.toDetailRspDTO(foundInquriy);
     }
 
     /**
@@ -118,10 +139,18 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
     @Override
     @Transactional
     public void deleteCustomerInquiry(Long customerId, Long inquiryId) {
-        CustomerInquiry findInquiry = findCustomerInquiry(inquiryId, customerId);
-        findInquiry.validateDelete();
-        findInquiry.validateReply();
-        findInquiry.delete();
+
+        // 문의 내역 존재 여부 확인
+        CustomerInquiry foundInquiry = findCustomerInquiry(inquiryId, customerId);
+
+        // 삭제 여부 확인
+        foundInquiry.validateDelete();
+
+        // 답변 여부 확인
+        foundInquiry.validateReply();
+
+        // 삭제(상태값 변경)
+        foundInquiry.delete();
     }
 
     /**
@@ -144,6 +173,5 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
         return customerInquiryRepository.findByInquiryIdAndAuthorId(inquiryId, customerId)
                 .orElseThrow(() -> new NoSuchElementException("문의사항이 존재하지 않거나 권한이 없습니다."));
     }
-
 
 }
