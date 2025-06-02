@@ -1,76 +1,75 @@
 package com.kernel.common.admin.controller;
 
-import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
-import com.kernel.common.admin.dto.response.ManagerResponseDTO;
-import com.kernel.common.admin.service.AdminManagerService;
 import com.kernel.common.global.entity.ApiResponse;
+import com.kernel.common.admin.dto.response.AdminManagerSummaryRspDTO;
+import com.kernel.common.admin.dto.response.AdminManagerRspDTO;
+import com.kernel.common.admin.service.AdminManagerService;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin/managers")
 @RequiredArgsConstructor
 @Validated
+@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/admin/managers")
 public class AdminManagerController {
 
     private final AdminManagerService adminManagerService;
 
-    @GetMapping("")
-    public ResponseEntity<ApiResponse<List<AdminManagerSummaryResponseDTO>>> getManagers(
-            // @AuthenticationPrincipal -> 로그인 기능 완성시 사용 예정
-            @RequestParam(required = false) String keyword
+    // 전체 매니저 목록 조회
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<AdminManagerSummaryRspDTO>>> getManagers(
+            @RequestParam(required = false) String keyword,
+            Pageable pageable
     ) {
-        List<AdminManagerSummaryResponseDTO> responseList = adminManagerService.getManagers(keyword);
-        return ResponseEntity.ok(new ApiResponse<>(true, "success", responseList));
+        Page<AdminManagerSummaryRspDTO> responsePage = adminManagerService.getManagers(keyword, pageable);
+        return ResponseEntity.ok(new ApiResponse<>(true, "매니저 목록 조회 성공", responsePage));
     }
 
+    // 선택한 매니저 상세 정보 조회
     @GetMapping("/{manager_id}")
-    public ResponseEntity<ApiResponse<ManagerResponseDTO>> getManager(
-            // @AuthenticationPrincipal -> 로그인 기능 완성시 사용 예정
+    public ResponseEntity<ApiResponse<AdminManagerRspDTO>> getManager(
             @PathVariable("manager_id") Long managerId
     ) {
-        ManagerResponseDTO response = adminManagerService.getManager(managerId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "success", response));
+        AdminManagerRspDTO response = adminManagerService.getManager(managerId);
+        return ResponseEntity.ok(new ApiResponse<>(true, "매니저 상세 정보 조회 성공", response));
     }
 
+    // 매니저 신청 목록 조회
     @GetMapping("/applies")
-    public ResponseEntity<ApiResponse<List<AdminManagerSummaryResponseDTO>>> getAppliedManagers (
-            // @AuthenticationPrincipal -> 로그인 기능 완성시 사용 예정
-            @RequestParam(required = false) String keyword
+    public ResponseEntity<ApiResponse<Page<AdminManagerSummaryRspDTO>>> getAppliedManagers (
+            @RequestParam(required = false) String keyword,
+            Pageable pageable
     ) {
-        List<AdminManagerSummaryResponseDTO> reponseList = adminManagerService.getApplyManagers(keyword);
-        return ResponseEntity.ok(new ApiResponse<>(true, "success", reponseList));
+        Page<AdminManagerSummaryRspDTO> reponsePage = adminManagerService.getAppliedManagers(keyword, pageable);
+        return ResponseEntity.ok(new ApiResponse<>(true, "매니저 신청 목록 조회 성공", reponsePage));
     }
 
+    // 매니저 신청 승인/반려
     @PatchMapping("/applies/{manager_id}")
-    public ResponseEntity<ApiResponse<Void>> processAppliedManager(    // 변경 -> Post 메서드에서 리턴 값을 null 변경
-            // @AuthenticationPrincipal -> 로그인 기능 완성시 사용 예정
+    public ResponseEntity<ApiResponse<Void>> processAppliedManager(
             @PathVariable("manager_id") Long managerId,
-            @RequestParam String status
-    ) {
-        adminManagerService.processAppliedManager(managerId, status);
-        return ResponseEntity.ok(new ApiResponse<>(true, "success", null));
+            @RequestBody Map<String, String> userStatus
+            ) {
+        adminManagerService.processAppliedManager(managerId, userStatus.get("status"));
+        return ResponseEntity.ok(new ApiResponse<>(true, "매니저 신청 처리 성공", null));
     }
 
-    @GetMapping("/reported")
-    public ResponseEntity<ApiResponse<List<AdminManagerSummaryResponseDTO>>> getReportedManagers(
-            // @AuthenticationPrincipal -> 로그인 기능 완성시 사용 예정
-            @RequestParam(required = false) String keyword
+    // 신고된 매니저 목록 조회
+    @GetMapping("/suspended")
+    public ResponseEntity<ApiResponse<Page<AdminManagerSummaryRspDTO>>> getReportedManagers(
+            @RequestParam(required = false) String keyword,
+            Pageable pageable
     ) {
-        List<AdminManagerSummaryResponseDTO> responseList = adminManagerService.getReportedManagers(keyword);
-        return ResponseEntity.ok(new ApiResponse<>(true, "success", responseList));
-    }
-
-    @PatchMapping("/reported/{manager_id}/black")
-    public ResponseEntity<ApiResponse<ManagerResponseDTO>> suspendManager(
-            // AuthenticationPrincipal -> 로그인 기능 완성시 사용 예정
-            @PathVariable("manager_id") Long managerId
-    ) {
-       ManagerResponseDTO response = adminManagerService.suspendManager(managerId);
-       return ResponseEntity.ok(new ApiResponse<>(true, "success", response));
+        Page<AdminManagerSummaryRspDTO> responsePage = adminManagerService.getReportedManagers(keyword, pageable);
+        return ResponseEntity.ok(new ApiResponse<>(true, "신고된 매니저 목록 조회 성공", responsePage));
     }
 }

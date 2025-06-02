@@ -59,7 +59,7 @@ dependencies {
 }
 
 tasks.named('bootJar') {
-    mainClass.set('com.kernel.api.ApiApplication')
+    mainClass.set('com.kernel.app.ApiApplication')
     enabled = true  // 실행 가능한 jar
 }
 
