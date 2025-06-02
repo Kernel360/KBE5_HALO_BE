@@ -1,20 +1,18 @@
 package com.kernel.common.manager.controller;
 
 
-import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
-import com.kernel.common.manager.dto.reponse.ManagerInquiryRspDTO;
-import com.kernel.common.manager.dto.reponse.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryCreateReqDTO;
 import com.kernel.common.manager.dto.request.ManagerInquirySearchCondDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryUpdateReqDTO;
+import com.kernel.common.manager.dto.response.ManagerInquiryRspDTO;
+import com.kernel.common.manager.dto.response.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.service.ManagerInquiryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -40,11 +38,9 @@ public class ManagerInquiryController {
      */
     @GetMapping("")
     public ResponseEntity<ApiResponse<Page<ManagerInquirySummaryRspDTO>>> searchManagerInquiries(
-        @ModelAttribute ManagerInquirySearchCondDTO searchCondDTO, @AuthenticationPrincipal AuthenticatedUser user,
+        @ModelAttribute ManagerInquirySearchCondDTO searchCondDTO,
         Pageable pageable
     ) {
-        System.out.println("유저 확인 아이디 "+user.getUserId());
-        System.out.println("유저 확인 핸드폰번호 "+user.getUsername());
         // TODO: @AuthenticationPrincipal 사용이 가능해지면 1L이 아닌 실제 id 넘길 예정
         Page<ManagerInquirySummaryRspDTO> summaryRspDTOPage
             = managerInquiryService.searchManagerinquiriesWithPaging(1L, searchCondDTO, pageable);

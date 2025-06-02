@@ -1,10 +1,10 @@
 package com.kernel.common.manager.service;
 
-import com.kernel.common.manager.dto.reponse.ManagerInquiryRspDTO;
-import com.kernel.common.manager.dto.reponse.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryCreateReqDTO;
 import com.kernel.common.manager.dto.request.ManagerInquirySearchCondDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryUpdateReqDTO;
+import com.kernel.common.manager.dto.response.ManagerInquiryRspDTO;
+import com.kernel.common.manager.dto.response.ManagerInquirySummaryRspDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

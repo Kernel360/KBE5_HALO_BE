@@ -21,7 +21,7 @@ public interface CustomerInquiryService {
 
     // 수요자 문의사항 수정
     CustomerInquiryDetailRspDTO updateCustomerInquiry(Long customerId, CustomerInquiryUpdateReqDTO inquiryRequestDTO);
-
+  
     // 수요자 문의사항 삭제
     void deleteCustomerInquiry(Long customerId, Long inquiryId);
 }
