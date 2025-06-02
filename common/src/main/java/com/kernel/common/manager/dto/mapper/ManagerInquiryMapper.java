@@ -1,8 +1,8 @@
 package com.kernel.common.manager.dto.mapper;
 
-import com.kernel.common.manager.dto.reponse.ManagerInquiryRspDTO;
-import com.kernel.common.manager.dto.reponse.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.dto.request.ManagerInquiryCreateReqDTO;
+import com.kernel.common.manager.dto.response.ManagerInquiryRspDTO;
+import com.kernel.common.manager.dto.response.ManagerInquirySummaryRspDTO;
 import com.kernel.common.manager.entity.ManagerInquiry;
 import org.springframework.stereotype.Component;
 

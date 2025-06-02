@@ -1,11 +1,15 @@
 package com.kernel.common.manager.service;
 
 import com.kernel.common.global.enums.AuthorType;
+import com.kernel.common.global.enums.ReservationStatus;
 import com.kernel.common.manager.dto.mapper.ManagerReviewMapper;
 import com.kernel.common.manager.dto.request.ManagerReviewReqDTO;
 import com.kernel.common.manager.dto.response.ManagerReviewRspDTO;
 import com.kernel.common.manager.repository.ManagerReviewRepository;
+import com.kernel.common.reservation.entity.Reservation;
 import com.kernel.common.reservation.entity.Review;
+import com.kernel.common.reservation.repository.ReservationRepository;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class ManagerReviewServiceImpl implements ManagerReviewService {
 
     private final ManagerReviewRepository managerReviewRepository;
+    private final ReservationRepository reservationRepository;
     private final ManagerReviewMapper managerReviewMapper;
 
 
@@ -28,12 +33,16 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
     public ManagerReviewRspDTO createManagerReview(Long authorId, Long reservationId, ManagerReviewReqDTO managerReviewReqDTO) {
 
         // 등록된 리뷰가 존재하는지 확인
-        if (managerReviewRepository.existsByAuthorTypeAndAuthorIdAndReservationId(AuthorType.MANAGER, authorId, reservationId)) {
+        if (managerReviewRepository.existsByAuthorTypeAndAuthorIdAndReservation_ReservationId(AuthorType.MANAGER, authorId, reservationId)) {
             throw new IllegalStateException("이미 등록된 리뷰가 존재합니다.");
         }
 
         // RequestDTO -> Entity
-        Review reviewedEntity = managerReviewMapper.toEntity(authorId, reservationId, managerReviewReqDTO);
+        Reservation foundReservation = reservationRepository.findReservationByreservationId(reservationId);
+        if (foundReservation == null) {
+            throw new NoSuchElementException("존재하지 않는 예약입니다.");
+        }
+        Review reviewedEntity = managerReviewMapper.toEntity(authorId, foundReservation, managerReviewReqDTO);
 
         // 저장
         Review savedReview = managerReviewRepository.save(reviewedEntity);
