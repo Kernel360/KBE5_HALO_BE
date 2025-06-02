@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/admin/notices")
 public class NoticeController {
 
     private final NoticeRepository noticeRepository;
@@ -27,7 +27,7 @@ public class NoticeController {
     }
 
     // 공지사항 / 이벤트 등록
-    @PostMapping("/notices")
+    @PostMapping("")
     public ResponseEntity<ApiResponse<NoticeResDto>> createNotice(
             @RequestBody @Valid NoticeReqDto requestDto
     ) {
@@ -38,7 +38,7 @@ public class NoticeController {
     }
 
     // 공지사항 / 이벤트 목록 조회
-    @GetMapping("/notices")
+    @GetMapping("")
     public ResponseEntity<ApiResponse<List<NoticeResDto>>> getNoticeList(@RequestParam("type") NoticeType type) {
         List<Notice> noticeList = noticeRepository.findByNoticeType(type);
         List<NoticeResDto> dtoList = noticeList.stream()
@@ -49,7 +49,7 @@ public class NoticeController {
     }
 
     // 공지사항 / 이벤트 상세 조회
-    @GetMapping("/notices/{noticeId}")
+    @GetMapping("/{noticeId}")
     public ResponseEntity<ApiResponse<NoticeResDto>> getNoticeDetail(@PathVariable Long noticeId) {
 
         return noticeRepository.findById(noticeId)
@@ -58,7 +58,7 @@ public class NoticeController {
     }
 
     // 공지사항 / 이벤트 수정
-    @PatchMapping("/notices/{noticeId}")
+    @PatchMapping("/{noticeId}")
     public ResponseEntity<ApiResponse<NoticeResDto>> updateNotice(
             @PathVariable Long noticeId,
             @RequestBody NoticeReqDto requestDto
@@ -87,12 +87,12 @@ public class NoticeController {
     }
 
     // 공지사항 / 이벤트 삭제
-    @DeleteMapping("/notices/{noticeId}")
+    @DeleteMapping("/{noticeId}")
     public ResponseEntity<ApiResponse<Void>> deleteNotice(@PathVariable Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
 
-        notice.setDeleted(true);
+        notice.Deleted(true);
         return ResponseEntity.ok(new ApiResponse<>(true, "success", null));
     }
 }
