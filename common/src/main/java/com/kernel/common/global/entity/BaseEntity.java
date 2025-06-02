@@ -1,6 +1,7 @@
 package com.kernel.common.global.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -16,23 +17,22 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
-    @Column
+    @Column(columnDefinition = "datetime(0)", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @CreatedBy
     @Column(updatable = false)
-    private String createdBy;
+    @CreatedBy
+    private Long createdBy;
 
-    @Column
+    @Column(columnDefinition = "datetime(0)")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column
     @LastModifiedBy
-    private String updatedBy;
-
-
+    private Long updatedBy;
 }

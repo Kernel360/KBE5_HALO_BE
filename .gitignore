@@ -38,5 +38,11 @@ out/
 
 *application*
 *dev.env
+
+
+# QueryDSL Q파일 자동 생성 위치 무시
+/api/build/generated/
+/common/build/generated/
+
 *logs
 *logback-spring.xml

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface ManagerReviewRepository extends JpaRepository<Review, Long> {
 
     // 리뷰 존재 여부 확인(작성자 유형, 작성자ID(=매니저ID), 예약ID 기준)
-    Boolean existsByAuthorTypeAndAuthorIdAndReservationId(AuthorType authorType, Long managerId, Long reservationId);
+    Boolean existsByAuthorTypeAndAuthorIdAndReservation_ReservationId(AuthorType authorType, Long managerId, Long reservationId);
 }
