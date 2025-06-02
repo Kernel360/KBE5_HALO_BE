@@ -34,7 +34,7 @@ public class Notice {
         this.fileId = fileId;
     }
 
-    public void setDeleted(Boolean Deleted) {
+    public void Deleted(Boolean Deleted) {
         this.Deleted = Deleted;
     }
 }
