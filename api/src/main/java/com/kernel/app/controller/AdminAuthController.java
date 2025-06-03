@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/admins/auth")
+@RequestMapping("/api/admin/auth")
 @RequiredArgsConstructor
 public class AdminAuthController {
 

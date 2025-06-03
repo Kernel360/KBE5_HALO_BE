@@ -59,6 +59,18 @@ public class CustomLogoutFilter extends GenericFilterBean {
         expiredCookie .setPath("/");
         response.addCookie(expiredCookie );
 
+        // JSON 응답 작성
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        String responseJson = """
+        {
+          "success": true,
+          "message": "로그아웃 성공",
+          "body": null
+        }
+        """;
+        response.getWriter().write(responseJson);
+
         response.setStatus(HttpServletResponse.SC_OK);
     }
 

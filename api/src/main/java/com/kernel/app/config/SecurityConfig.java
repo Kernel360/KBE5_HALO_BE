@@ -75,7 +75,7 @@ public class SecurityConfig {
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class)
             .logout(logout -> logout
                     .logoutUrl("/api/logout")
-                    .logoutSuccessUrl("/")
+//                    .logoutSuccessUrl("/") // 권한에 따라 로그아웃 후 리다이렉트 되는 경로가 달라 프론트에서 처리
                     .deleteCookies("refresh"));
 
         return http.build();
@@ -137,14 +137,14 @@ public class SecurityConfig {
         applyCommonSecurityConfig(http);
 
         CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
-        loginFilter.setFilterProcessesUrl("/api/admins/auth/login");
+        loginFilter.setFilterProcessesUrl("/api/admin/auth/login");
 
         http
-            .securityMatcher("/api/admins/**", "/api/admins/auth/login")
+            .securityMatcher("/api/admin/**", "/api/admin/auth/login")
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/admins/**").permitAll()) // TODO 테스트용
-                   /* .requestMatchers("/api/admins/auth/login", "/api/admins/auth/signup").permitAll()
-                    .requestMatchers("/api/admins/**").hasRole(UserType.ADMIN.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+                    .requestMatchers("/api/admin/**").permitAll()) // TODO 테스트용
+                   /* .requestMatchers("/api/admin/auth/login", "/api/admin/auth/signup").permitAll()
+                    .requestMatchers("/api/admin/**").hasRole(UserType.ADMIN.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
