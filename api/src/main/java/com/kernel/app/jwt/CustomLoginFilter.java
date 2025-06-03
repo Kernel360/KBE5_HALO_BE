@@ -1,9 +1,9 @@
 package com.kernel.app.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kernel.app.dto.AdminUserDetails;
-import com.kernel.app.dto.CustomerUserDetails;
-import com.kernel.app.dto.ManagerUserDetails;
+import com.kernel.common.global.security.AdminUserDetails;
+import com.kernel.common.global.security.CustomerUserDetails;
+import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.app.entity.Refresh;
 import com.kernel.app.exception.ErrorCode;
 import com.kernel.app.exception.dto.ErrorResponse;

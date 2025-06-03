@@ -1,8 +1,8 @@
 package com.kernel.app.jwt;
 
-import com.kernel.app.dto.AdminUserDetails;
-import com.kernel.app.dto.CustomerUserDetails;
-import com.kernel.app.dto.ManagerUserDetails;
+import com.kernel.common.global.security.AdminUserDetails;
+import com.kernel.common.global.security.CustomerUserDetails;
+import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.common.admin.entity.Admin;
 import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.customer.entity.Customer;
@@ -29,6 +29,18 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // 토큰이 없는 로그인(login)과 회원가입(signup) 요청은 JWT 필터에서 제외
+        String uri = request.getRequestURI();
+        if (uri.equals("/api/customers/auth/login")
+            || uri.equals("/api/managers/auth/login")
+            || uri.equals("/api/admins/auth/login")
+            || uri.equals("/api/customers/auth/signup")
+            || uri.equals("/api/managers/auth/signup")) {
+
+            filterChain.doFilter(request, response); // JWT 검사 없이 통과
+            return;
+        }
+        
         // Bearer 접두사 제거하여 실제 토큰 추출
         String accessToken = jwtTokenProvider.resolveToken(request);
 
