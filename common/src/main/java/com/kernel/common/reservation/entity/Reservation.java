@@ -88,4 +88,10 @@ public class Reservation extends BaseEntity {
     // 예약 취소 이유
     @Column
     private String cancelReason;
+
+    // 예약 취소
+    public void cancelReservation(String cancelReason, ReservationStatus status) {
+        this.cancelReason = cancelReason;
+        this.status = status;
+    }
 }
