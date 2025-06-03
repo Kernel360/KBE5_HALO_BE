@@ -1,10 +1,10 @@
-package com.kernel.common.manager.repository;
+package com.kernel.common.reservation.repository;
 
 import com.kernel.common.customer.entity.QCustomer;
 import com.kernel.common.global.enums.AuthorType;
-import com.kernel.common.global.enums.ReservationStatus;
-import com.kernel.common.manager.dto.request.ManagerReservationSearchCondDTO;
-import com.kernel.common.manager.dto.response.ManagerReservationRspDTO;
+import com.kernel.common.reservation.enums.ReservationStatus;
+import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
 import com.kernel.common.manager.entity.QCleaningLog;
 import com.kernel.common.manager.entity.QManager;
 import com.kernel.common.reservation.entity.QReservation;

@@ -1,5 +1,6 @@
 package com.kernel.common.global.entity;
 
+import com.kernel.common.reservation.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,13 @@ public class ExtraService extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long extraServiceId;
 
+    // 예약 정보
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private Reservation reservation;
+
+
+    // 추가 서비스(서비스 카테고리)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
     private ServiceCategory serviceCategory;
