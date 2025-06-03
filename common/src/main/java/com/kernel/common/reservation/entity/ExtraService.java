@@ -1,5 +1,6 @@
-package com.kernel.common.global.entity;
+package com.kernel.common.reservation.entity;
 
+import com.kernel.common.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,13 +22,14 @@ public class ExtraService extends BaseEntity {
     private Long extraServiceId;
 
     // 추가 서비스도 서비스 카테코리에 정의되어 있어서 1:N 관계로 설정
+    // 예약 정보
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private Reservation reservation;
+
+
+    // 추가 서비스(서비스 카테고리)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
     private ServiceCategory serviceCategory;
-
-    // TODO: Reservation 엔터티 생성 후 사용할 필드
-    /*@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservation;*/
-
 }

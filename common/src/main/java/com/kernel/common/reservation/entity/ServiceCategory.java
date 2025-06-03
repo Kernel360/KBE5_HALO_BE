@@ -1,5 +1,6 @@
-package com.kernel.common.global.entity;
+package com.kernel.common.reservation.entity;
 
+import com.kernel.common.global.entity.BaseEntity;
 import com.kernel.common.admin.dto.request.AdminServiceCategoryReqDTO;
 
 import jakarta.persistence.*;

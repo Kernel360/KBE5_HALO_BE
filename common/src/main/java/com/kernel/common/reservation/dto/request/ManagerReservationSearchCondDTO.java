@@ -1,8 +1,9 @@
-package com.kernel.common.manager.dto.request;
+package com.kernel.common.reservation.dto.request;
 
-import com.kernel.common.global.enums.ReservationStatus;
-import java.time.LocalDate;
+import com.kernel.common.reservation.enums.ReservationStatus;
 import lombok.Getter;
+
+import java.time.LocalDate;
 
 @Getter
 public class ManagerReservationSearchCondDTO {

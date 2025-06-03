@@ -1,22 +1,23 @@
-package com.kernel.common.manager.service;
+package com.kernel.common.reservation.service;
 
-import com.kernel.common.global.enums.ReservationStatus;
-import com.kernel.common.manager.dto.request.ManagerReservationSearchCondDTO;
-import com.kernel.common.manager.dto.response.ManagerReservationRspDTO;
-import com.kernel.common.manager.dto.response.ManagerReservationSummaryRspDTO;
-import com.kernel.common.manager.repository.CustomManagerReservationRepository;
+import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationSummaryRspDTO;
+import com.kernel.common.reservation.enums.ReservationStatus;
+import com.kernel.common.reservation.repository.CustomManagerReservationRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

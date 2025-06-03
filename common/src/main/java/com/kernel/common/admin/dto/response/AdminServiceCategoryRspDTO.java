@@ -1,7 +1,6 @@
 package com.kernel.common.admin.dto.response;
 
-import com.kernel.common.global.entity.ServiceCategory;
-
+import com.kernel.common.reservation.entity.ServiceCategory;
 import lombok.*;
 
 @Getter

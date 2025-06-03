@@ -1,4 +1,4 @@
-package com.kernel.common.global.enums;
+package com.kernel.common.reservation.enums;
 
 import lombok.Getter;
 
@@ -6,9 +6,9 @@ import lombok.Getter;
 public enum ReservationStatus {
 
     REQUESTED("예약 요청"),
-    CONFIRMED("예약 확정"),
+    CONFIRMED("예약 완료"),
     IN_PROGRESS("예약 진행 중"),
-    COMPLETED("예약 완료"),
+    COMPLETED("방문 완료"),
     CANCELED("예약 취소"),
     REJECTED("예약 거절"),
     REFUND_PROCESSING("환불 진행중"),

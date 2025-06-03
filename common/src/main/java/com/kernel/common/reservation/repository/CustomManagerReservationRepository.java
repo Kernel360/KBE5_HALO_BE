@@ -1,7 +1,7 @@
-package com.kernel.common.manager.repository;
+package com.kernel.common.reservation.repository;
 
-import com.kernel.common.manager.dto.request.ManagerReservationSearchCondDTO;
-import com.kernel.common.manager.dto.response.ManagerReservationRspDTO;
+import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
 import com.querydsl.core.Tuple;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

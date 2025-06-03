@@ -1,10 +1,10 @@
-package com.kernel.common.manager.controller;
+package com.kernel.common.reservation.controller;
 
 import com.kernel.common.global.entity.ApiResponse;
-import com.kernel.common.manager.dto.request.ManagerReservationSearchCondDTO;
-import com.kernel.common.manager.dto.response.ManagerReservationRspDTO;
-import com.kernel.common.manager.dto.response.ManagerReservationSummaryRspDTO;
-import com.kernel.common.manager.service.ManagerReservationService;
+import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationSummaryRspDTO;
+import com.kernel.common.reservation.service.ManagerReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

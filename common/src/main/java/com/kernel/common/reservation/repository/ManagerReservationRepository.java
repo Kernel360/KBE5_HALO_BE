@@ -1,4 +1,4 @@
-package com.kernel.common.manager.repository;
+package com.kernel.common.reservation.repository;
 
 import com.kernel.common.reservation.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
