@@ -1,25 +1,21 @@
 package com.kernel.common.admin.service;
 
+import com.kernel.common.admin.dto.response.AdminManagerSummaryRspDTO;
+import com.kernel.common.admin.dto.response.AdminManagerRspDTO;
 
-
-import com.kernel.common.admin.dto.response.AdminManagerSummaryResponseDTO;
-import com.kernel.common.admin.dto.response.ManagerResponseDTO; // 추후에 ManagerResponseDTO가 정의된 위치로 변경 필요
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface AdminManagerService {
 
-    List<AdminManagerSummaryResponseDTO> getManagers(String keyword);
+    Page<AdminManagerSummaryRspDTO> getManagers(String keyword, Pageable pageable);
 
-    ManagerResponseDTO getManager(Long managerId);
+    AdminManagerRspDTO getManager(Long managerId);
 
-    List<AdminManagerSummaryResponseDTO> getApplyManagers(String keyword);
+    Page<AdminManagerSummaryRspDTO> getAppliedManagers(String keyword, Pageable pageable);
 
     void processAppliedManager(Long managerId, String status);
 
-    List<AdminManagerSummaryResponseDTO> getReportedManagers(String keyword);
-
-    ManagerResponseDTO suspendManager(Long managerId);
-
+    Page<AdminManagerSummaryRspDTO> getReportedManagers(String keyword, Pageable pageable);
 
 }

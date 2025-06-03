@@ -1,13 +1,12 @@
-package com.kernel.app.dto;
+package com.kernel.common.global.security;
 
 import com.kernel.common.admin.entity.Admin;
 import com.kernel.common.global.AuthenticatedUser;
+import java.util.ArrayList;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 @RequiredArgsConstructor
 public class AdminUserDetails implements UserDetails, AuthenticatedUser {
@@ -65,4 +64,6 @@ public class AdminUserDetails implements UserDetails, AuthenticatedUser {
     public boolean isEnabled() {
         return true;
     }
+
+    public Long getAdminId() { return admin.getAdminId(); }
 }

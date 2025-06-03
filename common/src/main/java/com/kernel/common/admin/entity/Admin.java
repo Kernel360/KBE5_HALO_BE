@@ -3,17 +3,19 @@ package com.kernel.common.admin.entity;
 import com.kernel.common.global.entity.BaseEntity;
 import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.global.enums.UserType;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "admin")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
 @SuperBuilder
+// @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) // application.yml에서 전역 설정했으므로 주석처리
 public class Admin extends BaseEntity {
 
     @Id

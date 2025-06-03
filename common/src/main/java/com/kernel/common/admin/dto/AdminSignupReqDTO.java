@@ -1,16 +1,16 @@
 package com.kernel.common.admin.dto;
 
-
 import com.kernel.common.global.enums.UserStatus;
+
+import lombok.*;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
 
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class AdminSignupReqDTO {
 

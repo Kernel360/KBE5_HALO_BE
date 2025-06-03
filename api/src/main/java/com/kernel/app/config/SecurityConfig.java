@@ -2,10 +2,14 @@ package com.kernel.app.config;
 
 import com.kernel.app.exception.handler.JwtAccessDeniedHandler;
 import com.kernel.app.exception.handler.JwtAuthenticationEntryPoint;
-import com.kernel.app.jwt.*;
-
+import com.kernel.app.jwt.CustomLoginFilter;
+import com.kernel.app.jwt.CustomLogoutFilter;
+import com.kernel.app.jwt.JwtFilter;
+import com.kernel.app.jwt.JwtProperties;
+import com.kernel.app.jwt.JwtTokenProvider;
 import com.kernel.app.repository.RefreshRepository;
-import com.kernel.common.global.enums.UserType;
+import java.util.Arrays;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -73,7 +75,7 @@ public class SecurityConfig {
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class)
             .logout(logout -> logout
                     .logoutUrl("/api/logout")
-                    .logoutSuccessUrl("/")
+//                    .logoutSuccessUrl("/") // 권한에 따라 로그아웃 후 리다이렉트 되는 경로가 달라 프론트에서 처리
                     .deleteCookies("refresh"));
 
         return http.build();
@@ -135,14 +137,14 @@ public class SecurityConfig {
         applyCommonSecurityConfig(http);
 
         CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
-        loginFilter.setFilterProcessesUrl("/api/admins/auth/login");
+        loginFilter.setFilterProcessesUrl("/api/admin/auth/login");
 
         http
-            .securityMatcher("/api/admins/**", "/api/admins/auth/login")
+            .securityMatcher("/api/admin/**", "/api/admin/auth/login")
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/admins/**").permitAll()) // TODO 테스트용
-                   /* .requestMatchers("/api/admins/auth/login", "/api/admins/auth/signup").permitAll()
-                    .requestMatchers("/api/admins/**").hasRole(UserType.ADMIN.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+                    .requestMatchers("/api/admin/**").permitAll()) // TODO 테스트용
+                   /* .requestMatchers("/api/admin/auth/login", "/api/admin/auth/signup").permitAll()
+                    .requestMatchers("/api/admin/**").hasRole(UserType.ADMIN.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
@@ -155,7 +157,7 @@ public class SecurityConfig {
     private CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+            config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173")); // 3000: React (CRA), 5173: Vite (Vue, React 지원)
             config.setAllowedMethods(Collections.singletonList("*"));
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowCredentials(true);

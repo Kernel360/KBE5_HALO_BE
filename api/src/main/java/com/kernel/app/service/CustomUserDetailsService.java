@@ -1,9 +1,9 @@
 package com.kernel.app.service;
 
 
-import com.kernel.app.dto.CustomerUserDetails;
-import com.kernel.app.dto.ManagerUserDetails;
-import com.kernel.app.dto.AdminUserDetails;
+import com.kernel.common.global.security.CustomerUserDetails;
+import com.kernel.common.global.security.ManagerUserDetails;
+import com.kernel.common.global.security.AdminUserDetails;
 import com.kernel.app.repository.AdminAuthRepository;
 import com.kernel.app.repository.CustomerAuthRepository;
 import com.kernel.app.repository.ManagerAuthRepository;

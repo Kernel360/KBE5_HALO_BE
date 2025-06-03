@@ -26,7 +26,7 @@ public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
     @Column(updatable = false)
     @CreatedBy
-    private String createdBy;
+    private Long createdBy;
 
     @Column(columnDefinition = "datetime(0)")
     @UpdateTimestamp
@@ -34,7 +34,5 @@ public class BaseEntity { // 중복되는 엔티티들 모아놓음
 
     @Column
     @LastModifiedBy
-    private String updatedBy;
-
-
+    private Long updatedBy;
 }
