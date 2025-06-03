@@ -1,11 +1,10 @@
-package com.kernel.common.reservation.service;
+package com.kernel.common.manager.service;
 
 import com.kernel.common.global.enums.AuthorType;
 import com.kernel.common.manager.dto.mapper.ManagerReviewMapper;
 import com.kernel.common.manager.dto.request.ManagerReviewReqDTO;
 import com.kernel.common.manager.dto.response.ManagerReviewRspDTO;
 import com.kernel.common.manager.repository.ManagerReviewRepository;
-import com.kernel.common.manager.service.ManagerReviewService;
 import com.kernel.common.reservation.entity.Reservation;
 import com.kernel.common.reservation.entity.Review;
 import com.kernel.common.reservation.repository.ReservationRepository;
