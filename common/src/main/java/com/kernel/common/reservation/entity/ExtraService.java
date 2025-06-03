@@ -1,6 +1,6 @@
-package com.kernel.common.global.entity;
+package com.kernel.common.reservation.entity;
 
-import com.kernel.common.reservation.entity.Reservation;
+import com.kernel.common.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

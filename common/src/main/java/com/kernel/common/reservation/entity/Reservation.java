@@ -2,7 +2,6 @@ package com.kernel.common.reservation.entity;
 
 import com.kernel.common.customer.entity.Customer;
 import com.kernel.common.global.entity.BaseEntity;
-import com.kernel.common.global.entity.ServiceCategory;
 import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.reservation.enums.ReservationStatus;
 import jakarta.persistence.*;
