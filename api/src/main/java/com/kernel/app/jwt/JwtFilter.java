@@ -29,6 +29,18 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // 토큰이 없는 로그인(login)과 회원가입(signup) 요청은 JWT 필터에서 제외
+        String uri = request.getRequestURI();
+        if (uri.equals("/api/customers/auth/login")
+            || uri.equals("/api/managers/auth/login")
+            || uri.equals("/api/admins/auth/login")
+            || uri.equals("/api/customers/auth/signup")
+            || uri.equals("/api/managers/auth/signup")) {
+
+            filterChain.doFilter(request, response); // JWT 검사 없이 통과
+            return;
+        }
+        
         // Bearer 접두사 제거하여 실제 토큰 추출
         String accessToken = jwtTokenProvider.resolveToken(request);
 
