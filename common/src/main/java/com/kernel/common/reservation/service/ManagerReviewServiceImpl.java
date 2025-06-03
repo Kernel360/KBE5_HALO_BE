@@ -1,17 +1,18 @@
-package com.kernel.common.manager.service;
+package com.kernel.common.reservation.service;
 
 import com.kernel.common.global.enums.AuthorType;
-import com.kernel.common.global.enums.ReservationStatus;
 import com.kernel.common.manager.dto.mapper.ManagerReviewMapper;
 import com.kernel.common.manager.dto.request.ManagerReviewReqDTO;
 import com.kernel.common.manager.dto.response.ManagerReviewRspDTO;
 import com.kernel.common.manager.repository.ManagerReviewRepository;
+import com.kernel.common.manager.service.ManagerReviewService;
 import com.kernel.common.reservation.entity.Reservation;
 import com.kernel.common.reservation.entity.Review;
 import com.kernel.common.reservation.repository.ReservationRepository;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor

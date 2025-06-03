@@ -1,8 +1,8 @@
-package com.kernel.common.manager.service;
+package com.kernel.common.reservation.service;
 
-import com.kernel.common.manager.dto.request.ManagerReservationSearchCondDTO;
-import com.kernel.common.manager.dto.response.ManagerReservationRspDTO;
-import com.kernel.common.manager.dto.response.ManagerReservationSummaryRspDTO;
+import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationSummaryRspDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

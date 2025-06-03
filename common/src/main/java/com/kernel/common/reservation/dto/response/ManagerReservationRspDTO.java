@@ -1,11 +1,10 @@
-package com.kernel.common.manager.dto.response;
+package com.kernel.common.reservation.dto.response;
 
-import com.kernel.common.global.enums.ReservationStatus;
-import java.time.LocalDateTime;
-import lombok.Builder;
+import com.kernel.common.reservation.enums.ReservationStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
