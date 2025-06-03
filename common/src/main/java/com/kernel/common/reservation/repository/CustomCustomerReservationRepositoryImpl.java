@@ -1,12 +1,12 @@
 package com.kernel.common.reservation.repository;
 
-import com.kernel.common.global.entity.QExtraService;
-import com.kernel.common.global.entity.QServiceCategory;
 import com.kernel.common.manager.entity.QManager;
 import com.kernel.common.reservation.dto.response.CustomerReservationDetailRspDTO;
 import com.kernel.common.reservation.dto.response.CustomerReservationRspDTO;
 import com.kernel.common.reservation.dto.response.ExtraServiceRspDTO;
+import com.kernel.common.reservation.entity.QExtraService;
 import com.kernel.common.reservation.entity.QReservation;
+import com.kernel.common.reservation.entity.QServiceCategory;
 import com.kernel.common.reservation.enums.ReservationStatus;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;

@@ -2,8 +2,7 @@ package com.kernel.common.admin.dto.mapper;
 
 import com.kernel.common.admin.dto.request.AdminServiceCategoryReqDTO;
 import com.kernel.common.admin.dto.response.AdminServiceCategoryRspDTO;
-import com.kernel.common.global.entity.ServiceCategory;
-
+import com.kernel.common.reservation.entity.ServiceCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
