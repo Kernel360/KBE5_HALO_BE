@@ -33,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         if (uri.equals("/api/customers/auth/login")
             || uri.equals("/api/managers/auth/login")
-            || uri.equals("/api/admins/auth/login")
+            || uri.equals("/api/admin/auth/login")
             || uri.equals("/api/customers/auth/signup")
             || uri.equals("/api/managers/auth/signup")) {
 
