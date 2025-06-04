@@ -31,7 +31,7 @@ public class JwtTokenProvider {
     }
 
     // token 생성
-    public String createToken(String category, String phone, String userId, String role, Long expiredMs) {
+    public String createToken(String category, String phone, Long userId, String role, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category)
@@ -45,8 +45,8 @@ public class JwtTokenProvider {
     }
 
     // user 검증
-    public String getUserId(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", String.class);
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
     }
 
     public String getUsername(String token){

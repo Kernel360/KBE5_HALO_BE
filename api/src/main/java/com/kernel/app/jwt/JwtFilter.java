@@ -81,7 +81,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // username, role 값을 획득
         String phone = jwtTokenProvider.getUsername(accessToken);
         String role = jwtTokenProvider.getRole(accessToken);
-        String userId = jwtTokenProvider.getUserId(accessToken);
+        Long userId = jwtTokenProvider.getUserId(accessToken);
 
         // 역할에 따라 적절한 UserDetails 객체 생성
         UserDetails userDetails = createUserDetailsFromToken(phone, role, userId);
@@ -95,27 +95,27 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
 
     }
-    private UserDetails createUserDetailsFromToken(String phone, String role, String userId) {
+    private UserDetails createUserDetailsFromToken(String phone, String role, Long userId) {
         // 역할에 따라 적절한 UserDetails 생성
         // 실제로는 최소한의 정보만으로 객체를 생성
         switch (role) {
             case "ROLE_CUSTOMER":
                 Customer customer = Customer.builder()
-                        .customerId(Long.parseLong(userId))
+                        .customerId(userId)
                         .phone(phone)
                         .build();
                 return new CustomerUserDetails(customer);
 
             case "ROLE_MANAGER":
                 Manager manager = Manager.builder()
-                        .managerId(Long.parseLong(userId))
+                        .managerId(userId)
                         .phone(phone)
                         .build();
                 return new ManagerUserDetails(manager);
 
             case "ROLE_ADMIN":
                 Admin admin = Admin.builder()
-                        .adminId(Long.parseLong(userId))
+                        .adminId(userId)
                         .phone(phone)
                         .build();
                 return new AdminUserDetails(admin);

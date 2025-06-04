@@ -1,6 +1,7 @@
 package com.kernel.common.manager.controller;
 
 
+import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
 import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.common.manager.dto.request.ManagerInquiryCreateReqDTO;
@@ -41,12 +42,12 @@ public class ManagerInquiryController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<ManagerInquirySummaryRspDTO>>> searchManagerInquiries(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @ModelAttribute ManagerInquirySearchCondDTO searchCondDTO,
         Pageable pageable
     ) {
         Page<ManagerInquirySummaryRspDTO> summaryRspDTOPage
-            = managerInquiryService.searchManagerinquiriesWithPaging(manager.getManagerId(), searchCondDTO, pageable);
+            = managerInquiryService.searchManagerinquiriesWithPaging(manager.getUserId(), searchCondDTO, pageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 상담 게시글 목록 조회 성공", summaryRspDTOPage));
     }
 
@@ -58,10 +59,10 @@ public class ManagerInquiryController {
      */
     @GetMapping("/{inquiry-id}")
     public ResponseEntity<ApiResponse<ManagerInquiryRspDTO>> getManagerInquiry(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("inquiry-id") Long inquiryId
     ) {
-        ManagerInquiryRspDTO rspDTO = managerInquiryService.getManagerInquiry(manager.getManagerId(), inquiryId);
+        ManagerInquiryRspDTO rspDTO = managerInquiryService.getManagerInquiry(manager.getUserId(), inquiryId);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 문의사항 상세 조회 성공", rspDTO));
     }
 
@@ -73,10 +74,10 @@ public class ManagerInquiryController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse<ManagerInquirySummaryRspDTO>> createManagerInquiry(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @Valid @RequestBody ManagerInquiryCreateReqDTO requestDTO
     ) {
-        ManagerInquirySummaryRspDTO summaryRspDTO = managerInquiryService.createManagerInquiry(manager.getManagerId(), requestDTO);
+        ManagerInquirySummaryRspDTO summaryRspDTO = managerInquiryService.createManagerInquiry(manager.getUserId(), requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 문의사항 등록 성공", summaryRspDTO));
     }
 
@@ -89,11 +90,11 @@ public class ManagerInquiryController {
      */
     @PatchMapping("/{inquiry-id}")
     public ResponseEntity<ApiResponse<ManagerInquirySummaryRspDTO>> updateManagerInquiry(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("inquiry-id") Long inquiryId,
         @Valid @RequestBody ManagerInquiryUpdateReqDTO requestDTO
     ) {
-        ManagerInquirySummaryRspDTO summaryRspDTO = managerInquiryService.updateManagerInquiry(manager.getManagerId(), inquiryId, requestDTO);
+        ManagerInquirySummaryRspDTO summaryRspDTO = managerInquiryService.updateManagerInquiry(manager.getUserId(), inquiryId, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 문의사항 수정 성공", summaryRspDTO));
     }
 
@@ -105,10 +106,10 @@ public class ManagerInquiryController {
      */
     @DeleteMapping("/{inquiry-id}")
     public ResponseEntity<ApiResponse<ManagerInquirySummaryRspDTO>> updateManagerInquiry(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("inquiry-id") Long inquiryId
     ) {
-        managerInquiryService.deleteManagerInquiry(manager.getManagerId(), inquiryId);
+        managerInquiryService.deleteManagerInquiry(manager.getUserId(), inquiryId);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 문의사항 삭제 성공", null));
     }
 }
