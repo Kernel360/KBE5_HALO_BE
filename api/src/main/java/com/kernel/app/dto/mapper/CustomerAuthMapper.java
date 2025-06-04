@@ -14,18 +14,18 @@ public class CustomerAuthMapper {
    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     // CustomerSignupReqDTO -> Customer (회원가입)
-    public Customer toEntity(CustomerSignupReqDTO dto){
+    public Customer toEntity(CustomerSignupReqDTO signupReqDTO){
         return Customer.builder()
-                .email(dto.getEmail())
-                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-                .userName(dto.getUserName())
-                .birthDate(dto.getBirthDate())
-                .gender(dto.getGender())
-                .phone(dto.getPhone())
-                .zipcode(dto.getZipcode())
-                .roadAddress(dto.getRoadAddress())
-                .detailAddress(dto.getDetailAddress())
-                .status(dto.getStatus())
+                .email(signupReqDTO.getEmail())
+                .password(bCryptPasswordEncoder.encode(signupReqDTO.getPassword()))
+                .userName(signupReqDTO.getUserName())
+                .birthDate(signupReqDTO.getBirthDate())
+                .gender(signupReqDTO.getGender())
+                .phone(signupReqDTO.getPhone())
+                .zipcode(signupReqDTO.getZipcode())
+                .roadAddress(signupReqDTO.getRoadAddress())
+                .detailAddress(signupReqDTO.getDetailAddress())
+                .status(signupReqDTO.getStatus())
                 .build();
     }
 

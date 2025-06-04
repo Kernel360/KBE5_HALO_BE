@@ -1,5 +1,6 @@
 package com.kernel.app.service;
 
+import com.kernel.common.customer.dto.request.CustomerFindAccountReqDTO;
 import com.kernel.common.customer.dto.request.CustomerInfoUpdateReqDTO;
 import com.kernel.common.customer.dto.request.CustomerPasswordResetReqDTO;
 import com.kernel.common.customer.dto.request.CustomerSignupReqDTO;
@@ -23,4 +24,9 @@ public interface CustomerAuthService {
      // 수요자 회원 탈퇴
      void deleteCustomer(Long customerId, String password);
 
+     // 수요자 아이디 찾기
+     Boolean findCustomerId(CustomerFindAccountReqDTO findIdReqDTO);
+
+     // 수요자 비밀번호 찾기
+     String findCustomerPassword(CustomerFindAccountReqDTO findAccountReqDTO);
 }

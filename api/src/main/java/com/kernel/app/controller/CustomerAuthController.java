@@ -2,6 +2,7 @@ package com.kernel.app.controller;
 
 
 import com.kernel.app.service.CustomerAuthService;
+import com.kernel.common.customer.dto.request.CustomerFindAccountReqDTO;
 import com.kernel.common.customer.dto.request.CustomerInfoUpdateReqDTO;
 import com.kernel.common.customer.dto.request.CustomerPasswordResetReqDTO;
 import com.kernel.common.customer.dto.request.CustomerSignupReqDTO;
@@ -95,5 +96,30 @@ public class CustomerAuthController {
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 회원 탈퇴 성공", null));
     }
 
+    /**
+     * 수요자 아이디 찾기
+     * @param findAccountReqDTO 아이디 찾기 요청 DTO
+     * @return 수요자 계정 존재 여부
+     */
+    @PostMapping("/recovery-id")
+    public ResponseEntity<ApiResponse<Boolean>> findCustomerId(
+            @RequestBody CustomerFindAccountReqDTO findAccountReqDTO
+    ){
+        Boolean existsCustomer = customerAuthService.findCustomerId(findAccountReqDTO);
 
+        return ResponseEntity.ok(new ApiResponse<>(true, "수요자 아이디 찾기 성공", existsCustomer));
+    }
+
+    /**
+     * 수요자 비밀번호 찾기
+     * @param findAccountReqDTO 아이디 찾기 요청 DTO
+     * @return 랜덤 비밀번호
+     */
+    @PostMapping("/recovery-pwd")
+    public ResponseEntity<ApiResponse<String>> findCustomerPassword(
+            @RequestBody CustomerFindAccountReqDTO findAccountReqDTO
+    ) {
+        String randomPassword = customerAuthService.findCustomerPassword(findAccountReqDTO);
+        return ResponseEntity.ok((new ApiResponse<>(true, "수요자 비밀번호 찾기 성공", randomPassword)));
+    }
 }
