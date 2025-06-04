@@ -4,9 +4,11 @@ import com.kernel.common.global.enums.ReplyStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
+@Setter
 public class ManagerInquirySearchCondDTO {
 
     // 작성일시 시작일

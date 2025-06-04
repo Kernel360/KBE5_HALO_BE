@@ -40,7 +40,7 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
                     notDeleted(),                   // 삭제되지 않은 게시글
                     createdAtGoe(fromCreatedAt),    // 작성일 ≥ 시작일
                     createdAtLoe(toCreatedAt),      // 작성일 ≤ 종료일
-                    replyStatusCond(replyStatus),   // 답변 상태 필터
+                    replyStatusCond(replyStatus, managerInquiry),   // 답변 상태 필터
                     titleContains(titleKeyword),    // 제목 검색어 포함
                     contentContains(contentKeyword) // 내용 검색어 포함
                 )
@@ -50,7 +50,7 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
         // 페이지 결과 조회
         // managerReply에서는 inquiryId만 조회 (= 답변 여부 체크)
         List<Tuple> results = jpaQueryFactory
-            .select(managerInquiry,managerReply.inquiryId)
+            .select(managerInquiry, managerReply.answerId)
             .from(managerInquiry)
             .leftJoin(managerInquiry.managerReply, managerReply)
             .where(
@@ -58,7 +58,7 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
                 notDeleted(),                   // 삭제되지 않은 게시글
                 createdAtGoe(fromCreatedAt),    // 작성일 >= 시작일
                 createdAtLoe(toCreatedAt),      // 작성일 <= 종료일
-                replyStatusCond(replyStatus),   // 답변 상태 필터
+                replyStatusCond(replyStatus, managerInquiry),   // 답변 상태 필터
                 titleContains(titleKeyword),    // 제목 검색어 포함
                 contentContains(contentKeyword) // 내용 검색어 포함
             )
@@ -91,12 +91,11 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
     }
 
     // 답변 상태 필터
-    private BooleanExpression replyStatusCond(ReplyStatus status) {
-        QManagerReply reply = QManagerReply.managerReply;
+    private BooleanExpression replyStatusCond(ReplyStatus status, QManagerInquiry managerInquiry) {
         if (status == null) return null;
         return switch (status) {
-            case ANSWERED -> reply.inquiryId.isNotNull();
-            case PENDING -> reply.inquiryId.isNull();
+            case ANSWERED -> managerInquiry.managerReply.isNotNull(); // 답변이 존재함
+            case PENDING -> managerInquiry.managerReply.isNull();     // 답변이 없음
         };
     }
 

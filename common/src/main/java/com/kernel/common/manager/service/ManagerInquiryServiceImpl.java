@@ -65,7 +65,7 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
             if (inquiry == null) return null;
 
             // 답변 게시글 ID가 존재하면 답변여부 true
-            boolean isReplied = tuple.get(qManagerReply.inquiryId) != null;
+            boolean isReplied = tuple.get(qManagerReply.answerId) != null;
 
             return ManagerInquirySummaryRspDTO.builder()
                 .inquiryId(inquiry.getInquiryId())
@@ -92,6 +92,7 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
 
         // Entity 조회 (게시글ID, 작성자ID(=매니저ID)로 조회)
         ManagerInquiry foundInquiry = managerInquiryRepository.findByInquiryIdAndAuthorId(inquiryId, authorId);
+
         if (foundInquiry == null) {
             throw new NoSuchElementException("게시글이 존재하지 않거나 권한이 없습니다.");
         }
@@ -128,15 +129,16 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
     /**
      * 매니저 상담 게시글 수정
      * @param authorId 작성자ID(=매니저ID)
+     * @param inquiryId 게시글ID
      * @param requestDTO 게시글 수정 요청 데이터
      * @return 수정된 게시글 정보를 담은 응답
      */
     @Override
     @Transactional
-    public ManagerInquirySummaryRspDTO updateManagerInquiry(Long authorId, ManagerInquiryUpdateReqDTO requestDTO) {
+    public ManagerInquirySummaryRspDTO updateManagerInquiry(Long authorId, Long inquiryId, ManagerInquiryUpdateReqDTO requestDTO) {
 
             // Entity 조회 (게시글ID, 작성자ID(=매니저ID)로 조회)
-            ManagerInquiry foundInquiry = managerInquiryRepository.findByInquiryIdAndAuthorId(requestDTO.getInquiryId(), authorId);
+            ManagerInquiry foundInquiry = managerInquiryRepository.findByInquiryIdAndAuthorId(inquiryId, authorId);
             if (foundInquiry == null) {
                 throw new NoSuchElementException("게시글이 존재하지 않거나 권한이 없습니다.");
             }
@@ -152,7 +154,7 @@ public class ManagerInquiryServiceImpl implements ManagerInquiryService {
             }
 
             // 매니저 상담 게시글 수정
-            foundInquiry.update(requestDTO.getTitle(), requestDTO.getContent());
+            foundInquiry.update(requestDTO.getTitle(), requestDTO.getContent(), requestDTO.getFileId());
 
             // Entity -> SummaryResponseDTO 후, return
             return managerInquiryMapper.toSummaryResponseDTO(foundInquiry);
