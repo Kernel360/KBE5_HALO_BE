@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class CustomerInquiryRepositoryImpl implements CustomerInquiryRepositoryCustom{
+public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquiryRepository {
 
     private final JPAQueryFactory queryFactory;
     private final QCustomerInquiry inquiry = QCustomerInquiry.customerInquiry;

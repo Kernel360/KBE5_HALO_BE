@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface CustomerInquiryRepository extends JpaRepository<CustomerInquiry, Long>, CustomerInquiryRepositoryCustom {
+public interface CustomerInquiryRepository extends JpaRepository<CustomerInquiry, Long>, CustomCustomerInquiryRepository {
 
     // 문의사항 조회(where inquiry and authorId)
     Optional<CustomerInquiry> findByInquiryIdAndAuthorId(Long inquiryId, Long customerId);
