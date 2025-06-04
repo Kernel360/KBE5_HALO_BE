@@ -1,7 +1,6 @@
 package com.kernel.common.admin.dto.response;
 
-import com.kernel.common.admin.entity.Notice;
-import com.kernel.common.admin.entity.NoticeType;
+import com.kernel.common.global.enums.NoticeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

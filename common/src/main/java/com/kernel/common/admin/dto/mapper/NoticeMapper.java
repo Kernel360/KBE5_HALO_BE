@@ -1,7 +1,7 @@
 package com.kernel.common.admin.dto.mapper;
 
 import com.kernel.common.admin.dto.response.NoticeResDto;
-import com.kernel.common.admin.entity.Notice;
+import com.kernel.common.global.entity.Notice;
 
 public class NoticeMapper {
     public static NoticeResDto toDto(Notice notice) {

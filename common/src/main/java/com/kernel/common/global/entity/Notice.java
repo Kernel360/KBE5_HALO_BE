@@ -1,7 +1,7 @@
-package com.kernel.common.admin.entity;
+package com.kernel.common.global.entity;
 
+import com.kernel.common.global.enums.NoticeType;
 import jakarta.persistence.*;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

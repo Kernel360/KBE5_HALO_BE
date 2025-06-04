@@ -1,4 +1,4 @@
-package com.kernel.common.admin.repository;
+package com.kernel.common.repository;
 
 import com.kernel.common.global.entity.Notice;
 import com.kernel.common.global.enums.NoticeType;
