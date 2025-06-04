@@ -31,8 +31,8 @@ public class ManagerUserDetails implements UserDetails, AuthenticatedUser {
     }
 
     @Override
-    public String getUserId() {
-        return manager.getManagerId().toString();
+    public Long getUserId() {
+        return manager.getManagerId();
     }
 
     @Override

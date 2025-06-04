@@ -41,8 +41,8 @@ public class AdminUserDetails implements UserDetails, AuthenticatedUser {
     }
 
     @Override
-    public String getUserId() {
-        return admin.getAdminId().toString();
+    public Long getUserId() {
+        return admin.getAdminId();
     }
 
     @Override

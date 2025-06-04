@@ -1,5 +1,6 @@
 package com.kernel.common.manager.controller;
 
+import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
 import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.common.manager.dto.request.ManagerReviewReqDTO;
@@ -31,11 +32,11 @@ public class ManagerReviewController {
      */
     @PostMapping("/{reservation-id}")
     public ResponseEntity<ApiResponse<ManagerReviewRspDTO>> createManagerReview(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("reservation-id") Long reservationId,
         @Valid @RequestBody ManagerReviewReqDTO requestDTO
     ) {
-        ManagerReviewRspDTO responseDTO = managerReviewService.createManagerReview(manager.getManagerId(), reservationId, requestDTO);
+        ManagerReviewRspDTO responseDTO = managerReviewService.createManagerReview(manager.getUserId(), reservationId, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 리뷰 등록 성공", responseDTO));
     }
 }

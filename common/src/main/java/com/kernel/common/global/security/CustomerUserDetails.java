@@ -42,8 +42,8 @@ public class CustomerUserDetails implements UserDetails, AuthenticatedUser {
     }
 
     @Override
-    public String getUserId() {
-        return customer.getCustomerId().toString();
+    public Long getUserId() {
+        return customer.getCustomerId();
     }
 
     @Override
@@ -67,6 +67,4 @@ public class CustomerUserDetails implements UserDetails, AuthenticatedUser {
     }
 
     public String getName() { return customer.getUserName(); }
-
-    public Long getCustomerId() { return customer.getCustomerId(); }
 }

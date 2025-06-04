@@ -6,6 +6,6 @@ import java.util.Collection;
 
 public interface AuthenticatedUser {
     String getUsername();
-    String getUserId();
+    Long getUserId();
     Collection<? extends GrantedAuthority> getAuthorities();
 }

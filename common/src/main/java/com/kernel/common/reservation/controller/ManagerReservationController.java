@@ -1,5 +1,6 @@
 package com.kernel.common.reservation.controller;
 
+import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
 import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
@@ -33,12 +34,12 @@ public class ManagerReservationController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<ManagerReservationSummaryRspDTO>>> searchManagerReservations(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @ModelAttribute ManagerReservationSearchCondDTO searchCondDTO,
         Pageable pageable
     ) {
         Page<ManagerReservationSummaryRspDTO> responseDTOPage
-            = reservationService.searchManagerReservationsWithPaging(manager.getManagerId(), searchCondDTO, pageable);
+            = reservationService.searchManagerReservationsWithPaging(manager.getUserId(), searchCondDTO, pageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 예약 목록 조회 성공", responseDTOPage));
     }
 
@@ -50,10 +51,10 @@ public class ManagerReservationController {
      */
     @GetMapping("/{reservation-id}")
     public ResponseEntity<ApiResponse<ManagerReservationRspDTO>> getManagerReservation(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("reservation-id") Long reservationId
     ) {
-        ManagerReservationRspDTO responseDTO = reservationService.getManagerReservation(manager.getManagerId(), reservationId);
+        ManagerReservationRspDTO responseDTO = reservationService.getManagerReservation(manager.getUserId(), reservationId);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 예약 상세 조회 성공", responseDTO));
     }
 }

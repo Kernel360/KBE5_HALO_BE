@@ -45,7 +45,7 @@ public class ReissueController {
 
         String phone = jwtTokenProvider.getUsername(refreshToken);
         String role = jwtTokenProvider.getRole(refreshToken);
-        String userId = jwtTokenProvider.getUserId(refreshToken);
+        Long userId = jwtTokenProvider.getUserId(refreshToken);
 
         // refresh 토큰 재발급
         String newAccessToken = jwtTokenProvider.createToken("access", phone, userId, role, jwtProperties.accessTokenValiditySeconds());

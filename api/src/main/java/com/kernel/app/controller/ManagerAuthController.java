@@ -1,6 +1,7 @@
 package com.kernel.app.controller;
 
 import com.kernel.app.service.ManagerAuthService;
+import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
 import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.common.manager.dto.request.ManagerSignupReqDTO;
@@ -43,9 +44,9 @@ public class ManagerAuthController {
      */
     @GetMapping("/my")
     public ResponseEntity<ApiResponse<ManagerInfoRspDTO>> getManager(
-        @AuthenticationPrincipal ManagerUserDetails manager
+        @AuthenticationPrincipal AuthenticatedUser manager
     ) {
-        ManagerInfoRspDTO responseDTO = managerAuthService.getManager(manager.getManagerId());
+        ManagerInfoRspDTO responseDTO = managerAuthService.getManager(manager.getUserId());
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 정보 조회 성공", responseDTO));
     }
 
@@ -57,10 +58,10 @@ public class ManagerAuthController {
      */
     @PatchMapping("/my")
     public ResponseEntity<ApiResponse<Void>> updateManager(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @Valid @RequestBody ManagerUpdateReqDTO updateReqDTO
     ) {
-        managerAuthService.updateManager(manager.getManagerId(), updateReqDTO);
+        managerAuthService.updateManager(manager.getUserId(), updateReqDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 정보 수정 성공", null));
     }
 
@@ -72,10 +73,10 @@ public class ManagerAuthController {
      */
     @PatchMapping("/my/request-termination")
     public ResponseEntity<ApiResponse<Void>> requestTermination(
-        @AuthenticationPrincipal ManagerUserDetails manager,
+        @AuthenticationPrincipal AuthenticatedUser manager,
         @Valid @RequestBody ManagerTerminationReqDTO terminationReqDTO
     ) {
-        managerAuthService.requestManagerTermination(manager.getManagerId(), terminationReqDTO);
+        managerAuthService.requestManagerTermination(manager.getUserId(), terminationReqDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 계약 해지 요청 성공", null));
     }
 }

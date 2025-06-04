@@ -74,7 +74,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String phone;
         String role;
-        String userId;
+        Long userId;
         String name;
 
         // role 권한에서 추출
