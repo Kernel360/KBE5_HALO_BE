@@ -14,14 +14,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ManagerInquiryUpdateReqDTO {
 
-    // 매니저 게시글ID
-    @NotNull
-    private Long inquiryId;
-
-    // 작성자ID(= 매니저ID)
-    @NotNull
-    private Long authorId;
-
     // 제목
     @NotBlank(message = "제목은 필수입니다.")
     @Size(max = 50, message = "제목은 최대 50자까지 입력할 수 있습니다")
@@ -33,6 +25,5 @@ public class ManagerInquiryUpdateReqDTO {
     private String content;
 
     // 첨부파일
-    // TODO: 첨부파일 추후 작업 예정
-//    private Long fileId;
+    private Long fileId;
 }

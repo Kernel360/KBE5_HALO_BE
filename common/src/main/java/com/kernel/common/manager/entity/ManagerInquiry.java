@@ -40,24 +40,21 @@ public class ManagerInquiry extends BaseEntity {
     private String content;
 
     // 첨부파일
-    // TODO: 첨부파일 추후 작업 예정
-//    @Column
-//    private Long fileId;
+    @Column
+    private Long fileId;
 
     // 삭제여부
     @Column(nullable = false)
     @Builder.Default
     private Boolean isDeleted = false;
 
-    public void update(String title, String content) {
+    public void update(String title, String content, Long fileId) {
         this.title = title;
         this.content = content;
-        // TODO: 첨부파일 추후 작업 예정
-//        this.fileId = fileId;
+        this.fileId = fileId;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inquiry_id", referencedColumnName = "inquiry_id", insertable = false, updatable = false)
+    @OneToOne(mappedBy = "managerInquiry", fetch = FetchType.LAZY)
     private ManagerReply managerReply;
 
     public void delete() {

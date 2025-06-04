@@ -24,17 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class CleaningLogController {
 
     private final CleaningLogService cleaningLogService;
-
+    
     /**
-     * 체크인
-     * @param reservationId
-     * @param requestDTO
+     * 체크인 API
+     * @param manager 매니저
+     * @param reservationId 예약ID
+     * @param requestDTO 체크인 요청 정보
      * @return 체크인 정보를 담은 응답
      */
-    @PostMapping("/{reservation_id}/check-in")
+    @PostMapping("/{reservation-id}/check-in")
     public ResponseEntity<ApiResponse<CleaningLogCheckInRspDTO>> checkIn(
         @AuthenticationPrincipal ManagerUserDetails manager,
-        @PathVariable("reservation_id") Long reservationId,
+        @PathVariable("reservation-id") Long reservationId,
         @Valid @RequestBody CleaningLogCheckInReqDTO requestDTO
     ) {
         CleaningLogCheckInRspDTO responseDTO = cleaningLogService.checkIn(manager.getManagerId(), reservationId, requestDTO);
@@ -42,15 +43,22 @@ public class CleaningLogController {
     }
 
     /**
-     * 체크아웃
+     * 체크아웃 API
      * @param reservationId
      * @param requestDTO
      * @return 체크아웃 정보를 담은 응답
      */
-    @PostMapping("/{reservation_id}/check-out")
+    /**
+     * 체크아웃
+     * @param manager 매니저
+     * @param reservationId 예약ID
+     * @param requestDTO 체크아웃 요청 정보
+     * @return
+     */
+    @PostMapping("/{reservation-id}/check-out")
     public ResponseEntity<ApiResponse<CleaningLogCheckOutRspDTO>> checkOut(
         @AuthenticationPrincipal ManagerUserDetails manager,
-        @PathVariable("reservation_id") Long reservationId,
+        @PathVariable("reservation-id") Long reservationId,
         @Valid @RequestBody CleaningLogCheckOutReqDTO requestDTO
     ) {
         CleaningLogCheckOutRspDTO responseDTO = cleaningLogService.checkOut(manager.getManagerId(), reservationId, requestDTO);

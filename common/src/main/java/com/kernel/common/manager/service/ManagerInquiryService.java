@@ -38,10 +38,11 @@ public interface ManagerInquiryService {
     /**
      * 매니저 상담 게시글 수정
      * @param authorId 작성자ID(=매니저ID)
+     * @param inquiryId 게시글ID
      * @param requestDTO 게시글 수정 요청 데이터
      * @return 수정된 게시글 정보를 담은 응답
      */
-    public ManagerInquirySummaryRspDTO updateManagerInquiry(Long authorId, ManagerInquiryUpdateReqDTO requestDTO);
+    public ManagerInquirySummaryRspDTO updateManagerInquiry(Long authorId, Long inquiryId, ManagerInquiryUpdateReqDTO requestDTO);
 
     /**
      * 매니저 상담 게시글 삭제

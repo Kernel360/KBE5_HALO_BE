@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.convert.Jsr310Converters.LocalDateTimeToInstantConverter;
 
 @Getter
 @SuperBuilder
@@ -26,12 +27,23 @@ public class ManagerInquiryRspDTO {
     private String content;
 
     // 첨부파일
-    // TODO: 첨부파일 추후 작업 예정
-//    private Long fileId;
+    private Long fileId;
 
     // 작성일시(= 생성일시)
     private LocalDateTime createdAt;
 
     // 답변
     private ManagerReply managerReply;
+
+    // 답변ID
+    private Long answerId;
+
+    // 답변내용
+    private String replyContent;
+
+    // 답변첨부파일ID
+    private Long replyFileId;
+
+    // 답변일시
+    private LocalDateTime replyCreatedAt;
 }
