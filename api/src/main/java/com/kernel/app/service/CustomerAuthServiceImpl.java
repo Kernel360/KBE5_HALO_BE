@@ -3,6 +3,7 @@ package com.kernel.app.service;
 import com.kernel.app.dto.mapper.CustomerAuthMapper;
 import com.kernel.app.exception.custom.DuplicateUserException;
 import com.kernel.app.repository.CustomerAuthRepository;
+import com.kernel.common.customer.dto.request.CustomerFindAccountReqDTO;
 import com.kernel.common.customer.dto.request.CustomerInfoUpdateReqDTO;
 import com.kernel.common.customer.dto.request.CustomerPasswordResetReqDTO;
 import com.kernel.common.customer.dto.request.CustomerSignupReqDTO;
@@ -142,6 +143,52 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
 
         // 삭제
         foundCustomer.delete();
+    }
+
+    /**
+     * 수요자 아이디 찾기
+     * @param findAccountReqDTO 아이디 찾기 요청 DTO
+     * @return 수요자 계정 존재 여부
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean findCustomerId(CustomerFindAccountReqDTO findAccountReqDTO) {
+
+        // 수요자 존재 여부 확인
+        return authRepository.existsByPhoneAndUserNameAndBirthDate(
+                                findAccountReqDTO.getPhone(),         // 핸드폰번호
+                                findAccountReqDTO.getUserName(),      // 사용자 이름
+                                findAccountReqDTO.getBirthDate()      // 생년월일
+                              );
+    }
+
+    /**
+     * 수요자 비밀번호 찾기
+     * @param findAccountReqDTO 비밀번호 찾기 요청 DTO
+     * @return 랜덤 비밀번호
+     */
+    @Override
+    @Transactional
+    public String findCustomerPassword(CustomerFindAccountReqDTO findAccountReqDTO) {
+
+        // 수요자 조회
+        Customer findCustomer = authRepository.findByPhoneAndUserNameAndBirthDate(
+                                                findAccountReqDTO.getPhone(),         // 핸드폰번호
+                                                findAccountReqDTO.getUserName(),      // 사용자 이름
+                                                findAccountReqDTO.getBirthDate()      // 생년월일
+                                ).orElseThrow(()-> new NoSuchElementException("존재하지 않는 사용자입니다."));
+
+        // 랜덤 비밀번호 생성
+        // TODO 종은님이 작성하신 랜덤비밀번호 사용할 예정
+        String randomPassword = "test";
+
+        // 비밀번호 암호화
+        String afterRandomPassword = bCryptPasswordEncoder.encode(randomPassword);
+
+        // 계정 비밀번호 재설정
+        findCustomer.resetPassword(afterRandomPassword);
+
+        return randomPassword;
     }
 
     /**
