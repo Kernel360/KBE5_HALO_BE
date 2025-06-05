@@ -3,15 +3,19 @@ package com.kernel.common.manager.service;
 import com.kernel.common.global.enums.AuthorType;
 import com.kernel.common.manager.dto.mapper.ManagerReviewMapper;
 import com.kernel.common.manager.dto.request.ManagerReviewReqDTO;
+import com.kernel.common.manager.dto.request.ManagerReviewSearchCondDTO;
 import com.kernel.common.manager.dto.response.ManagerReviewRspDTO;
+import com.kernel.common.manager.dto.response.ManagerReviewSummaryRspDTO;
 import com.kernel.common.manager.repository.ManagerReviewRepository;
 import com.kernel.common.reservation.entity.Reservation;
 import com.kernel.common.reservation.entity.Review;
 import com.kernel.common.reservation.repository.ReservationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.NoSuchElementException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,34 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
     private final ReservationRepository reservationRepository;
     private final ManagerReviewMapper managerReviewMapper;
 
+    /**
+     * 매니저 리뷰 목록 조회 (검색 조건 및 페이징 처리)
+     * @param managerId 매니저ID
+     * @param searchCondDTO 검색조건DTO
+     * @param pageable 페이징
+     * @return 조건에 맞는 리뷰 정보를 담은 Page 객체
+     */
+    @Override
+    public Page<ManagerReviewSummaryRspDTO> searchManagerReviewsWithPaging(
+        Long managerId,
+        ManagerReviewSearchCondDTO searchCondDTO,
+        Pageable pageable
+    ) {
+
+        // 조건 및 페이징 포함된 매니저 리뷰 목록 조회
+        Page<ManagerReviewSummaryRspDTO> searchedReviewsPage = managerReviewRepository.searchManagerReviewWithPaging(
+            managerId,
+            searchCondDTO.getFromDateTime(),
+            searchCondDTO.getToDateTime(),
+            searchCondDTO.getRatingOption(),
+            searchCondDTO.getCustomerNameKeyword(),
+            searchCondDTO.getContentKeyword(),
+            pageable
+        );
+
+        // return
+        return new PageImpl<>(searchedReviewsPage.getContent(), pageable, searchedReviewsPage.getTotalElements());
+    }
 
     /**
      * 매니저 리뷰 등록
