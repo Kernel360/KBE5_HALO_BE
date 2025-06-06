@@ -1,6 +1,7 @@
 package com.kernel.common.global.security;
 
 import com.kernel.common.global.AuthenticatedUser;
+import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.manager.entity.Manager;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,5 +68,5 @@ public class ManagerUserDetails implements UserDetails, AuthenticatedUser {
 
     public String getName() { return manager.getUserName(); }
 
-    public Long getManagerId() { return manager.getManagerId(); }
+    public UserStatus getStatus() { return manager.getStatus(); }
 }
