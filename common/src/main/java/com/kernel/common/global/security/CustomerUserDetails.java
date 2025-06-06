@@ -2,6 +2,7 @@ package com.kernel.common.global.security;
 
 import com.kernel.common.customer.entity.Customer;
 import com.kernel.common.global.AuthenticatedUser;
+import com.kernel.common.global.enums.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,4 +68,6 @@ public class CustomerUserDetails implements UserDetails, AuthenticatedUser {
     }
 
     public String getName() { return customer.getUserName(); }
+
+    public UserStatus getStatus() { return customer.getStatus(); }
 }

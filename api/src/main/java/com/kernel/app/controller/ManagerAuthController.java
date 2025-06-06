@@ -3,7 +3,7 @@ package com.kernel.app.controller;
 import com.kernel.app.service.ManagerAuthService;
 import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
-import com.kernel.common.global.security.ManagerUserDetails;
+import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.manager.dto.request.ManagerSignupReqDTO;
 import com.kernel.common.manager.dto.request.ManagerTerminationReqDTO;
 import com.kernel.common.manager.dto.request.ManagerUpdateReqDTO;
@@ -11,6 +11,7 @@ import com.kernel.common.manager.dto.response.ManagerInfoRspDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -46,6 +47,15 @@ public class ManagerAuthController {
     public ResponseEntity<ApiResponse<ManagerInfoRspDTO>> getManager(
         @AuthenticationPrincipal AuthenticatedUser manager
     ) {
+        if (   !UserStatus.ACTIVE.equals(manager.getStatus())               // 활성
+            || !UserStatus.PENDING.equals(manager.getStatus())              // 대기
+            || !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
+            || !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
+        ) {
+            throw new AccessDeniedException(
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
+            );
+        }
         ManagerInfoRspDTO responseDTO = managerAuthService.getManager(manager.getUserId());
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 정보 조회 성공", responseDTO));
     }
@@ -61,6 +71,13 @@ public class ManagerAuthController {
         @AuthenticationPrincipal AuthenticatedUser manager,
         @Valid @RequestBody ManagerUpdateReqDTO updateReqDTO
     ) {
+        if (   !UserStatus.ACTIVE.equals(manager.getStatus())               // 활성
+            || !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
+        ) {
+            throw new AccessDeniedException(
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
+            );
+        }
         managerAuthService.updateManager(manager.getUserId(), updateReqDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 정보 수정 성공", null));
     }
@@ -76,6 +93,11 @@ public class ManagerAuthController {
         @AuthenticationPrincipal AuthenticatedUser manager,
         @Valid @RequestBody ManagerTerminationReqDTO terminationReqDTO
     ) {
+        if (!UserStatus.ACTIVE.equals(manager.getStatus())) {
+            throw new AccessDeniedException(
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
+            );
+        }
         managerAuthService.requestManagerTermination(manager.getUserId(), terminationReqDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 계약 해지 요청 성공", null));
     }

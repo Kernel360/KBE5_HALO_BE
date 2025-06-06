@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,6 +37,7 @@ public class ManagerReviewController {
      * @return 검색 조건에 따른 매니저 리뷰 목록을 응답 (페이징 포함)
      */
     @GetMapping
+    @PreAuthorize("manager.status == 'ACTIVE'")
     public ResponseEntity<ApiResponse<Page<ManagerReviewSummaryRspDTO>>> searchManagerReviews(
         @AuthenticationPrincipal AuthenticatedUser manager,
         @ModelAttribute ManagerReviewSearchCondDTO searchCondDTO,
@@ -54,6 +56,7 @@ public class ManagerReviewController {
      * @return 작성된 리뷰 정보를 담은 응답
      */
     @PostMapping("/{reservation-id}")
+    @PreAuthorize("manager.status == 'ACTIVE'")
     public ResponseEntity<ApiResponse<ManagerReviewRspDTO>> createManagerReview(
         @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("reservation-id") Long reservationId,

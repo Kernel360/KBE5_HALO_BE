@@ -1,13 +1,12 @@
 package com.kernel.app.service;
 
-
-import com.kernel.common.global.security.CustomerUserDetails;
-import com.kernel.common.global.security.ManagerUserDetails;
-import com.kernel.common.global.security.AdminUserDetails;
 import com.kernel.app.repository.AdminAuthRepository;
 import com.kernel.app.repository.CustomerAuthRepository;
 import com.kernel.app.repository.ManagerAuthRepository;
 import com.kernel.common.global.enums.UserStatus;
+import com.kernel.common.global.security.AdminUserDetails;
+import com.kernel.common.global.security.CustomerUserDetails;
+import com.kernel.common.global.security.ManagerUserDetails;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,7 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             case "customer" -> customerRepository.findByPhone(phone)
                     .map(CustomerUserDetails::new)
                     .orElseThrow(() -> new UsernameNotFoundException("Customer not found"));
-            case "manager" -> managerRepository.findByPhoneAndStatusIn(phone, List.of(UserStatus.ACTIVE, UserStatus.TERMINATION_PENDING))
+            case "manager" -> managerRepository.findByPhoneAndStatusIn(phone, List.of(UserStatus.ACTIVE, UserStatus.PENDING, UserStatus.REJECTED, UserStatus.TERMINATION_PENDING))
                     .map(ManagerUserDetails::new)
                     .orElseThrow(() -> new UsernameNotFoundException("Manager not found"));
             case "admin" -> adminRepository.findByPhone(phone)

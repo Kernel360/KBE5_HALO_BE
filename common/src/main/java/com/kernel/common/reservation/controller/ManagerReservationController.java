@@ -2,6 +2,7 @@ package com.kernel.common.reservation.controller;
 
 import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
+import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
 import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -38,6 +40,11 @@ public class ManagerReservationController {
         @ModelAttribute ManagerReservationSearchCondDTO searchCondDTO,
         Pageable pageable
     ) {
+        if (!UserStatus.ACTIVE.equals(manager.getStatus())) {
+            throw new AccessDeniedException(
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
+            );
+        }
         Page<ManagerReservationSummaryRspDTO> responseDTOPage
             = reservationService.searchManagerReservationsWithPaging(manager.getUserId(), searchCondDTO, pageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 예약 목록 조회 성공", responseDTOPage));
@@ -54,6 +61,11 @@ public class ManagerReservationController {
         @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("reservation-id") Long reservationId
     ) {
+        if (!UserStatus.ACTIVE.equals(manager.getStatus())) {
+            throw new AccessDeniedException(
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
+            );
+        }
         ManagerReservationRspDTO responseDTO = reservationService.getManagerReservation(manager.getUserId(), reservationId);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 예약 상세 조회 성공", responseDTO));
     }

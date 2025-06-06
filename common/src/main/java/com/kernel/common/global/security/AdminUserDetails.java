@@ -2,6 +2,7 @@ package com.kernel.common.global.security;
 
 import com.kernel.common.admin.entity.Admin;
 import com.kernel.common.global.AuthenticatedUser;
+import com.kernel.common.global.enums.UserStatus;
 import java.util.ArrayList;
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +66,5 @@ public class AdminUserDetails implements UserDetails, AuthenticatedUser {
         return true;
     }
 
-    public Long getAdminId() { return admin.getAdminId(); }
+    public UserStatus getStatus() { return admin.getStatus(); }
 }

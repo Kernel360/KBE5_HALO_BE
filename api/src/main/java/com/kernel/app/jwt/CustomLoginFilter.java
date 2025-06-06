@@ -1,6 +1,7 @@
 package com.kernel.app.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.global.security.AdminUserDetails;
 import com.kernel.common.global.security.CustomerUserDetails;
 import com.kernel.common.global.security.ManagerUserDetails;
@@ -76,6 +77,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         String role;
         Long userId;
         String name;
+        UserStatus status;
 
         // role 권한에서 추출
         role = authentication.getAuthorities().stream()
@@ -90,18 +92,21 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
                 phone = userDetails.getUsername();
                 userId = userDetails.getUserId();
                 name = userDetails.getName();
+                status = userDetails.getStatus();
             }
             case "manager" -> {
                 ManagerUserDetails userDetails = (ManagerUserDetails) authentication.getPrincipal();
                 phone = userDetails.getUsername();
                 userId = userDetails.getUserId();
                 name = userDetails.getName();
+                status = userDetails.getStatus();
             }
             case "admin" -> {
                 AdminUserDetails userDetails = (AdminUserDetails) authentication.getPrincipal();
                 phone = userDetails.getUsername();
                 userId = userDetails.getUserId();
                 name = null;
+                status = userDetails.getStatus();
             }
             default -> throw new IllegalStateException("Unsupported user type: " + userType);
         }
@@ -120,6 +125,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             // Map 생성해서 name 담기
             Map<String, Object> bodyMap = new HashMap<>();
             bodyMap.put("userName", name);
+            bodyMap.put("status", status);
 
             ApiResponse<Map<String, Object>> successResponse = new ApiResponse<>(true, "로그인이 완료되었습니다.", bodyMap);
             objectMapper.writeValue(response.getWriter(), successResponse);
