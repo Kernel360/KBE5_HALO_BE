@@ -6,15 +6,11 @@ import com.kernel.common.global.dto.response.FileDeleteRspDTO;
 import com.kernel.common.global.dto.response.FileUploadRspDTO;
 import com.kernel.common.global.entity.ApiResponse;
 import com.kernel.common.global.service.FileUploadService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
@@ -38,7 +34,6 @@ public class FileUploadController {
     ) {
         FileDeleteRspDTO response = fileUploadService.deleteFiles(request);
         return ResponseEntity.ok(new ApiResponse<>(true, "파일 삭제 성공", response));
-        //return ResponseEntity.ok(new ApiResponse<>(true, "파일 삭제 성공", request));
     }
 
 }

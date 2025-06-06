@@ -8,7 +8,7 @@ import com.kernel.common.global.dto.request.FileUploadReqDTO;
 import com.kernel.common.global.dto.response.FileDeleteRspDTO;
 import com.kernel.common.global.dto.response.FileUploadRspDTO;
 import com.kernel.common.global.entity.UploadedFiles;
-import com.kernel.common.repository.FileUploadRepository;
+import com.kernel.common.repository.UploadedFileRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +23,7 @@ import java.util.*;
 public class FileUploadServiceImpl implements FileUploadService{
 
     private final S3Processor s3Processor;
-    private final FileUploadRepository fileUploadRepository;
+    private final UploadedFileRepository uploadedFileRepository;
     private final FileUploadMapper fileUploadMapper;
     private final ListJsonConverter listJsonConverter;
 
@@ -42,7 +42,7 @@ public class FileUploadServiceImpl implements FileUploadService{
         if (request.getFileId() == null) {
             existingFiles = UploadedFiles.builder().filePathsJson("[]").build();
         } else {
-            existingFiles = fileUploadRepository.findById(request.getFileId())
+            existingFiles = uploadedFileRepository.findById(request.getFileId())
                     .orElseThrow(() -> new NoSuchElementException("File을 찾을 수 없습니다."));
         }
 
@@ -60,7 +60,7 @@ public class FileUploadServiceImpl implements FileUploadService{
 
         existingFiles.updateFiles(listJsonConverter.convertListToJson(fileUrls));
 
-        return fileUploadMapper.toFileUploadRspDTO(fileUploadRepository.save(existingFiles)); // uploadedFiles에 save를 사용한 이유는 새로운 엔터티를 생성한 경우가 있기 때문
+        return fileUploadMapper.toFileUploadRspDTO(uploadedFileRepository.save(existingFiles)); // uploadedFiles에 save를 사용한 이유는 새로운 엔터티를 생성한 경우가 있기 때문
     }
 
     /**
@@ -72,7 +72,7 @@ public class FileUploadServiceImpl implements FileUploadService{
     @Transactional
     @Override
     public FileDeleteRspDTO deleteFiles(FileDeleteReqDTO request) {
-        UploadedFiles existingFiles = fileUploadRepository.findById(request.getFileId())
+        UploadedFiles existingFiles = uploadedFileRepository.findById(request.getFileId())
                 .orElseThrow(() -> new RuntimeException("Uploaded files not found"));
 
         List<String> existingPaths = listJsonConverter.parseJsonToList(existingFiles.getFilePathsJson());
