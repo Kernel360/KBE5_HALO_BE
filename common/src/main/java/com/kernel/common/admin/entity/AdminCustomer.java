@@ -1,5 +1,6 @@
 package com.kernel.common.admin.entity;
 
+import com.kernel.common.global.enums.Gender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

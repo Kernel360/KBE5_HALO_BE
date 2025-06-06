@@ -1,4 +1,4 @@
-package com.kernel.common.admin.entity;
+package com.kernel.common.global.enums;
 
 public enum NoticeType {
     NOTICE("공지"),

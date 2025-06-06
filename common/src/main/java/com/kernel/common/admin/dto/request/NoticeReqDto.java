@@ -1,6 +1,6 @@
 package com.kernel.common.admin.dto.request;
 
-import com.kernel.common.admin.entity.NoticeType;
+import com.kernel.common.global.enums.NoticeType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 

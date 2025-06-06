@@ -1,8 +1,7 @@
-package com.kernel.common.admin.repository;
+package com.kernel.common.repository;
 
-import com.kernel.common.admin.entity.AdminCustomer;
-import com.kernel.common.admin.entity.Notice;
-import com.kernel.common.admin.entity.NoticeType;
+import com.kernel.common.global.entity.Notice;
+import com.kernel.common.global.enums.NoticeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
