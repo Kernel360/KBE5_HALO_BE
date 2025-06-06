@@ -2,17 +2,7 @@ package com.kernel.common.reservation.entity;
 
 import com.kernel.common.global.entity.BaseEntity;
 import com.kernel.common.global.enums.AuthorType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
@@ -20,7 +10,15 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name="review")
+@Table(
+        name = "review",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_review_reservation_author_type",
+                        columnNames = {"reservation_id", "author_id", "author_type"}
+                )
+        }
+)
 @Getter
 @SuperBuilder
 @NoArgsConstructor
@@ -54,4 +52,19 @@ public class Review extends BaseEntity {
     // 리뷰 내용
     @Column(nullable = false, length = 600)
     private String content;
+
+    //리뷰 수정
+    public void update(Integer reqRating, String reqContent){
+
+        // 리뷰 평점
+        if(reqRating!= null && !reqRating.equals(this.rating)){
+            this.rating = reqRating;
+        }
+
+        // 리뷰 내용
+        if(reqContent != null && !reqContent.equals(this.content)){
+            this.content = reqContent;
+        }
+    }
+
 }
