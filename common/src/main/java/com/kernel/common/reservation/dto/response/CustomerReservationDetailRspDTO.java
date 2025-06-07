@@ -12,7 +12,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class CustomerReservationDetailRspDTO {
 
@@ -43,7 +43,7 @@ public class CustomerReservationDetailRspDTO {
     // 서비스 종류(대분류)
     private String serviceName;
 
-    // 추가
+    // 추가 서비스
     private List<ExtraServiceRspDTO> extraServices;
 
     // 매니저 이름
@@ -60,9 +60,5 @@ public class CustomerReservationDetailRspDTO {
 
     // 결제 수단 //TODO 가격관리 정의 후 수정
     //private String payment;
-
-
-
-
 
 }

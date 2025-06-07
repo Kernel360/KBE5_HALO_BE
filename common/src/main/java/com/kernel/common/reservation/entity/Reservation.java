@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -36,8 +37,9 @@ public class Reservation extends BaseEntity {
     private Customer customer;
 
     // 매니저 ID
+    // 예약 요청 시에는 매니저 Null로 저장, 매니저 매칭 선택 후 저장
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_id", nullable = false)
+    @JoinColumn(name = "manager_id")
     private Manager manager;
 
     // 우편번호
@@ -55,12 +57,20 @@ public class Reservation extends BaseEntity {
     @Column(length = 100, nullable = false)
     private String detailAddress;
 
+    // 위도
+    @Column(precision = 10, scale = 7, nullable = false)
+    private BigDecimal latitude;
+
+    // 경도
+    @Column(precision = 10, scale = 7, nullable = false)
+    private BigDecimal longitude;
+
     // 청소 요청 날짜
     @Column(nullable = false)
     private LocalDate requestDate;
 
     // 청소 시작 희망 시간
-    @Column(nullable = false)
+    @Column(columnDefinition = "time(0)", nullable = false)
     private LocalTime startTime;
 
     // 소요 시간
@@ -92,5 +102,11 @@ public class Reservation extends BaseEntity {
     public void cancelReservation(String cancelReason, ReservationStatus status) {
         this.cancelReason = cancelReason;
         this.status = status;
+    }
+
+    // 예약 확정
+    public void confirmReservation(Manager manager) {
+        this.manager = manager;
+        this.status = ReservationStatus.CONFIRMED;
     }
 }

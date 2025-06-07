@@ -167,6 +167,49 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
     }
 
     /**
+     * 수요자 예약 조회
+     * @param customerId 수요자ID
+     * @param reservationId 페이징 정보
+     * @return 조회된 예약 내용
+     */
+    @Override
+    public CustomerReservationRspDTO getCustomerReservations(Long customerId, Long reservationId) {
+
+        // 수요자 예약 내역 조회
+        Tuple tuple = queryFactory
+                .select(
+                        reservation.reservationId,      // 예약ID
+                        manager.userName,               // 매니저 이름
+                        reservation.status,             // 예약 상태
+                        serviceCategory.serviceName,    // 서비스 카테고리 이름
+                        reservation.requestDate,        // 서비스 요청 날짜
+                        reservation.startTime,          // 서비스 시작 시간
+                        reservation.turnaround,         // 서비스 소요 시간
+                        reservation.price               // 예약 금액
+                )
+                .from (reservation)
+                .leftJoin(reservation.manager, manager)
+                .leftJoin(reservation.serviceCategory, serviceCategory)
+                .where(
+                        reservation.reservationId.eq(reservationId),
+                        reservation.customer.customerId.eq(customerId)
+                )
+                .fetchOne();
+
+        // Tuple -> DTO 로 변환
+        return CustomerReservationRspDTO.builder()
+                .reservationId(tuple.get(reservation.reservationId))
+                .managerName(tuple.get(manager.userName))
+                .reservationStatus(tuple.get(reservation.status))
+                .serviceName(tuple.get(serviceCategory.serviceName))
+                .requestDate(tuple.get(reservation.requestDate))
+                .startTime(tuple.get(reservation.startTime))
+                .turnaround(tuple.get(reservation.turnaround))
+                .price(tuple.get(reservation.price))
+                .build();
+    }
+
+    /**
      * 예약내역 검색 조건 (수요자 ID + 예약상태)
      * @param customerId 수요자 ID
      * @param status 예약 상태
