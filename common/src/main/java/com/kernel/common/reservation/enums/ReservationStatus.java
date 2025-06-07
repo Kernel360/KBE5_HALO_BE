@@ -6,8 +6,8 @@ import lombok.Getter;
 public enum ReservationStatus {
 
     REQUESTED("예약 요청"),
-    CONFIRMED("예약 완료"),
     IN_PROGRESS("예약 진행 중"),
+    CONFIRMED("예약 완료"),
     COMPLETED("방문 완료"),
     CANCELED("예약 취소"),
     REJECTED("예약 거절"),

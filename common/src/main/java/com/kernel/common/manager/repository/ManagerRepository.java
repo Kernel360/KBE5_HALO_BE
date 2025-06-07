@@ -2,7 +2,6 @@ package com.kernel.common.manager.repository;
 
 import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.manager.entity.Manager;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

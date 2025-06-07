@@ -1,8 +1,14 @@
 package com.kernel.common.reservation.service;
 
+import com.kernel.common.manager.entity.Manager;
+import com.kernel.common.matching.repository.MatchingManagerRepository;
+import com.kernel.common.reservation.dto.mapper.ReservationMapper;
 import com.kernel.common.reservation.dto.request.CustomerReservationCancelReqDTO;
+import com.kernel.common.reservation.dto.request.CustomerReservationReqDTO;
+import com.kernel.common.reservation.dto.request.ReservationConfirmReqDTO;
 import com.kernel.common.reservation.dto.response.CustomerReservationDetailRspDTO;
 import com.kernel.common.reservation.dto.response.CustomerReservationRspDTO;
+import com.kernel.common.reservation.dto.response.ReservationRspDTO;
 import com.kernel.common.reservation.entity.Reservation;
 import com.kernel.common.reservation.enums.ReservationStatus;
 import com.kernel.common.reservation.repository.CustomerReservationRepository;
@@ -19,10 +25,54 @@ import java.util.NoSuchElementException;
 public class CustomerReservationServiceImpl implements CustomerReservationService {
 
     private final CustomerReservationRepository customerReservationRepository;
+    private final MatchingManagerRepository matchingManagerRepository;
+    private final ReservationMapper reservationMapper;
+
+    /**
+     * 예약 요청
+     * @param customerId 수요자ID
+     * @param reservationReqDTO 수요자 예약 요청 DTO
+     * @return 예약 요청 내용
+     */
+    @Override
+    @Transactional
+    public ReservationRspDTO requestCustomerReservation(Long customerId, CustomerReservationReqDTO reservationReqDTO) {
+
+        // 예약 요청 저장
+        Reservation requestedReservation = customerReservationRepository.save(reservationMapper.toEntity(customerId, reservationReqDTO));
+
+        return reservationMapper.toRspDTO(requestedReservation);
+    }
+
+    /**
+     * 예약 확정
+     * @param reservationId 예약ID
+     * @param customerId 수요자ID
+     * @param confirmReqDTO 예약확정 요청DTO
+     * @return 확정한 예약 정보
+     */
+    @Override
+    @Transactional
+    public CustomerReservationRspDTO confirmCustomerReservation(Long customerId, Long reservationId, ReservationConfirmReqDTO confirmReqDTO) {
+
+        // 예약 조회
+        Reservation confirmedReservation = customerReservationRepository.findByReservationIdAndCustomer_CustomerId(reservationId,customerId)
+                .orElseThrow(() -> new NoSuchElementException("확정 가능한 예약이 없습니다."));
+
+        // 매니저 조회
+        Manager chooseManager = matchingManagerRepository.findByManagerId(confirmReqDTO.getSelectedManagerId())
+                .orElseThrow(() -> new NoSuchElementException("예약 할 수 없는 매니저입니다."));
+
+        // 예약 확정
+        confirmedReservation.confirmReservation(chooseManager);
+
+        // 예약 재조회
+        return customerReservationRepository.getCustomerReservations(customerId, reservationId);
+
+    }
 
     /**
      * 예약 내역 조회
-     *
      * @param customerId 수요자ID
      * @param status     예약 상태
      * @param pageable   페이징
@@ -69,4 +119,5 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
         foundReservation.cancelReservation(cancelReqDTO.getCancelReason(), ReservationStatus.CANCELED);
 
     }
+
 }

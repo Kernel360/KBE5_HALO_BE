@@ -14,4 +14,7 @@ public interface CustomCustomerReservationRepository {
 
     // 수요자 예약 상세 내역 조회
     CustomerReservationDetailRspDTO getCustomerReservationDetail(Long customerId, Long reservationId);
+
+    // 수요자 예약 조회
+    CustomerReservationRspDTO getCustomerReservations(Long customerId, Long reservationId);
 }

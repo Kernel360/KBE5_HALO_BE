@@ -46,6 +46,13 @@ public class ServiceCategory extends BaseEntity {
     @JoinColumn(name = "parent_id")
     private ServiceCategory parentId;
 
+    // 가격
+    @Column
+    private Integer price;
+
+    // 설명
+    @Column(nullable = false, length = 100)
+    private String description;
 
     // 엔터티 생성시 depth를 계산 및 기본값 설정을 위한 메서드
     // Prepersist 어노테이션은 한 클래스에 하나만 사용할 수 있는 제약 조건이 있어서 하나의 메서드로 구현
