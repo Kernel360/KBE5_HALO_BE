@@ -46,10 +46,11 @@ public class ReissueController {
         String phone = jwtTokenProvider.getUsername(refreshToken);
         String role = jwtTokenProvider.getRole(refreshToken);
         Long userId = jwtTokenProvider.getUserId(refreshToken);
+        String status = jwtTokenProvider.getStatus(refreshToken);
 
         // refresh 토큰 재발급
-        String newAccessToken = jwtTokenProvider.createToken("access", phone, userId, role, jwtProperties.accessTokenValiditySeconds());
-        String newRefreshToken = jwtTokenProvider.createToken("refresh", phone, userId, role, jwtProperties.refreshTokenValiditySeconds());
+        String newAccessToken = jwtTokenProvider.createToken("access", phone, userId, role, status, jwtProperties.accessTokenValiditySeconds());
+        String newRefreshToken = jwtTokenProvider.createToken("refresh", phone, userId, role, status, jwtProperties.refreshTokenValiditySeconds());
 
         // 기존 리프레시 삭제 후 새 토큰 저장
         refreshRepository.deleteByRefreshToken(refreshToken);

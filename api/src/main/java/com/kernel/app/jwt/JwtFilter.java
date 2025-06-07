@@ -1,5 +1,6 @@
 package com.kernel.app.jwt;
 
+import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.global.security.AdminUserDetails;
 import com.kernel.common.global.security.CustomerUserDetails;
 import com.kernel.common.global.security.ManagerUserDetails;
@@ -82,9 +83,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String phone = jwtTokenProvider.getUsername(accessToken);
         String role = jwtTokenProvider.getRole(accessToken);
         Long userId = jwtTokenProvider.getUserId(accessToken);
+        String status = jwtTokenProvider.getStatus(accessToken);
 
         // 역할에 따라 적절한 UserDetails 객체 생성
-        UserDetails userDetails = createUserDetailsFromToken(phone, role, userId);
+        UserDetails userDetails = createUserDetailsFromToken(phone, role, userId, status);
 
         // 인증 객체 생성 (UserDetails 없이도 가능)
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -95,29 +97,32 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
 
     }
-    private UserDetails createUserDetailsFromToken(String phone, String role, Long userId) {
+    private UserDetails createUserDetailsFromToken(String phone, String role, Long userId, String status) {
         // 역할에 따라 적절한 UserDetails 생성
         // 실제로는 최소한의 정보만으로 객체를 생성
         switch (role) {
             case "ROLE_CUSTOMER":
                 Customer customer = Customer.builder()
-                        .customerId(userId)
-                        .phone(phone)
-                        .build();
+                    .customerId(userId)
+                    .phone(phone)
+                    .status(UserStatus.valueOf(status))
+                    .build();
                 return new CustomerUserDetails(customer);
 
             case "ROLE_MANAGER":
                 Manager manager = Manager.builder()
-                        .managerId(userId)
-                        .phone(phone)
-                        .build();
+                    .managerId(userId)
+                    .phone(phone)
+                    .status(UserStatus.valueOf(status))
+                    .build();
                 return new ManagerUserDetails(manager);
 
             case "ROLE_ADMIN":
                 Admin admin = Admin.builder()
-                        .adminId(userId)
-                        .phone(phone)
-                        .build();
+                    .adminId(userId)
+                    .phone(phone)
+                    .status(UserStatus.valueOf(status))
+                    .build();
                 return new AdminUserDetails(admin);
 
             default:
