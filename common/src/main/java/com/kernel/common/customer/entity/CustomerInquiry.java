@@ -35,11 +35,10 @@ public class CustomerInquiry extends BaseEntity {
     @Column(nullable = false, length = 5000)
     private String content;
 
-    //TODO 첨부파일 추가
-    /*
-    * @Column(nullable = true)
-    * private Long fileId;
-    */
+    // 첨부파일 ID
+    @Column
+    private Long fileId;
+
 
     // 삭제 여부
     @Column(nullable = false)
@@ -56,7 +55,7 @@ public class CustomerInquiry extends BaseEntity {
         this.title = title;
         this.content = content;
         this.category = category;
-        //this.fileId = fileId; TODO 첨부파일 추가
+        //this.fileId = fileId;
     }
 
     // 문의사항 삭제

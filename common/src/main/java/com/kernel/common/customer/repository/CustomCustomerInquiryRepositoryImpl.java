@@ -1,5 +1,7 @@
 package com.kernel.common.customer.repository;
 
+import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
+import com.kernel.common.admin.repository.AdminRepository;
 import com.kernel.common.customer.entity.CustomerInquiry;
 import  com.kernel.common.customer.entity.QCustomerInquiry;
 import com.kernel.common.customer.entity.QCustomerReply;
@@ -21,6 +23,7 @@ public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquir
     private final QCustomerInquiry inquiry = QCustomerInquiry.customerInquiry;
     private final QInquiryCategory category = QInquiryCategory.inquiryCategory;
     private final QCustomerReply reply = QCustomerReply.customerReply;
+    private final CustomerRepository customerRepository;
 
     /**
      * 수요자 게시글 조회 및 검색
@@ -93,4 +96,47 @@ public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquir
         return condition;
     }
 
+    /**
+     * 수요자 문의사항 검색 (관리자용)
+     * @param query 검색 조건 DTO
+     * @param pageable 페이징 정보
+     * @return 검색된 문의사항 목록 (페이징 적용)
+     */
+    @Override
+    public Page<CustomerInquiry> searchCustomerInquiryByKeyword(AdminInquirySearchReqDTO query, Pageable pageable) {
+        BooleanExpression condition = inquiry.isDeleted.eq(false);
+
+        if (query.getAuthorName() != null && !query.getAuthorName().isBlank()) {
+            Long authorId = customerRepository.findByUserName(query.getAuthorName())
+                    .orElseThrow(() -> new IllegalArgumentException("작성자를 찾을 수 없습니다: " + query.getAuthorName()));
+            condition = condition.and(inquiry.authorId.eq(authorId));
+        }
+
+        if (query.getAuthorName() != null && !query.getAuthorName().isBlank()) {
+            condition = condition.and(inquiry.title.containsIgnoreCase(query.getAuthorName()));
+        }
+
+        if (query.getCategory() != null) {
+            condition = condition.and(inquiry.category.categoryName.eq(query.getCategory()));
+        }
+
+        List<CustomerInquiry> content = queryFactory
+                .selectFrom(inquiry)
+                .leftJoin(inquiry.category, category).fetchJoin()
+                .where(condition)
+                .orderBy(inquiry.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(inquiry.count())
+                        .from(inquiry)
+                        .where(condition)
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(content, pageable, total);
+    }
 }
