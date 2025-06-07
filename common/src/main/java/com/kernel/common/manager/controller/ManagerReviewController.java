@@ -2,6 +2,7 @@ package com.kernel.common.manager.controller;
 
 import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
+import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.manager.dto.request.ManagerReviewReqDTO;
 import com.kernel.common.manager.dto.request.ManagerReviewSearchCondDTO;
 import com.kernel.common.manager.dto.response.ManagerReviewRspDTO;
@@ -12,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,12 +38,15 @@ public class ManagerReviewController {
      * @return 검색 조건에 따른 매니저 리뷰 목록을 응답 (페이징 포함)
      */
     @GetMapping
-    @PreAuthorize("manager.status == 'ACTIVE'")
     public ResponseEntity<ApiResponse<Page<ManagerReviewSummaryRspDTO>>> searchManagerReviews(
         @AuthenticationPrincipal AuthenticatedUser manager,
         @ModelAttribute ManagerReviewSearchCondDTO searchCondDTO,
         Pageable pageable
     ) {
+        if (!UserStatus.ACTIVE.equals(manager.getStatus())) { // 활성
+            throw new AccessDeniedException(
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")" );
+        }
         Page<ManagerReviewSummaryRspDTO> summaryRspDTOPage
             = managerReviewService.searchManagerReviewsWithPaging(manager.getUserId(), searchCondDTO, pageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 리뷰 목록 조회 성공", summaryRspDTOPage));
@@ -56,12 +60,15 @@ public class ManagerReviewController {
      * @return 작성된 리뷰 정보를 담은 응답
      */
     @PostMapping("/{reservation-id}")
-    @PreAuthorize("manager.status == 'ACTIVE'")
     public ResponseEntity<ApiResponse<ManagerReviewRspDTO>> createManagerReview(
         @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("reservation-id") Long reservationId,
         @Valid @RequestBody ManagerReviewReqDTO requestDTO
     ) {
+        if (!UserStatus.ACTIVE.equals(manager.getStatus())) { // 활성
+            throw new AccessDeniedException(
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")" );
+        }
         ManagerReviewRspDTO responseDTO = managerReviewService.createManagerReview(manager.getUserId(), reservationId, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 리뷰 등록 성공", responseDTO));
     }

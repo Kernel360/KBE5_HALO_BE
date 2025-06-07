@@ -3,7 +3,6 @@ package com.kernel.app.dto.mapper;
 import com.kernel.common.global.enums.DayOfWeek;
 import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.manager.dto.request.ManagerSignupReqDTO;
-import com.kernel.common.manager.dto.request.ManagerTerminationReqDTO;
 import com.kernel.common.manager.dto.response.AvailableTimeRspDTO;
 import com.kernel.common.manager.dto.response.ManagerInfoRspDTO;
 import com.kernel.common.manager.entity.AvailableTime;
@@ -32,7 +31,6 @@ public class ManagerAuthMapper {
     // AvailableTime → AvailableTimeRspDTO
     private AvailableTimeRspDTO toAvailableTimeRspDTO(AvailableTime time) {
         return AvailableTimeRspDTO.builder()
-            .timeId(time.getTimeId())       // 시간ID
             .dayOfWeek(time.getDayOfWeek()) // 가능 요일
             .time(time.getTime())           // 가능 시간
             .build();
@@ -49,9 +47,10 @@ public class ManagerAuthMapper {
             .userName(requestDTO.getUserName())             // 이름
             .birthDate(requestDTO.getBirthDate())           // 생년월일
             .gender(requestDTO.getGender())                 // 성별
-            .zipcode(requestDTO.getZipcode())               // 우편번호 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-            .roadAddress(requestDTO.getRoadAddress())       // 도로명주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-            .detailAddress(requestDTO.getDetailAddress())   // 상세주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+            .latitude(requestDTO.getLatitude())             // 위도
+            .longitude(requestDTO.getLongitude())           // 경도
+            .roadAddress(requestDTO.getRoadAddress())       // 도로명주소
+            .detailAddress(requestDTO.getDetailAddress())   // 상세주소
             .bio(requestDTO.getBio())                       // 한줄소개
             .profileImageId(requestDTO.getProfileImageId()) // 프로필이미지ID
             .fileId(requestDTO.getFileId())                 // 첨부파일ID
@@ -60,15 +59,13 @@ public class ManagerAuthMapper {
 
         // AvailableTime 리스트 추가
         if (requestDTO.getAvailableTimes() != null) {
-            requestDTO.getAvailableTimes().forEach(timeDTO -> {
-                manager.addAvailableTime(
-                    toAvailableTime(
-                        manager,
-                        timeDTO.getDayOfWeek(), // 가능 요일
-                        timeDTO.getTime()       // 가능 시간
-                    )
-                );
-            });
+            requestDTO.getAvailableTimes().forEach(timeDTO -> manager.addAvailableTime(
+                toAvailableTime(
+                    manager,
+                    timeDTO.getDayOfWeek(), // 가능 요일
+                    timeDTO.getTime()       // 가능 시간
+                )
+            ));
         }
 
         return manager;
@@ -83,19 +80,24 @@ public class ManagerAuthMapper {
             .userName(manager.getUserName())                // 이름
             .birthDate(manager.getBirthDate())              // 생년월일
             .gender(manager.getGender())                    // 성별
-            .zipcode(manager.getZipcode())                  // 우편번호 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-            .roadAddress(manager.getRoadAddress())          // 도로명주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-            .detailAddress(manager.getDetailAddress())      // 상세주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+            .genderName(manager.getGender().getLabel())     // 성별 라벨
+            .latitude(manager.getLatitude())                // 위도
+            .longitude(manager.getLongitude())              // 경도
+            .roadAddress(manager.getRoadAddress())          // 도로명주소
+            .detailAddress(manager.getDetailAddress())      // 상세주소
             .bio(manager.getBio())                          // 한줄소개
             .profileImageId(manager.getProfileImageId())    // 프로필이미지ID
             .fileId(manager.getFileId())                    // 첨부파일ID
             .status(manager.getStatus())                    // 계정 상태
+            .statusName(manager.getStatus().getLabel())     // 계정 상태 라벨
             .availableTimes(                                // 매니저 가능 시간
                 manager.getAvailableTimes().stream()
                     .map(this::toAvailableTimeRspDTO)
                     .toList()
             )
-            .isDeleted(manager.getIsDeleted())              // 삭제여부
+            .contractAt(manager.getContractAt())                // 계약일시
+            .terminationReason(manager.getTerminationReason())  // 계약해지사유
+            .terminatedAt(manager.getTerminatedAt())            // 계약해지일시
             .build();
     }
 }

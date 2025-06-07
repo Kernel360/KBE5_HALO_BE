@@ -1,5 +1,7 @@
 package com.kernel.common.manager.dto.request;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.kernel.common.global.enums.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,10 +13,12 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
 public class ManagerSignupReqDTO {
 
     // 연락처(=계정ID)
@@ -46,20 +50,20 @@ public class ManagerSignupReqDTO {
     @NotNull(message = "성별은 필수 입력입니다.")
     private Gender gender;
 
-    // 우편번호
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-    @NotBlank(message = "우편번호는 필수 입력입니다.")
-    @Size(max = 10)
-    private String zipcode;
+    // 위도
+    @NotNull(message = "위도는 필수 입력입니다.")
+    private Double latitude;
+
+    // 경도
+    @NotNull(message = "경도는 필수 입력입니다.")
+    private Double longitude;
 
     // 도로명 주소
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
     @NotBlank(message = "도로명 주소는 필수 입력입니다.")
     @Size(max = 200)
     private String roadAddress;
 
     // 상세 주소
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
     @NotBlank(message = "상세 주소는 필수 입력입니다.")
     @Size(max = 100)
     private String detailAddress;
@@ -70,11 +74,13 @@ public class ManagerSignupReqDTO {
     private String bio;
 
     // 프로필이미지ID
-    @NotNull(message = "프로필 이미지는 필수입니다.")
+    // TODO: 첨부파일 완료되면 NotNull
+//    @NotNull(message = "프로필 이미지는 필수입니다.")
     private Long profileImageId;
 
     // 첨부파일ID
-    @NotNull(message = "첨부파일은 필수입니다.")
+    // TODO: 첨부파일 완료되면 NotNull
+//    @NotNull(message = "첨부파일은 필수입니다.")
     private Long fileId;
 
     // 매니저 업무 가능 시간

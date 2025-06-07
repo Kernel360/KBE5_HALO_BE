@@ -38,7 +38,7 @@ public class ManagerInquiryController {
      * 매니저 문의사항 목록 조회 API (검색 조건 및 페이징 처리)
      * @param manager 매니저
      * @param searchCondDTO 검색조건DTO
-     * @param pageable
+     * @param pageable 페이징
      * @return 검색 조건에 따른 매니저 문의사항 목록을 응답 (페이징 포함)
      */
     @GetMapping
@@ -48,13 +48,12 @@ public class ManagerInquiryController {
         Pageable pageable
     ) {
         if (    !UserStatus.ACTIVE.equals(manager.getStatus())               // 활성
-             || !UserStatus.PENDING.equals(manager.getStatus())              // 대기
-             || !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
-             || !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
+             && !UserStatus.PENDING.equals(manager.getStatus())              // 대기
+             && !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
+             && !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
         ) {
             throw new AccessDeniedException(
-                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
-            );
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")" );
         }
         Page<ManagerInquirySummaryRspDTO> summaryRspDTOPage
             = managerInquiryService.searchManagerinquiriesWithPaging(manager.getUserId(), searchCondDTO, pageable);
@@ -73,13 +72,12 @@ public class ManagerInquiryController {
         @PathVariable("inquiry-id") Long inquiryId
     ) {
         if (   !UserStatus.ACTIVE.equals(manager.getStatus())               // 활성
-            || !UserStatus.PENDING.equals(manager.getStatus())              // 대기
-            || !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
-            || !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
+            && !UserStatus.PENDING.equals(manager.getStatus())              // 대기
+            && !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
+            && !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
         ) {
             throw new AccessDeniedException(
-                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
-            );
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")" );
         }
         ManagerInquiryRspDTO rspDTO = managerInquiryService.getManagerInquiry(manager.getUserId(), inquiryId);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 문의사항 상세 조회 성공", rspDTO));
@@ -97,13 +95,12 @@ public class ManagerInquiryController {
         @Valid @RequestBody ManagerInquiryCreateReqDTO requestDTO
     ) {
         if (   !UserStatus.ACTIVE.equals(manager.getStatus())               // 활성
-            || !UserStatus.PENDING.equals(manager.getStatus())              // 대기
-            || !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
-            || !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
+            && !UserStatus.PENDING.equals(manager.getStatus())              // 대기
+            && !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
+            && !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
         ) {
             throw new AccessDeniedException(
-                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
-            );
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")" );
         }
         ManagerInquirySummaryRspDTO summaryRspDTO = managerInquiryService.createManagerInquiry(manager.getUserId(), requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 문의사항 등록 성공", summaryRspDTO));
@@ -123,13 +120,12 @@ public class ManagerInquiryController {
         @Valid @RequestBody ManagerInquiryUpdateReqDTO requestDTO
     ) {
         if (   !UserStatus.ACTIVE.equals(manager.getStatus())               // 활성
-            || !UserStatus.PENDING.equals(manager.getStatus())              // 대기
-            || !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
-            || !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
+            && !UserStatus.PENDING.equals(manager.getStatus())              // 대기
+            && !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
+            && !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
         ) {
             throw new AccessDeniedException(
-                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
-            );
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")" );
         }
         ManagerInquirySummaryRspDTO summaryRspDTO = managerInquiryService.updateManagerInquiry(manager.getUserId(), inquiryId, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 문의사항 수정 성공", summaryRspDTO));
@@ -147,13 +143,12 @@ public class ManagerInquiryController {
         @PathVariable("inquiry-id") Long inquiryId
     ) {
         if (   !UserStatus.ACTIVE.equals(manager.getStatus())               // 활성
-            || !UserStatus.PENDING.equals(manager.getStatus())              // 대기
-            || !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
-            || !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
+            && !UserStatus.PENDING.equals(manager.getStatus())              // 대기
+            && !UserStatus.REJECTED.equals(manager.getStatus())             // 매니저 승인 거절
+            && !UserStatus.TERMINATION_PENDING.equals(manager.getStatus())  // 매니저 계약 해지 대기
         ) {
             throw new AccessDeniedException(
-                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")"
-            );
+                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + manager.getStatus().getLabel() + ")" );
         }
         managerInquiryService.deleteManagerInquiry(manager.getUserId(), inquiryId);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 문의사항 삭제 성공", null));

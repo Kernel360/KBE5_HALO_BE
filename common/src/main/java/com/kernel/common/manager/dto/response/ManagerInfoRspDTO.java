@@ -3,6 +3,7 @@ package com.kernel.common.manager.dto.response;
 import com.kernel.common.global.enums.Gender;
 import com.kernel.common.global.enums.UserStatus;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,16 +34,19 @@ public class ManagerInfoRspDTO {
     // 성별
     private Gender gender;
 
-    // 우편번호
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-    private String zipcode;
+    // 성별 라벨
+    private String genderName;
+
+    // 위도
+    private Double latitude;
+
+    // 경도
+    private Double longitude;
 
     // 도로명 주소
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
     private String roadAddress;
 
     // 상세 주소
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
     private String detailAddress;
 
     // 한줄소개
@@ -55,11 +59,20 @@ public class ManagerInfoRspDTO {
     private Long fileId;
 
     // 계정 상태
-    private UserStatus status = UserStatus.PENDING;
+    private UserStatus status;
+
+    // 계정 상태 라벨
+    private String statusName;
 
     // 매니저 업무 가능 시간
     private List<AvailableTimeRspDTO> availableTimes;
 
-    // 삭제 여부
-    private Boolean isDeleted = false;
+    // 계약일시
+    private LocalDateTime contractAt;
+
+    // 계약해지사유
+    private String terminationReason;
+
+    // 계약해지일시
+    private LocalDateTime terminatedAt;
 }
