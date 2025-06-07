@@ -2,12 +2,11 @@ package com.kernel.app.jwt;
 
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider {
@@ -31,13 +30,14 @@ public class JwtTokenProvider {
     }
 
     // token 생성
-    public String createToken(String category, String phone, Long userId, String role, Long expiredMs) {
+    public String createToken(String category, String phone, Long userId, String role, String status, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category)
                 .claim("username", phone)
                 .claim("role", role)
                 .claim("userId",userId)
+                .claim("status", status)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
@@ -55,6 +55,10 @@ public class JwtTokenProvider {
 
     public String getRole(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+    }
+
+    public String getStatus(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("status", String.class);
     }
 
     public String getCategory(String token) {

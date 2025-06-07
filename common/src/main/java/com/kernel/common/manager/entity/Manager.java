@@ -1,7 +1,5 @@
 package com.kernel.common.manager.entity;
 
-import static com.kernel.common.manager.entity.QManager.manager;
-
 import com.kernel.common.global.entity.BaseEntity;
 import com.kernel.common.global.enums.Gender;
 import com.kernel.common.global.enums.UserStatus;
@@ -46,7 +44,7 @@ public class Manager extends BaseEntity {
     private String phone;
 
     // 이메일
-    @Column(length = 50, nullable = false, unique = true)
+    @Column(length = 50, nullable = false)
     private String email;
 
     // 비밀번호
@@ -66,17 +64,18 @@ public class Manager extends BaseEntity {
     @Column(length = 10, nullable = false)
     private Gender gender;
 
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-    // 우편번호
-    @Column(length = 10, nullable = false)
-    private String zipcode;
+    // 위도
+    @Column(nullable = false)
+    private Double latitude;
 
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+    // 경도
+    @Column(nullable = false)
+    private Double longitude;
+
     // 도로명 주소
     @Column(length = 200, nullable = false)
     private String roadAddress;
 
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
     // 상세 주소
     @Column(length = 100, nullable = false)
     private String detailAddress;
@@ -86,16 +85,19 @@ public class Manager extends BaseEntity {
     private String bio;
 
     // 프로필사진ID
-    @Column(nullable = false)
+    // TODO: 첨부파일 완료되면 nullable
+//    @Column(nullable = false)
+    @Column
     private Long profileImageId;
 
     // 첨부파일ID
-    @Column(nullable = false)
+    // TODO: 첨부파일 완료되면 nullable
+//    @Column(nullable = false)
+    @Column
     private Long fileId;
 
     // 계정 상태
     // 매니저는 회원가입 시 바로 활성화되지 않고, 지원서 제출 상태이므로 초기값은 Status.PENDING(승인대기)
-    // TODO: 종은님 확인 필요, Status -> UserStatus로 변경
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
@@ -110,6 +112,10 @@ public class Manager extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private Boolean isDeleted = false;
+
+    // 계약일시
+    @Column
+    private LocalDateTime contractAt;
 
     // 계약해지사유
     @Column(length = 50)
@@ -138,7 +144,7 @@ public class Manager extends BaseEntity {
     // 리뷰가 등록되면 계산하여 UPDATE
     @Column(precision = 2, scale = 1)
     @Builder.Default
-    private BigDecimal 	averageRating = BigDecimal.ZERO;
+    private BigDecimal averageRating = BigDecimal.ZERO;
 
 
     @PrePersist
@@ -168,9 +174,10 @@ public class Manager extends BaseEntity {
     public void updateManager(ManagerUpdateReqDTO updateReqDTO, String encodedPassword ) {
         this.email = updateReqDTO.getEmail();                   // 이메일
         this.password = encodedPassword;                        // 비밀번호
-        this.zipcode = updateReqDTO.getZipcode();               // 우편번호 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-        this.roadAddress = updateReqDTO.getRoadAddress();       // 도로명주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-        this.detailAddress = updateReqDTO.getDetailAddress();   // 상세주소 TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
+        this.latitude = updateReqDTO.getLatitude();             // 위도
+        this.longitude = updateReqDTO.getLongitude();           // 경도
+        this.roadAddress = updateReqDTO.getRoadAddress();       // 도로명주소
+        this.detailAddress = updateReqDTO.getDetailAddress();   // 상세주소
         this.bio = updateReqDTO.getBio();                       // 한줄소개
         this.profileImageId = updateReqDTO.getProfileImageId(); // 프로필이미지ID
         this.fileId = updateReqDTO.getFileId();                 // 첨부파일ID
@@ -178,13 +185,11 @@ public class Manager extends BaseEntity {
         // 업무 가능 시간 수정
         if (updateReqDTO.getAvailableTimes() != null) {
             this.availableTimes.clear(); // 기존 전체 삭제
-            updateReqDTO.getAvailableTimes().forEach(timeDTO -> {
-                this.addAvailableTime(AvailableTime.builder()
-                    .manager(this)
-                    .dayOfWeek(timeDTO.getDayOfWeek())  // 가능 요일
-                    .time(timeDTO.getTime())            // 가능 시간
-                    .build());
-            });
+            updateReqDTO.getAvailableTimes().forEach(timeDTO -> this.addAvailableTime(AvailableTime.builder()
+                .manager(this)
+                .dayOfWeek(timeDTO.getDayOfWeek())  // 가능 요일
+                .time(timeDTO.getTime())            // 가능 시간
+                .build()));
         }
     }
     

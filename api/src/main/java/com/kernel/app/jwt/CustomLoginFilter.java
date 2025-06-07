@@ -111,8 +111,8 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             default -> throw new IllegalStateException("Unsupported user type: " + userType);
         }
 
-        String accessToken = jwtTokenProvider.createToken("access", phone, userId, role, jwtProperties.accessTokenValiditySeconds());
-        String refreshToken = jwtTokenProvider.createToken("refresh", phone, userId, role, jwtProperties.refreshTokenValiditySeconds());
+        String accessToken = jwtTokenProvider.createToken("access", phone, userId, role, status.name(), jwtProperties.accessTokenValiditySeconds());
+        String refreshToken = jwtTokenProvider.createToken("refresh", phone, userId, role, status.name(), jwtProperties.refreshTokenValiditySeconds());
 
         saveRefreshToken(phone, refreshToken, jwtProperties.refreshTokenValiditySeconds());
 

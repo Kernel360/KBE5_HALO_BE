@@ -81,13 +81,8 @@ public class ManagerAuthServiceImpl implements ManagerAuthService {
         Manager foundManager = authRepository.findById(managerId)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 매니저입니다."));
 
-        // 기존 비밀번호 일치 확인
-        if (!bCryptPasswordEncoder.matches(updateReqDTO.getCurrentPassword(), foundManager.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
-        }
-
         // 암호화된 새 비밀번호와 함께 매니저 정보 수정
-        foundManager.updateManager(updateReqDTO, bCryptPasswordEncoder.encode(updateReqDTO.getNewPassword()));
+        foundManager.updateManager(updateReqDTO, bCryptPasswordEncoder.encode(updateReqDTO.getPassword()));
     }
 
     /**
