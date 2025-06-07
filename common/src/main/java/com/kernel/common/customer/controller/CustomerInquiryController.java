@@ -31,7 +31,7 @@ public class CustomerInquiryController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<CustomerInquiryRspDTO>>> searchCustomerInquiries(
             @RequestParam(required = false) String keyword,
-            @PageableDefault(size = 3) Pageable pageable // TODO 페이지 전역 설정 확인
+            @PageableDefault(size = 10) Pageable pageable
             // TODO @AuthenticationPrincipal AuthenticatedUser customer
     ) {
         Page<CustomerInquiryRspDTO> rspDTOPage =
