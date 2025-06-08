@@ -42,10 +42,10 @@ public class Reservation extends BaseEntity {
     @JoinColumn(name = "manager_id")
     private Manager manager;
 
-    // 우편번호
-    // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요
-    @Column(length = 10, nullable = false)
-    private String zipcode;
+    // 연락처
+    @Column(nullable = false)
+    private String phone;
+
 
     // 도로명 주소
     // TODO: 구글맵API 사용 시, 필요한 컬럼만 정리 필요

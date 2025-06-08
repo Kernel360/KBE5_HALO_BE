@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Email;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -49,10 +50,6 @@ public class Customer extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    // 우편번호
-    @Column(nullable = false)
-    private String zipcode;
-
     // 도로명주소
     @Column(nullable = false)
     private String roadAddress;
@@ -60,6 +57,14 @@ public class Customer extends BaseEntity {
     // 상세주소
     @Column(nullable = false)
     private String detailAddress;
+
+    // 위도
+    @Column(precision = 10, scale = 7, nullable = false)
+    private BigDecimal latitude;
+
+    // 경도
+    @Column(precision = 10, scale = 7, nullable = false)
+    private BigDecimal longitude;
 
     // 포인트
     @Column(nullable = false)
@@ -89,10 +94,22 @@ public class Customer extends BaseEntity {
 
     // 회원 정보 수정
     public void update(CustomerInfoUpdateReqDTO updateDTO){
-        this.email = updateDTO.getEmail();
-        this.zipcode = updateDTO.getZipcode();
-        this.roadAddress = updateDTO.getRoadAddress();
-        this.detailAddress = updateDTO.getDetailAddress();
+
+        if(updateDTO.getEmail() != null && !updateDTO.getEmail().equals(this.email)){
+            this.email = updateDTO.getEmail();
+        }
+        if(updateDTO.getRoadAddress() != null && !updateDTO.getRoadAddress().equals(this.roadAddress)){
+            this.roadAddress = updateDTO.getRoadAddress();
+        }
+        if(updateDTO.getDetailAddress() != null && !updateDTO.getDetailAddress().equals(this.detailAddress)){
+            this.detailAddress = updateDTO.getDetailAddress();
+        }
+        if(updateDTO.getLatitude()!= null && !updateDTO.getLatitude().equals(this.latitude)){
+            this.latitude = updateDTO.getLatitude();
+        }
+        if(updateDTO.getLongitude() != null && !updateDTO.getLongitude().equals(this.longitude)){
+            this.longitude = updateDTO.getLongitude();
+        }
     }
 
     // 비밀번호 수정
