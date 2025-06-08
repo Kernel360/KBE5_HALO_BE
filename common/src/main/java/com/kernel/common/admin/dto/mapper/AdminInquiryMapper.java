@@ -1,13 +1,13 @@
 package com.kernel.common.admin.dto.mapper;
 
-import com.kernel.common.admin.dto.request.AdminInquiryReplyReqDTO;
 import com.kernel.common.admin.dto.response.AdminInquiryDetailRspDTO;
 import com.kernel.common.admin.dto.response.AdminInquirySummaryCustomerRspDTO;
-import com.kernel.common.admin.dto.response.AdminInquirySummaryRspDTO;
+import com.kernel.common.admin.dto.response.AdminInquirySummaryManagerRspDTO;
 import com.kernel.common.customer.entity.CustomerInquiry;
 import com.kernel.common.customer.entity.CustomerReply;
 import com.kernel.common.manager.entity.ManagerInquiry;
 import com.kernel.common.manager.entity.ManagerReply;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -19,7 +19,7 @@ public interface AdminInquiryMapper {
     AdminInquirySummaryCustomerRspDTO toSummaryRspDTO(CustomerInquiry inquiry);
 
     // ManagerInquiry -> AdminInquirySummaryRspDTO
-    AdminInquirySummaryRspDTO toSummaryRspDTO(ManagerInquiry inquiry);
+    AdminInquirySummaryManagerRspDTO toSummaryManagerRspDTO(ManagerInquiry inquiry);
 
     // CustomerInquiry -> AdminInquiryDetailRspDTO
     @Mapping(source = "inquiry.authorId", target = "authorId")

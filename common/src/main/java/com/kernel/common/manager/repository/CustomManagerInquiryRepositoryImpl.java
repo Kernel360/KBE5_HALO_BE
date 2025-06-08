@@ -3,6 +3,7 @@ package com.kernel.common.manager.repository;
 import com.kernel.common.global.enums.ReplyStatus;
 import com.kernel.common.manager.entity.QManagerInquiry;
 import com.kernel.common.manager.entity.QManagerReply;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
