@@ -1,6 +1,5 @@
 package com.kernel.common.admin.dto.request;
 
-import com.kernel.common.customer.entity.InquiryCategory;
 import lombok.Getter;
 import lombok.Setter;
 

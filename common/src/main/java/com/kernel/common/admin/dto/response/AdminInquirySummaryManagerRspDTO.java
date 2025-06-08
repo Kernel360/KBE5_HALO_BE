@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class AdminInquirySummaryRspDTO {
+@Builder
+public class AdminInquirySummaryManagerRspDTO {
     private Long inquiryId;
 
     private Long authorId;

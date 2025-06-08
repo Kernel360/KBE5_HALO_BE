@@ -45,4 +45,10 @@ public class ManagerReply extends BaseEntity {
     // 첨부파일
     @Column
     private Long fileId;
+
+    // 매니저 답변 수정
+    public void update(String content, Long fileId) {
+        this.content = content;
+        this.fileId = fileId;
+    }
 }
