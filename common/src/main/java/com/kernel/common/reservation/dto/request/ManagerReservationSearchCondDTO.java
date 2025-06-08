@@ -1,11 +1,12 @@
 package com.kernel.common.reservation.dto.request;
 
 import com.kernel.common.reservation.enums.ReservationStatus;
-import lombok.Getter;
-
 import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class ManagerReservationSearchCondDTO {
 
     // 예약 날짜 시작일

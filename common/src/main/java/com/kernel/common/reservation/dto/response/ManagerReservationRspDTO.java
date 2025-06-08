@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class ManagerReservationRspDTO {
 
@@ -24,7 +26,7 @@ public class ManagerReservationRspDTO {
     private ReservationStatus status;
 
     // 상태명
-//    private String statusName;
+    private String statusName;
 
 
     /* 고객 정보 **************************************/

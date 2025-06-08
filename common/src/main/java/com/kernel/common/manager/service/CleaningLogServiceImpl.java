@@ -8,6 +8,7 @@ import com.kernel.common.manager.dto.response.CleaningLogCheckOutRspDTO;
 import com.kernel.common.manager.entity.CleaningLog;
 import com.kernel.common.manager.repository.CleaningLogRepository;
 import com.kernel.common.reservation.entity.Reservation;
+import com.kernel.common.reservation.enums.ReservationStatus;
 import com.kernel.common.reservation.repository.ReservationRepository;
 import jakarta.transaction.Transactional;
 import java.util.NoSuchElementException;
@@ -24,16 +25,19 @@ public class CleaningLogServiceImpl implements CleaningLogService {
 
     /**
      * 체크인
-     * @param managerId
-     * @param reservationId
-     * @param cleaningLogCheckInReqDTO
+     * @param managerId 매니저ID
+     * @param reservationId 예약ID
+     * @param cleaningLogCheckInReqDTO 체크인요청DTO
      * @return 체크인 정보를 담은 응답
      */
     @Override
     @Transactional
     public CleaningLogCheckInRspDTO checkIn(Long managerId, Long reservationId, CleaningLogCheckInReqDTO cleaningLogCheckInReqDTO) {
 
-        // TODO: 해당 예약건의 매니저가 맞는지 체크
+        // 해당 예약건의 매니저가 맞는지 체크
+        if (!reservationRepository.existsByReservationIdAndManager_ManagerId(reservationId, managerId)) {
+            throw new IllegalStateException("해당 예약건의 매니저가 아닙니다.");
+        }
 
         // 이미 등록된 cleaning log가 있는지 체크
         if (cleaningLogRepository.existsByReservation_ReservationId(reservationId)) {
@@ -56,16 +60,19 @@ public class CleaningLogServiceImpl implements CleaningLogService {
 
     /**
      * 체크아웃
-     * @param managerId
-     * @param reservationId
-     * @param cleaningLogCheckOutReqDTO
+     * @param managerId 매니저ID
+     * @param reservationId 예약ID
+     * @param cleaningLogCheckOutReqDTO 체크아웃요청DTO
      * @return 체크아웃 정보를 담은 응답
      */
     @Override
     @Transactional
     public CleaningLogCheckOutRspDTO checkOut(Long managerId, Long reservationId, CleaningLogCheckOutReqDTO cleaningLogCheckOutReqDTO) {
 
-        // TODO: 해당 예약건의 매니저가 맞는지 체크
+        // 해당 예약건의 매니저가 맞는지 체크
+        if (!reservationRepository.existsByReservationIdAndManager_ManagerId(reservationId, managerId)) {
+            throw new IllegalStateException("해당 예약건의 매니저가 아닙니다.");
+        }
 
         // Entity 조회 (= 예약ID로 조회)
         CleaningLog foundCleaningLog = cleaningLogRepository.findByReservation_ReservationId(reservationId);
@@ -75,6 +82,10 @@ public class CleaningLogServiceImpl implements CleaningLogService {
 
         // 체크아웃
         foundCleaningLog.checkOut(cleaningLogCheckOutReqDTO.getOutFileId());
+
+        // 방문완료로 변경
+        Reservation foundReservation = reservationRepository.findReservationByreservationId(reservationId);
+        foundReservation.updateStatus(ReservationStatus.COMPLETED);
 
         // Entity -> ResponseDTO 변환 후, return
         return cleaningLogMapper.toCheckOutResponseDTO(foundCleaningLog);

@@ -82,9 +82,9 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         ManagerReservationRspDTO responseDTO = customManagerReservationRepository.findByManagerIdAndReservationId(managerId, reservationId);
 
         // 상태명(statusName) 추가 처리
-//        if (responseDTO != null && responseDTO.getStatus() != null) {
-//            responseDTO.setStatusName(responseDTO.getStatus().getLabel());
-//        }
+        if (responseDTO != null && responseDTO.getStatus() != null) {
+            responseDTO.setStatusName(responseDTO.getStatus().getLabel());
+        }
 
         return responseDTO;
     }

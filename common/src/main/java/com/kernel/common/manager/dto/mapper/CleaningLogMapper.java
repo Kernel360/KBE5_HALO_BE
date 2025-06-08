@@ -36,6 +36,8 @@ public class CleaningLogMapper {
             .reservationId(cleaningLog.getReservation().getReservationId())
             .outTime(cleaningLog.getOutTime())
             .outFileId(cleaningLog.getOutFileId())
+            .status(cleaningLog.getReservation().getStatus())
+            .statusName(cleaningLog.getReservation().getStatus().getLabel())
             .build();
     }
 }

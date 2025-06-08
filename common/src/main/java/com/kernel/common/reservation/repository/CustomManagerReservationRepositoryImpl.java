@@ -2,13 +2,13 @@ package com.kernel.common.reservation.repository;
 
 import com.kernel.common.customer.entity.QCustomer;
 import com.kernel.common.global.enums.AuthorType;
-import com.kernel.common.reservation.enums.ReservationStatus;
-import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
-import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
 import com.kernel.common.manager.entity.QCleaningLog;
 import com.kernel.common.manager.entity.QManager;
 import com.kernel.common.reservation.entity.QReservation;
 import com.kernel.common.reservation.entity.QReview;
+import com.kernel.common.reservation.enums.ReservationStatus;
+import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
+import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -44,6 +44,12 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             jpaQueryFactory
                 .select(reservation.count())
                 .from(reservation)
+                .leftJoin(cleaningLog).on(cleaningLog.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(review).on(
+                    review.reservation.reservationId.eq(reservation.reservationId)
+                        .and(review.authorType.eq(AuthorType.MANAGER))
+                        .and(review.authorId.eq(managerId))
+                )
                 .where(
                     managerEq(managerId),                                       // 매니저 ID 일치
                     RequestDateGoe(searchCondDTO.getFromRequestDate()),         // 청소 예약 날짜 >= 시작일
@@ -164,7 +170,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 // 고객 연락처
                 customer.phone.as("customerPhone"),
                 // 고객 주소
-                Expressions.stringTemplate("CONCAT({0}, ' ', {1})",
+                Expressions.stringTemplate("CONCAT({0}, ', ', {1})",
                     customer.roadAddress, customer.detailAddress).as("customerAddress"),
 
                 // 고객 요청사항
@@ -201,7 +207,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             ))
             .from(reservation)
             .leftJoin(reservation.customer, customer)
-            .leftJoin(cleaningLog).on(cleaningLog.reservation.reservationId.eq(reservation.reservationId))
+            .leftJoin(cleaningLog)
+            .on(cleaningLog.reservation.reservationId.eq(reservation.reservationId))
             .leftJoin(customerReview).on(
                 customerReview.reservation.reservationId.eq(reservation.reservationId)
                     .and(customerReview.authorType.eq(AuthorType.CUSTOMER))
@@ -246,23 +253,26 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
 
     // 체크인 여부
     private BooleanExpression isCheckedIn(Boolean isCheckedIn) {
-        return isCheckedIn != null
-            ? QCleaningLog.cleaningLog.inTime.isNotNull().eq(isCheckedIn)
-            : null;
+        if (isCheckedIn == null) return null;
+        return isCheckedIn
+            ? QCleaningLog.cleaningLog.inTime.isNotNull()
+            : QCleaningLog.cleaningLog.inTime.isNull();
     }
 
     // 체크아웃 여부
     private BooleanExpression isCheckedOut(Boolean isCheckedOut) {
-        return isCheckedOut != null
-            ? QCleaningLog.cleaningLog.outTime.isNotNull().eq(isCheckedOut)
-            : null;
+        if (isCheckedOut == null) return null;
+        return isCheckedOut
+            ? QCleaningLog.cleaningLog.outTime.isNotNull()
+            : QCleaningLog.cleaningLog.outTime.isNull();
     }
 
     // 리뷰 작성 여부
     private BooleanExpression isReviewed(Boolean isReviewed) {
-        return isReviewed != null
-            ? QReview.review.reviewId.isNotNull().eq(isReviewed)
-            : null;
+        if (isReviewed == null) return null;
+        return isReviewed
+            ? QReview.review.reviewId.isNotNull()
+            : QReview.review.reviewId.isNull();
     }
 
     // 고객명 검색어 포함
