@@ -65,12 +65,12 @@ public class Manager extends BaseEntity {
     private Gender gender;
 
     // 위도
-    @Column(nullable = false)
-    private Double latitude;
+    @Column(precision = 10, scale = 7, nullable = false)
+    private BigDecimal latitude;
 
     // 경도
-    @Column(nullable = false)
-    private Double longitude;
+    @Column(precision = 10, scale = 7, nullable = false)
+    private BigDecimal longitude;
 
     // 도로명 주소
     @Column(length = 200, nullable = false)

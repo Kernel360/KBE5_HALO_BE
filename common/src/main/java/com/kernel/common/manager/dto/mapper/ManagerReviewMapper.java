@@ -26,9 +26,9 @@ public class ManagerReviewMapper {
         return ManagerReviewRspDTO.builder()
             .reviewId(review.getReviewId())                              // 리뷰ID
             .reservationId(review.getReservation().getReservationId())   // 예약
-            .authorId(review.getAuthorId())                              // 작성자ID
             .rating(review.getRating())                                  // 리뷰 평점
             .content(review.getContent())                                // 리뷰 내용
+            .createdAt(review.getCreatedAt())                            // 리뷰 작성일시
             .build();
     }
 }

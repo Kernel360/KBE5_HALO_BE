@@ -16,7 +16,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name="cleaning_log")
@@ -43,8 +42,7 @@ public class CleaningLog extends BaseEntity {
     // 체크인 첨부파일
     private Long inFileId;
 
-    // 체크아웃 일시 (UPDATE 시 자동 갱신)
-    @UpdateTimestamp
+    // 체크아웃 일시
     private LocalDateTime outTime;
 
     // 체크아웃 첨부파일
@@ -52,10 +50,10 @@ public class CleaningLog extends BaseEntity {
 
     /**
      * 체크아웃 처리
-     *  - outTime은 @UpdateTimestamp로 자동 갱신됨
-     * @param outFileId
+     * @param outFileId 체크아웃파일ID
      */
     public void checkOut(Long outFileId) {
+        this.outTime = LocalDateTime.now();
         this.outFileId = outFileId;
     }
 }

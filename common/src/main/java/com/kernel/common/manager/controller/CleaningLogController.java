@@ -12,8 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,11 +51,11 @@ public class CleaningLogController {
 
     /**
      * 체크아웃 API
-     * @param reservationId
-     * @param requestDTO
+     * @param reservationId 예약ID
+     * @param requestDTO 체크아웃요청DTO
      * @return 체크아웃 정보를 담은 응답
      */
-    @PreAuthorize("manager.status == 'ACTIVE'")
+    @PatchMapping("/{reservation-id}/check-out")
     public ResponseEntity<ApiResponse<CleaningLogCheckOutRspDTO>> checkOut(
         @AuthenticationPrincipal AuthenticatedUser manager,
         @PathVariable("reservation-id") Long reservationId,

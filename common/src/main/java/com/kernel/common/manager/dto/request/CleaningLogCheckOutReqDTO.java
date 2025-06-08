@@ -7,6 +7,6 @@ import lombok.Getter;
 public class CleaningLogCheckOutReqDTO {
 
     // 체크아웃 첨부파일
-    @NotNull(message = "체크아웃 일시는 필수입니다.")
+    @NotNull(message = "체크아웃 첨부파일은 필수입니다.")
     private Long outFileId;
 }

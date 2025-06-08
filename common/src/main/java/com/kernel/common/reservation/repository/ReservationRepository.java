@@ -8,5 +8,8 @@ import org.springframework.stereotype.Repository;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
     // 예약ID로 조회
-    Reservation findReservationByreservationId(long reservationId);
+    Reservation findReservationByreservationId(Long reservationId);
+
+    // 예약ID와 매니저ID로 조회
+    Boolean existsByReservationIdAndManager_ManagerId(Long reservationId, Long managerId);
 }

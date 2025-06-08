@@ -4,15 +4,24 @@ import com.kernel.common.customer.entity.Customer;
 import com.kernel.common.global.entity.BaseEntity;
 import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.reservation.enums.ReservationStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "reservation")
@@ -108,5 +117,10 @@ public class Reservation extends BaseEntity {
     public void confirmReservation(Manager manager) {
         this.manager = manager;
         this.status = ReservationStatus.CONFIRMED;
+    }
+
+    // 예약상태 변경 (=매니저 체크아웃)
+    public void updateStatus(ReservationStatus status) {
+        this.status = status;
     }
 }

@@ -1,5 +1,6 @@
 package com.kernel.common.manager.dto.response;
 
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,12 +14,12 @@ public class ManagerReviewRspDTO {
     // 예약ID
     private Long reservationId;
 
-    // 작성자ID(=매니저ID)
-    private Long authorId;
-
     // 리뷰 평점
     private Integer rating;
 
     // 리뷰 내용
     private String content;
+
+    // 리뷰 작성일시
+    private LocalDateTime createdAt;
 }

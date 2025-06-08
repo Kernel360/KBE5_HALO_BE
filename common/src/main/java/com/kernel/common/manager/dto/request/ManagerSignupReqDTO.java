@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.*;
 
@@ -52,11 +53,11 @@ public class ManagerSignupReqDTO {
 
     // 위도
     @NotNull(message = "위도는 필수 입력입니다.")
-    private Double latitude;
+    private BigDecimal latitude;
 
     // 경도
     @NotNull(message = "경도는 필수 입력입니다.")
-    private Double longitude;
+    private BigDecimal longitude;
 
     // 도로명 주소
     @NotBlank(message = "도로명 주소는 필수 입력입니다.")

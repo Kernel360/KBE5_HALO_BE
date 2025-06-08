@@ -1,6 +1,6 @@
 package com.kernel.common.manager.dto.response;
 
-import jakarta.validation.constraints.NotNull;
+import com.kernel.common.reservation.enums.ReservationStatus;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,18 +10,20 @@ import lombok.Getter;
 public class CleaningLogCheckOutRspDTO {
 
     // 체크ID
-    @NotNull
     private Long checkId;
 
     // 예약ID
-    @NotNull
     private Long reservationId;
 
     // 체크아웃 일시
-    @NotNull
     private LocalDateTime outTime;
 
     // 체크아웃 첨부파일
-    @NotNull
     private Long outFileId;
+
+    // 예약 상태
+    private ReservationStatus status;
+
+    // 예약 상태명
+    private String statusName;
 }

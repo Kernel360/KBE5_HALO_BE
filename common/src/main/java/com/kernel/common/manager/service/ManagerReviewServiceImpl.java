@@ -64,6 +64,11 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
     @Override
     public ManagerReviewRspDTO createManagerReview(Long authorId, Long reservationId, ManagerReviewReqDTO managerReviewReqDTO) {
 
+        // 해당 예약건의 매니저가 맞는지 체크
+        if (!reservationRepository.existsByReservationIdAndManager_ManagerId(reservationId, authorId)) {
+            throw new IllegalStateException("해당 예약건의 매니저가 아닙니다.");
+        }
+
         // 등록된 리뷰가 존재하는지 확인
         if (managerReviewRepository.existsByAuthorTypeAndAuthorIdAndReservation_ReservationId(AuthorType.MANAGER, authorId, reservationId)) {
             throw new IllegalStateException("이미 등록된 리뷰가 존재합니다.");
