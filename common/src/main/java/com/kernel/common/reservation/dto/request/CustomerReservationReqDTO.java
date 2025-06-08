@@ -7,17 +7,21 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 public class CustomerReservationReqDTO {
 
-    // 서비스ID
+    // 메인 서비스ID
     @NotNull(message = "서비스 유형을 선택해주세요.")
-    private Long serviceCategoryId;
+    private Long mainServiceId;
 
-    // 우편번호
-    @NotBlank(message = "우편번호를 입력해주세요.")
-    private String zipcode;
+    // 추가 서비스ID
+    private List<Long> additionalServiceIds;
+
+    // 핸드폰 번호
+    @NotBlank(message = "핸드폰 번호를 입력해주세요.")
+    private String phone;
 
     // 도로명 주소
     @NotBlank(message = "도로명 주소를 입력해주세요.")
