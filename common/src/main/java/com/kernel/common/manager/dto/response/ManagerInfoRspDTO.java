@@ -2,6 +2,7 @@ package com.kernel.common.manager.dto.response;
 
 import com.kernel.common.global.enums.Gender;
 import com.kernel.common.global.enums.UserStatus;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,10 +39,10 @@ public class ManagerInfoRspDTO {
     private String genderName;
 
     // 위도
-    private Double latitude;
+    private BigDecimal latitude;
 
     // 경도
-    private Double longitude;
+    private BigDecimal longitude;
 
     // 도로명 주소
     private String roadAddress;
