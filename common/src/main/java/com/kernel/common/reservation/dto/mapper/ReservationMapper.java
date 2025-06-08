@@ -13,9 +13,9 @@ public class ReservationMapper {
     // CustomerReservationReqDTO -> Reservation
     public Reservation toEntity(Long customerId, CustomerReservationReqDTO reservationReqDTO) {
         return Reservation.builder()
-                .serviceCategory(ServiceCategory.builder().serviceId(reservationReqDTO.getServiceCategoryId()).build())
+                .serviceCategory(ServiceCategory.builder().serviceId(reservationReqDTO.getMainServiceId()).build())
                 .customer(Customer.builder().customerId(customerId).build())
-                .zipcode(reservationReqDTO.getZipcode())
+                .phone(reservationReqDTO.getPhone())
                 .roadAddress(reservationReqDTO.getRoadAddress())
                 .detailAddress(reservationReqDTO.getDetailAddress())
                 .latitude(reservationReqDTO.getLatitude())
@@ -33,7 +33,6 @@ public class ReservationMapper {
         return ReservationRspDTO.builder()
                 .reservationId(reservation.getReservationId())
                 .serviceCategoryId(reservation.getServiceCategory().getServiceId())
-                .zipcode(reservation.getZipcode())
                 .roadAddress(reservation.getRoadAddress())
                 .detailAddress(reservation.getDetailAddress())
                 .latitude(reservation.getLatitude())

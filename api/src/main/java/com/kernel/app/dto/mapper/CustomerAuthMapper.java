@@ -22,9 +22,10 @@ public class CustomerAuthMapper {
                 .birthDate(signupReqDTO.getBirthDate())
                 .gender(signupReqDTO.getGender())
                 .phone(signupReqDTO.getPhone())
-                .zipcode(signupReqDTO.getZipcode())
                 .roadAddress(signupReqDTO.getRoadAddress())
                 .detailAddress(signupReqDTO.getDetailAddress())
+                .latitude(signupReqDTO.getLatitude())
+                .longitude(signupReqDTO.getLongitude())
                 .status(signupReqDTO.getStatus())
                 .build();
     }
@@ -37,9 +38,10 @@ public class CustomerAuthMapper {
                 .username(customer.getUserName())
                 .birthDate(customer.getBirthDate())
                 .gender(customer.getGender())
-                .zipcode(customer.getZipcode())
                 .roadAddress(customer.getRoadAddress())
                 .detailAddress(customer.getDetailAddress())
+                .latitude(customer.getLatitude())
+                .longitude(customer.getLongitude())
                 .point(customer.getPoint())
                 .status(customer.getStatus())
                 .build();

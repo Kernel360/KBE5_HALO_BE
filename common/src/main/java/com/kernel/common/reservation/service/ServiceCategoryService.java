@@ -10,5 +10,5 @@ public interface ServiceCategoryService {
     List<ServiceCategoryTreeDTO> getServiceCategoryTree();
 
     // 요청 서비스 카테고리 조회
-    ServiceCategoryTreeDTO getRequestServiceCategory(Long serviceId);
+    ServiceCategoryTreeDTO getRequestServiceCategory(Long mainServiceId, List<Long> extraServiceId);
 }
