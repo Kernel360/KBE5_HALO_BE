@@ -11,6 +11,8 @@ import com.kernel.common.reservation.enums.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface CustomerReservationService {
 
     // 수요자 예약 요청
@@ -28,4 +30,6 @@ public interface CustomerReservationService {
     // 수요자 예약 취소
     void cancelReservationByCustomer(Long customerId, CustomerReservationCancelReqDTO cancelReqDTO);
 
+    // 수요자 추가 서비스 조회
+    List<Long> getExtraService(Long reservationId);
 }

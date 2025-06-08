@@ -2,11 +2,14 @@ package com.kernel.common.customer.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Builder
 @Getter
@@ -24,10 +27,6 @@ public class CustomerInfoUpdateReqDTO {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
 
-    // 우편번호
-    @NotBlank(message = "우편번호를 입력해주세요.")
-    private String zipcode;
-
     // 도로명주소
     @NotBlank(message = "도로명 주소를 입력해주세요.")
     private String roadAddress;
@@ -36,5 +35,12 @@ public class CustomerInfoUpdateReqDTO {
     @NotBlank(message = "상세 주소를 입력해주세요.")
     private String detailAddress;
 
+    // 위도
+    @NotNull(message = "주소를 입력해주세요.")
+    private BigDecimal latitude;
+
+    // 경도
+    @NotNull(message = "주소를 입력해주세요.")
+    private BigDecimal longitude;
 
 }

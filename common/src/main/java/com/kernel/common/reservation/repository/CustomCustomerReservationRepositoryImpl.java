@@ -182,10 +182,13 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                         manager.userName,               // 매니저 이름
                         reservation.status,             // 예약 상태
                         serviceCategory.serviceName,    // 서비스 카테고리 이름
+                        serviceCategory.serviceId,   // 서비스 카테고리ID
                         reservation.requestDate,        // 서비스 요청 날짜
                         reservation.startTime,          // 서비스 시작 시간
                         reservation.turnaround,         // 서비스 소요 시간
-                        reservation.price               // 예약 금액
+                        reservation.price,               // 예약 금액
+                        reservation.roadAddress,
+                        reservation.detailAddress
                 )
                 .from (reservation)
                 .leftJoin(reservation.manager, manager)
@@ -202,10 +205,13 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 .managerName(tuple.get(manager.userName))
                 .reservationStatus(tuple.get(reservation.status))
                 .serviceName(tuple.get(serviceCategory.serviceName))
+                .serviceCategoryId(tuple.get(serviceCategory.serviceId))
                 .requestDate(tuple.get(reservation.requestDate))
                 .startTime(tuple.get(reservation.startTime))
                 .turnaround(tuple.get(reservation.turnaround))
                 .price(tuple.get(reservation.price))
+                .roadAddress(tuple.get(reservation.roadAddress))
+                .detailAddress(tuple.get(reservation.detailAddress))
                 .build();
     }
 

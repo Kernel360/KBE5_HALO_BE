@@ -17,9 +17,6 @@ public class ReservationRspDTO {
     // 서비스 ID
     private Long serviceCategoryId;
 
-    // 우편번호
-    private String zipcode;
-
     // 도로명 주소
     private String roadAddress;
 

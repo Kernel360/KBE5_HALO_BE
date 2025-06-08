@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Builder
@@ -38,6 +39,12 @@ public class CustomerInfoDetailRspDTO {
 
     // 상세주소
     private String detailAddress;
+
+    // 위도
+    private BigDecimal latitude;
+
+    // 경도
+    private BigDecimal longitude;
 
     // 포인트
     private Integer point;

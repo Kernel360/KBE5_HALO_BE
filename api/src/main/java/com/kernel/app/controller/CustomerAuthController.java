@@ -7,11 +7,13 @@ import com.kernel.common.customer.dto.request.CustomerInfoUpdateReqDTO;
 import com.kernel.common.customer.dto.request.CustomerPasswordResetReqDTO;
 import com.kernel.common.customer.dto.request.CustomerSignupReqDTO;
 import com.kernel.common.customer.dto.response.CustomerInfoDetailRspDTO;
+import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -43,56 +45,52 @@ public class CustomerAuthController {
      */
     @GetMapping("/my")
     public ResponseEntity<ApiResponse<CustomerInfoDetailRspDTO>> getCustomer(
-            @RequestParam Long customerId //TODO 테스트용
-            // TODO @AuthenticationPrincipal AuthenticatedUser user
+            @AuthenticationPrincipal AuthenticatedUser customer
     ){
-        CustomerInfoDetailRspDTO infoRspDTO = customerAuthService.getCustomer(customerId);
+        CustomerInfoDetailRspDTO infoRspDTO = customerAuthService.getCustomer(customer.getUserId());
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 정보 조회 성공", infoRspDTO));
     }
 
     /**
      * 수요자 정보 수정
-     * @param customerId 수요자ID
+     * @param customer 수요자ID
      * @param updateReqDTO 수요자 정보 수정 요청 DTO
      * @return 수요자 정보를 담은 응답
      */
     @PatchMapping("/my")
     public ResponseEntity<ApiResponse<CustomerInfoDetailRspDTO>> updateCustomer(
-            @RequestParam Long customerId, //TODO 테스트용
-            // TODO @AuthenticationPrincipal AuthenticatedUser user
+            @AuthenticationPrincipal AuthenticatedUser customer,
             @Valid @RequestBody CustomerInfoUpdateReqDTO updateReqDTO
     ){
-        CustomerInfoDetailRspDTO updateRspDTO = customerAuthService.updateCustomer(customerId, updateReqDTO);
+        CustomerInfoDetailRspDTO updateRspDTO = customerAuthService.updateCustomer(customer.getUserId(), updateReqDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 정보 수정 성공", updateRspDTO));
     }
 
     /**
      * 수요자 비밀번호 수정
-     * @param customerId 수요자ID
+     * @param customer 수요자ID
      * @param resetReqDTO 새로운 비밀번호 요청 DTO
      */
     @PatchMapping("/reset-pwd")
     public ResponseEntity<ApiResponse<Void>> resetPassword(
-            @RequestParam Long customerId, //TODO 테스트용
-            // TODO @AuthenticationPrincipal AuthenticatedUser user
+            @AuthenticationPrincipal AuthenticatedUser customer,
             @Valid @RequestBody CustomerPasswordResetReqDTO resetReqDTO
     ){
-        customerAuthService.resetPassword(customerId, resetReqDTO);
+        customerAuthService.resetPassword(customer.getUserId(), resetReqDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 비밀번호 수정 성공", null));
     }
 
     /**
      * 수요자 회원 탈퇴
-     * @param customerId 수요자ID
+     * @param customer 수요자ID
      * @param jsonPassword 수요자 비밀번호
      */
     @DeleteMapping("/my")
     public ResponseEntity<ApiResponse<Void>> deleteCustomer(
-            @RequestParam Long customerId, //TODO 테스트용
-            @RequestBody Map<String, String> jsonPassword
-            // TODO @AuthenticationPrincipal AuthenticatedUser user
+            @RequestBody Map<String, String> jsonPassword,
+            @AuthenticationPrincipal AuthenticatedUser customer
     ){
-        customerAuthService.deleteCustomer(customerId, jsonPassword.get("password"));
+        customerAuthService.deleteCustomer(customer.getUserId(), jsonPassword.get("password"));
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 회원 탈퇴 성공", null));
     }
 

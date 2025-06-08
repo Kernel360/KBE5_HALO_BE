@@ -9,16 +9,22 @@ import com.kernel.common.reservation.dto.request.ReservationConfirmReqDTO;
 import com.kernel.common.reservation.dto.response.CustomerReservationDetailRspDTO;
 import com.kernel.common.reservation.dto.response.CustomerReservationRspDTO;
 import com.kernel.common.reservation.dto.response.ReservationRspDTO;
+import com.kernel.common.reservation.entity.ExtraService;
 import com.kernel.common.reservation.entity.Reservation;
+import com.kernel.common.reservation.entity.ServiceCategory;
 import com.kernel.common.reservation.enums.ReservationStatus;
 import com.kernel.common.reservation.repository.CustomerReservationRepository;
+import com.kernel.common.reservation.repository.ReservationExtraServiceRepository;
+import com.kernel.common.reservation.repository.ReservationServiceCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +32,8 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
 
     private final CustomerReservationRepository customerReservationRepository;
     private final MatchingManagerRepository matchingManagerRepository;
+    private final ReservationExtraServiceRepository extraServiceRepository;
+    private final ReservationServiceCategoryRepository serviceCategoryRepository;
     private final ReservationMapper reservationMapper;
 
     /**
@@ -40,6 +48,18 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
 
         // 예약 요청 저장
         Reservation requestedReservation = customerReservationRepository.save(reservationMapper.toEntity(customerId, reservationReqDTO));
+
+        // 추가 서비스 저장
+        List<ServiceCategory> categories = serviceCategoryRepository.findByServiceIdIn(reservationReqDTO.getAdditionalServiceIds());
+
+        List<ExtraService> extraServices = categories.stream()
+                .map(category -> ExtraService.builder()
+                        .reservation(requestedReservation)
+                        .serviceCategory(category)
+                        .build())
+                .collect(Collectors.toList());
+
+        extraServiceRepository.saveAll(extraServices);
 
         return reservationMapper.toRspDTO(requestedReservation);
     }
@@ -118,6 +138,18 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
         // 예약 취소
         foundReservation.cancelReservation(cancelReqDTO.getCancelReason(), ReservationStatus.CANCELED);
 
+    }
+
+    // 예약 추가서비스 조회
+    @Override
+    @Transactional(readOnly = true)
+    public List<Long> getExtraService(Long reservationId) {
+
+        List<ExtraService> list = extraServiceRepository.findByReservation_ReservationId(reservationId);
+
+        return list.stream()
+                .map(extra -> extra.getServiceCategory().getServiceId())
+                .collect(Collectors.toList());
     }
 
 }

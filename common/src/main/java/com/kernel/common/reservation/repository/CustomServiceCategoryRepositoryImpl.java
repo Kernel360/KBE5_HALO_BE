@@ -3,6 +3,7 @@ package com.kernel.common.reservation.repository;
 import com.kernel.common.reservation.dto.response.ServiceCategoryTreeDTO;
 import com.kernel.common.reservation.entity.QServiceCategory;
 import com.kernel.common.reservation.entity.ServiceCategory;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -72,22 +73,35 @@ public class CustomServiceCategoryRepositoryImpl implements CustomServiceCategor
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 요청 서비스 카테고리 조회
-     * @param serviceId 요청 서비스 카테고리ID
-     * @return 서비스 카테고리 tree
-     */
     @Override
-    public ServiceCategoryTreeDTO getRequestServiceCategory(Long serviceId) {
+    public ServiceCategoryTreeDTO getRequestServiceCategory(Long serviceId, List<Long> extraServiceIds) {
+
+        // null 방지: null이면 빈 리스트로 초기화
+        List<Long> safeExtraIds = Optional.ofNullable(extraServiceIds).orElse(Collections.emptyList());
+
+        BooleanBuilder parantAndChildCategory = new BooleanBuilder()
+                .and(serviceCategory.isActive.isTrue())
+                .and(serviceCategory.price.ne(0));
+
+        if (safeExtraIds.isEmpty()) {
+            // extraServiceIds 없으면 부모만 조회
+            parantAndChildCategory.and(serviceCategory.serviceId.eq(serviceId));
+        } else {
+            // 부모 + 선택한 자식만 조회
+            parantAndChildCategory.and(
+                    serviceCategory.serviceId.eq(serviceId)
+                            .or(
+                                    serviceCategory.parentId.serviceId.eq(serviceId)
+                                            .and(serviceCategory.serviceId.in(safeExtraIds))
+                            )
+            );
+        }
 
         // 1. 요청 카테고리 + 하위 카테고리 조회
         List<ServiceCategory> filteredCategories = queryFactory
                 .selectFrom(serviceCategory)
                 .where(
-                        serviceCategory.isActive.isTrue(),
-                        serviceCategory.price.ne(0),
-                        serviceCategory.serviceId.eq(serviceId)
-                                .or(serviceCategory.parentId.serviceId.eq(serviceId) )
+                        parantAndChildCategory
                 )
                 .orderBy(serviceCategory.sortOrder.asc())
                 .fetch();
@@ -110,14 +124,14 @@ public class CustomServiceCategoryRepositoryImpl implements CustomServiceCategor
                     .depth(category.getDepth())
                     .price(category.getPrice())
                     .description(category.getDescription())
-                    .children(new ArrayList<>()) // 자식 목록 초기화
+                    .children(new ArrayList<>())
                     .build();
 
             dtoMap.put(category.getServiceId(), dto);
             parentMap.put(
                     category.getServiceId(),
                     category.getParentId() != null ? category.getParentId().getServiceId() : null
-            ); // parent 연결용
+            );
         }
 
         // 3. 부모-자식 연결
@@ -131,12 +145,13 @@ public class CustomServiceCategoryRepositoryImpl implements CustomServiceCategor
             if (parentId != null && dtoMap.containsKey(parentId)) {
                 dtoMap.get(parentId).getChildren().add(dto);
             } else {
-                root = dto; // 최상위 루트 (요청한 ID)
+                root = dto; // 최상위 루트
             }
         }
 
         return root;
     }
+
 
     /**
      * 부모 카테고리 isActive = False 확인

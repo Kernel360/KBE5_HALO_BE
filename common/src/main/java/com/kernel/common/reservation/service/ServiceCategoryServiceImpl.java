@@ -27,13 +27,14 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
 
     /**
      * 요청 서비스 카테고리 조회
-     * @param serviceId 요청 서비스 카테고리ID
+     * @param mainServiceId 요청 메인 서비서ID
+     * @param extraServiceId 요청 추가서비스 ID
      * @return 서비스 카테고리 tree
      */
     @Override
     @Transactional(readOnly = true)
-    public ServiceCategoryTreeDTO getRequestServiceCategory(Long serviceId) {
+    public ServiceCategoryTreeDTO getRequestServiceCategory(Long mainServiceId, List<Long> extraServiceId) {
 
-        return serviceCategoryRepository.getRequestServiceCategory(serviceId);
+        return serviceCategoryRepository.getRequestServiceCategory(mainServiceId, extraServiceId);
     }
 }
