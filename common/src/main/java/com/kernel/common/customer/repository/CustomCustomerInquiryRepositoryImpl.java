@@ -2,10 +2,7 @@ package com.kernel.common.customer.repository;
 
 import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
 import com.kernel.common.admin.repository.AdminRepository;
-import com.kernel.common.customer.entity.CustomerInquiry;
-import  com.kernel.common.customer.entity.QCustomerInquiry;
-import com.kernel.common.customer.entity.QCustomerReply;
-import com.kernel.common.customer.entity.QInquiryCategory;
+import com.kernel.common.customer.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -107,13 +104,15 @@ public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquir
         BooleanExpression condition = inquiry.isDeleted.eq(false);
 
         if (query.getAuthorName() != null && !query.getAuthorName().isBlank()) {
-            Long authorId = customerRepository.findByUserName(query.getAuthorName())
-                    .orElseThrow(() -> new IllegalArgumentException("작성자를 찾을 수 없습니다: " + query.getAuthorName()));
-            condition = condition.and(inquiry.authorId.eq(authorId));
+            Optional<Customer> customer = customerRepository.findByUserName(query.getAuthorName());
+            if (customer.isEmpty()) {
+                return new PageImpl<>(List.of(), pageable, 0);
+            }
+            condition = condition.and(inquiry.authorId.eq(customer.get().getCustomerId()));
         }
 
-        if (query.getAuthorName() != null && !query.getAuthorName().isBlank()) {
-            condition = condition.and(inquiry.title.containsIgnoreCase(query.getAuthorName()));
+        if (query.getTitle() != null && !query.getTitle().isBlank()) {
+            condition = condition.and(inquiry.title.containsIgnoreCase(query.getTitle()));
         }
 
         if (query.getCategory() != null) {
