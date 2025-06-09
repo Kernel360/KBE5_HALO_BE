@@ -57,7 +57,7 @@ public class AdminManagerInquiryServiceImpl implements AdminManagerInquiryServic
         List<Manager> authors = managerRepository.findByUserNameContaining(request.getAuthorName().trim());
 
         if (authors.isEmpty()) {
-            throw new NoSuchElementException("해당 이름의 매니저를 찾을 수 없습니다.");
+            return new PageImpl<>(List.of(), pageable, 0);
         }
 
         // request의 작성자 이름인 모든 id를 추출
