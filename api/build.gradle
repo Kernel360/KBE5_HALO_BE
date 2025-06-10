@@ -33,6 +33,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // json 직렬화
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
     // Database
     implementation 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
