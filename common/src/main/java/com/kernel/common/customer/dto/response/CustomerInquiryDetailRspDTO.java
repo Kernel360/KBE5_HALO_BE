@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CustomerInquiryDetailRspDTO {
 
-    // 수요자 게시글ID
+    // 수요자 게시글 ID
     private Long inquiryId;
 
-    // 작성자ID
+    // 작성자 ID
     private Long authorId;
 
-    // 카테고리ID
+    // 카테고리 ID
     private Long categoryId;
 
     // 카테고리명
@@ -32,8 +32,8 @@ public class CustomerInquiryDetailRspDTO {
     // 내용
     private String content;
 
-    //TODO 첨부파일 기능 추가
-    // private Long fileId
+    // 첨부파일 ID
+    private Long fileId;
 
     // 작성일시
     private LocalDateTime createdAt;

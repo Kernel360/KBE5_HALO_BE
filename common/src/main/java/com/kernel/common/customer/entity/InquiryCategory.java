@@ -2,10 +2,7 @@ package com.kernel.common.customer.entity;
 
 import com.kernel.common.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -24,5 +21,10 @@ public class InquiryCategory extends BaseEntity {
     // 카테고리 명
     @Column(nullable = false, length =  50)
     private String categoryName;
+
+    // 활성화 여부
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
 
 }

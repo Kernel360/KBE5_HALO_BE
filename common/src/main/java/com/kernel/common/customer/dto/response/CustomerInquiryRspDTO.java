@@ -17,6 +17,12 @@ public class CustomerInquiryRspDTO {
     // 수요자 게시글ID
     private Long inquiryId;
 
+    // 게시글 카테고리ID
+    private Long categoryId;
+
+    // 게시글 카테고리 이름
+    private String categoryName;
+
     // 제목
     private String title;
 

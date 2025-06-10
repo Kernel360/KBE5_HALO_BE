@@ -4,13 +4,15 @@ package com.kernel.common.customer.dto.mapper;
 import com.kernel.common.customer.dto.request.CustomerInquiryCreateReqDTO;
 import com.kernel.common.customer.dto.response.CustomerInquiryDetailRspDTO;
 import com.kernel.common.customer.dto.response.CustomerInquiryReplyRspDTO;
-import com.kernel.common.customer.dto.response.CustomerInquiryRspDTO;
+import com.kernel.common.customer.dto.response.InquiryCategoryRspDTO;
 import com.kernel.common.customer.entity.CustomerInquiry;
 import com.kernel.common.customer.entity.CustomerReply;
 import com.kernel.common.customer.entity.InquiryCategory;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class CustomerInquiryMapper {
@@ -24,16 +26,6 @@ public class CustomerInquiryMapper {
                 .content(dto.getContent())
                 //TODO 첨부파일
                 //.fileId(dto.getFileId)
-                .build();
-    }
-
-    // CustomerInquiry -> CustomerInquiryRspDTO (문의사항 목록)
-    public CustomerInquiryRspDTO toRspDTO(CustomerInquiry inquiry){
-        return CustomerInquiryRspDTO.builder()
-                .inquiryId(inquiry.getInquiryId())
-                .title(inquiry.getTitle())
-                .createdAt(inquiry.getCreatedAt())
-                .isReplied(inquiry.getCustomerReply() != null)
                 .build();
     }
 
@@ -60,5 +52,16 @@ public class CustomerInquiryMapper {
                             .createdAt(r.getCreatedAt())
                             .build())
                 .orElse(null);
+    }
+
+    // InquiryCategoryRspDTO -> InquiryCategory
+    public List<InquiryCategoryRspDTO> toCategoryRspDTOList(List<InquiryCategory> categoryList){
+        return categoryList.stream()
+                .map(entity -> InquiryCategoryRspDTO.builder()
+                        .categoryId(entity.getCategoryId())
+                        .categoryName(entity.getCategoryName())
+                        .build()
+                ).collect(Collectors.toList());
+
     }
 }
