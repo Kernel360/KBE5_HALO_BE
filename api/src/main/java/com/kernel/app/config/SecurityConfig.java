@@ -1,15 +1,11 @@
 package com.kernel.app.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel.app.exception.handler.JwtAccessDeniedHandler;
 import com.kernel.app.exception.handler.JwtAuthenticationEntryPoint;
-import com.kernel.app.jwt.CustomLoginFilter;
-import com.kernel.app.jwt.CustomLogoutFilter;
-import com.kernel.app.jwt.JwtFilter;
-import com.kernel.app.jwt.JwtProperties;
-import com.kernel.app.jwt.JwtTokenProvider;
+import com.kernel.app.jwt.*;
 import com.kernel.app.repository.RefreshRepository;
-import java.util.Arrays;
-import java.util.Collections;
+import com.kernel.common.global.enums.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +23,9 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -37,6 +36,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshRepository refreshRepository;
     private final JwtProperties jwtProperties;
+    private final ObjectMapper objectMapper;
     // 예외 처리
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
@@ -89,16 +89,14 @@ public class SecurityConfig {
         applyCommonSecurityConfig(http);
 
         // 로그인 필터
-        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
+        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), objectMapper, refreshRepository, jwtProperties);
         loginFilter.setFilterProcessesUrl("/api/customers/auth/login");
 
         http
             .securityMatcher("/api/customers/**", "/api/customers/auth/login", "/api/reissue")
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/customers/auth/**").permitAll()) // TODO 테스트용
-                    /*
                     .requestMatchers("/api/customers/auth/login", "/api/customers/auth/signup").permitAll()
-                    .requestMatchers("/api/customers/**").hasRole(UserType.CUSTOMER.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+                    .requestMatchers("/api/customers/**").hasRole(UserType.CUSTOMER.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
@@ -113,15 +111,14 @@ public class SecurityConfig {
 
         applyCommonSecurityConfig(http);
 
-        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
+        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), objectMapper, refreshRepository, jwtProperties);
         loginFilter.setFilterProcessesUrl("/api/managers/auth/login");
 
         http
             .securityMatcher("/api/managers/**", "/api/managers/auth/login")
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/managers/**").permitAll()) // TODO 테스트용
-                    /*.requestMatchers("/api/managers/auth/login", "/api/managers/auth/signup").permitAll()
-                    .requestMatchers("/api/managers/**").hasRole(UserType.MANAGER.name()))*/ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+                    .requestMatchers("/api/managers/auth/login", "/api/managers/auth/signup").permitAll()
+                    .requestMatchers("/api/managers/**").hasRole(UserType.MANAGER.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
@@ -136,15 +133,14 @@ public class SecurityConfig {
 
         applyCommonSecurityConfig(http);
 
-        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), refreshRepository, jwtProperties);
+        CustomLoginFilter loginFilter = new CustomLoginFilter(jwtTokenProvider, authenticationManager(), objectMapper, refreshRepository, jwtProperties);
         loginFilter.setFilterProcessesUrl("/api/admin/auth/login");
 
         http
             .securityMatcher("/api/admin/**", "/api/admin/auth/login")
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/admin/**").permitAll()) // TODO 테스트용
-                   /* .requestMatchers("/api/admin/auth/login", "/api/admin/auth/signup").permitAll()
-                    .requestMatchers("/api/admin/**").hasRole(UserType.ADMIN.name())) */ //TODO 테스트용이하게 막아둠, 배포시 주석 제거
+                    .requestMatchers("/api/admin/auth/login", "/api/admin/auth/signup").permitAll()
+                    .requestMatchers("/api/admin/**").hasRole(UserType.ADMIN.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);

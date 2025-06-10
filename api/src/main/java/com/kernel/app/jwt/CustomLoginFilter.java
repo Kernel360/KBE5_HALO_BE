@@ -1,20 +1,19 @@
 package com.kernel.app.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kernel.common.global.enums.UserStatus;
-import com.kernel.common.global.security.AdminUserDetails;
-import com.kernel.common.global.security.CustomerUserDetails;
-import com.kernel.common.global.security.ManagerUserDetails;
 import com.kernel.app.entity.Refresh;
 import com.kernel.app.exception.ErrorCode;
 import com.kernel.app.exception.dto.ErrorResponse;
 import com.kernel.app.repository.RefreshRepository;
 import com.kernel.common.global.entity.ApiResponse;
+import com.kernel.common.global.enums.UserStatus;
+import com.kernel.common.global.security.AdminUserDetails;
+import com.kernel.common.global.security.CustomerUserDetails;
+import com.kernel.common.global.security.ManagerUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -38,7 +38,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
     private final RefreshRepository refreshRepository;
     private final JwtProperties jwtProperties;
 
@@ -146,9 +146,6 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         log.warn("Authentication failed: {}", failed.getMessage());
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType("application/json;charset=UTF-8");
-
         ErrorResponse errorResponse;
         if (failed instanceof BadCredentialsException) {
             errorResponse = new ErrorResponse(ErrorCode.INVALID_CREDENTIALS);
@@ -158,7 +155,15 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             errorResponse = new ErrorResponse(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        objectMapper.writeValue(response.getWriter(), errorResponse);
+        // Spring이 자동으로 JSON 변환하도록 처리
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json;charset=UTF-8");
+
+        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+        log.debug("Error response JSON: {}", jsonResponse);
+
+        response.getWriter().print(jsonResponse); // write 대신 print 사용
+        response.getWriter().flush();
     }
 
     /*** 클래스 내 메서드 ***/
