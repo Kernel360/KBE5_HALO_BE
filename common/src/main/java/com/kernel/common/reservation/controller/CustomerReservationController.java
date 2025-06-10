@@ -50,7 +50,7 @@ public class CustomerReservationController {
                 = serviceCategoryService.getRequestServiceCategory(reservationReqDTO.getMainServiceId(), reservationReqDTO.getAdditionalServiceIds());
 
         // 매칭 매니저 조회 및 매칭된 매니저 상태 변경 ACTIVE -> MATCHING
-        List<ManagerMatchingRspDTO> matchedManagers = matchingService.getMatchingManagers(reservationReqDTO);
+        List<ManagerMatchingRspDTO> matchedManagers = matchingService.getMatchingManagers(requestedReservation, customer.getUserId());
 
         // 예약ID + 매칭 매니저 리스트
         ReservationMatchedRspDTO result = ReservationMatchedRspDTO.builder()

@@ -52,9 +52,18 @@ public class CustomerInquiry extends BaseEntity {
 
     // 문의사항 수정
     public void update(String title, String content, InquiryCategory category) {
-        this.title = title;
-        this.content = content;
-        this.category = category;
+        if( title != null && !title.equals(this.title) ) {
+            this.title = title;
+        }
+
+        if( content != null && !content.equals(this.content) ) {
+            this.content = content;
+        }
+
+        if (category.getCategoryId() != null && !this.category.getCategoryId().equals(category.getCategoryId())) {
+            this.category = category;
+        }
+
         //this.fileId = fileId;
     }
 

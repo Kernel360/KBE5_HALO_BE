@@ -6,6 +6,7 @@ import com.kernel.common.customer.dto.request.CustomerInquiryCreateReqDTO;
 import com.kernel.common.customer.dto.request.CustomerInquiryUpdateReqDTO;
 import com.kernel.common.customer.dto.response.CustomerInquiryDetailRspDTO;
 import com.kernel.common.customer.dto.response.CustomerInquiryRspDTO;
+import com.kernel.common.customer.dto.response.InquiryCategoryRspDTO;
 import com.kernel.common.customer.entity.CustomerInquiry;
 import com.kernel.common.customer.entity.InquiryCategory;
 import com.kernel.common.customer.repository.CustomerInquiryRepository;
@@ -13,11 +14,12 @@ import com.kernel.common.customer.repository.InquiryCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -32,9 +34,20 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
     private final CustomerInquiryMapper customerInquiryMapper;
 
     /**
+     * 수요자 문의사항 카테고리 조회
+     * @return 문의사항 카테고리 목록
+     */
+    @GetMapping("/categories")
+    public List<InquiryCategoryRspDTO> getCustomerInquiryCategory(){
+
+        List<InquiryCategory> foundCategories = inquiryCategoryRepository.findAllByIsActiveTrue();
+        return customerInquiryMapper.toCategoryRspDTOList(foundCategories);
+    }
+
+    /**
      * 수요자 문의사항 목록 조회
      * @param customerId 수요자 ID
-     * @param keyword 검색 키워드
+     * @param startDate 검색 시작 날짜
      * @param pageable 페이징 정보
      * @return 검색된 문의사항 목록 (페이징 포함)
      */
@@ -42,19 +55,11 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
     @Transactional(readOnly = true)
     public Page<CustomerInquiryRspDTO> searchCustomerInquiries(
             Long customerId,
-            String keyword,
+            LocalDateTime startDate,
             Pageable pageable
     ) {
 
-        // 페이지 포함 수요자 문의사항 검색
-        Page<CustomerInquiry> inquiryPage = customerInquiryRepository.searchByAuthorIdAndKeyword(customerId, keyword, pageable);
-
-        // entity -> dtoList
-        List<CustomerInquiryRspDTO> dtoList = inquiryPage.getContent().stream()
-                .map(customerInquiryMapper::toRspDTO)
-                .toList();
-
-        return new PageImpl<>(dtoList, pageable, inquiryPage.getTotalElements());
+        return  customerInquiryRepository.searchByAuthorIdAndKeyword(customerId, startDate, pageable);
     }
 
     /**
@@ -107,29 +112,26 @@ public class CustomerInquiryServiceImpl  implements CustomerInquiryService {
      */
     @Override
     @Transactional
-    public CustomerInquiryDetailRspDTO updateCustomerInquiry(Long customerId, CustomerInquiryUpdateReqDTO inquiryRequestDTO) {
+    public CustomerInquiryDetailRspDTO updateCustomerInquiry(Long customerId, Long inquiryId, CustomerInquiryUpdateReqDTO inquiryRequestDTO) {
 
         // 문의내역 존재 여부 확인
-        CustomerInquiry foundInquriy = findCustomerInquiry(inquiryRequestDTO.getInquiryId(), customerId);
-
-        // 삭제 여부 확인
-        foundInquriy.validateDelete();
+        CustomerInquiry foundInquiry = findCustomerInquiry(inquiryId, customerId);
 
         // 답변 여부 확인
-        foundInquriy.validateReply();
+        foundInquiry.validateReply();
 
         // 카테고리 존재 여부 확인
         InquiryCategory foundCategory = findCategory(inquiryRequestDTO.getCategoryId());
 
         // 수정
-        foundInquriy.update(
+        foundInquiry.update(
                 inquiryRequestDTO.getTitle(),
                 inquiryRequestDTO.getContent(),
                 foundCategory
         );
 
         // 수정된 내역 반환
-        return customerInquiryMapper.toDetailRspDTO(foundInquriy);
+        return customerInquiryMapper.toDetailRspDTO(foundInquiry);
     }
 
     /**

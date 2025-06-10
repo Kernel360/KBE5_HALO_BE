@@ -14,14 +14,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CustomerInquiryUpdateReqDTO {
 
-    // 문의사항ID
-    @NotNull
-    private Long inquiryId;
-
-    // 작성자ID
-    @NotNull
-    private Long authorId;
-
     // 카테고리ID
     @NotNull(message = "카테고리를 선택해주세요.")
     private Long categoryId;
@@ -36,7 +28,7 @@ public class CustomerInquiryUpdateReqDTO {
     @Size(max = 5000, message = "내용은 최대 5000자까지 입력할 수 있습니다.")
     private String content;
 
-    //TODO 첨부파일 추가
-    //private Long fileId;
+    // 첨부파일 추가
+    private Long fileId;
 
 }
