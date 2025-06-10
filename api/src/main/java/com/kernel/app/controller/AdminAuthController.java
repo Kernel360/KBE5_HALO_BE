@@ -1,7 +1,7 @@
 package com.kernel.app.controller;
 
 import com.kernel.app.service.AdminAuthService;
-import com.kernel.common.admin.dto.AdminSignupReqDTO;
+import com.kernel.common.admin.dto.request.AdminSignupReqDTO;
 import com.kernel.common.global.entity.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

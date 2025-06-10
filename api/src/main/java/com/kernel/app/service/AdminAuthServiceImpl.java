@@ -3,7 +3,7 @@ package com.kernel.app.service;
 import com.kernel.app.dto.mapper.AdminAuthMapper;
 import com.kernel.app.exception.custom.DuplicateUserException;
 import com.kernel.app.repository.AdminAuthRepository;
-import com.kernel.common.admin.dto.AdminSignupReqDTO;
+import com.kernel.common.admin.dto.request.AdminSignupReqDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

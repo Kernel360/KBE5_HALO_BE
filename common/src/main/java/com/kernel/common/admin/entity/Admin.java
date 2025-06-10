@@ -22,8 +22,14 @@ public class Admin extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long adminId;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 15)
     private String phone;
+
+    @Column(nullable = false, length = 10)
+    private String userName;
+
+    @Column(nullable = false, length = 50)
+    private String email;
 
     @Column(nullable = false, length = 100)
     private String password;
