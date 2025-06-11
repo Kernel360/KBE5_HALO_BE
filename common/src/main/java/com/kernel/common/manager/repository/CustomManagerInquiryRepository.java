@@ -1,6 +1,8 @@
 package com.kernel.common.manager.repository;
 
+import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
 import com.kernel.common.global.enums.ReplyStatus;
+import com.kernel.common.manager.entity.ManagerInquiry;
 import com.querydsl.core.Tuple;
 import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
@@ -17,4 +19,6 @@ public interface CustomManagerInquiryRepository {
         String contentKeyword,
         Pageable pageable
     );
+
+    Page<ManagerInquiry> searchManagerInquiryWithReply(AdminInquirySearchReqDTO request, Pageable pageable);
 }

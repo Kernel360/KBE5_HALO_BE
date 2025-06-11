@@ -122,8 +122,9 @@ public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquir
         List<CustomerInquiry> content = queryFactory
                 .selectFrom(inquiry)
                 .leftJoin(inquiry.category, category).fetchJoin()
+                .leftJoin(inquiry.customerReply, reply).fetchJoin()
                 .where(condition)
-                .orderBy(inquiry.createdAt.desc())
+                .orderBy(inquiry.inquiryId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

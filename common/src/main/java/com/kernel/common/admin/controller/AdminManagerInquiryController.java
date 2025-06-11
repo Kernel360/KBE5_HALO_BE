@@ -4,13 +4,16 @@ import com.kernel.common.admin.dto.request.AdminInquiryReplyReqDTO;
 import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
 import com.kernel.common.admin.dto.response.AdminInquiryDetailRspDTO;
 import com.kernel.common.admin.dto.response.AdminInquirySummaryManagerRspDTO;
+import com.kernel.common.admin.dto.response.AdminInquirySummaryRspDTO;
 import com.kernel.common.admin.service.AdminManagerInquiryService;
 import com.kernel.common.global.entity.ApiResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +25,7 @@ public class AdminManagerInquiryController {
     private final AdminManagerInquiryService adminManagerInquiryService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<AdminInquirySummaryManagerRspDTO>>> getManagerInquiryPage(
+    public ResponseEntity<ApiResponse<Page<AdminInquirySummaryRspDTO>>> getManagerInquiryPage(
             // @AuthenticationPrincipal AuthenticatedUser admin,
             @ModelAttribute AdminInquirySearchReqDTO request,
             Pageable pageable
@@ -33,7 +36,9 @@ public class AdminManagerInquiryController {
             return ResponseEntity.status(403).body(new ApiResponse<>(false, "권한이 없습니다.", null));
         }*/
 
-        Page<AdminInquirySummaryManagerRspDTO> inquiryPage = adminManagerInquiryService.getManagerInquiryPage(request, pageable);
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "inquiryId"));
+
+        Page<AdminInquirySummaryRspDTO> inquiryPage = adminManagerInquiryService.getManagerInquiryPage(request, sortedPageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "고객 문의사항 목록 조회 성공", inquiryPage));
     }
 

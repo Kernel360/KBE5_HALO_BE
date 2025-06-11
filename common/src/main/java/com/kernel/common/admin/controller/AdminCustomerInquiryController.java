@@ -1,5 +1,6 @@
 package com.kernel.common.admin.controller;
 
+import com.kernel.common.admin.dto.request.AdminInquiryDetailReqDTO;
 import com.kernel.common.admin.dto.request.AdminInquiryReplyReqDTO;
 import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
 import com.kernel.common.admin.dto.response.AdminInquiryDetailRspDTO;
@@ -54,6 +55,7 @@ public class AdminCustomerInquiryController {
     @GetMapping("/{inquiry-id}")
     public ResponseEntity<ApiResponse<AdminInquiryDetailRspDTO>> getCustomerInquiryDetail(
             // @AuthenticationPrincipal AuthenticatedUser admin,
+            @ModelAttribute @Valid AdminInquiryDetailReqDTO request,
             @PathVariable("inquiry-id") Long inquiryId
     ) {
         // TODO: 관리자 권한 확인 (ROLE_ADMIN 권한을 체크)
@@ -61,7 +63,7 @@ public class AdminCustomerInquiryController {
             return ResponseEntity.status(403).body(new ApiResponse<>(false, "권한이 없습니다.", null));
         }*/
 
-        AdminInquiryDetailRspDTO inquiryDetail = adminCustomerInquiryService.getCustomerInquiryDetail(inquiryId);
+        AdminInquiryDetailRspDTO inquiryDetail = adminCustomerInquiryService.getCustomerInquiryDetail(inquiryId, request.getAuthorId());
         return ResponseEntity.ok(new ApiResponse<>(true, "고객 문의사항 상세 조회 성공", inquiryDetail));
     }
 

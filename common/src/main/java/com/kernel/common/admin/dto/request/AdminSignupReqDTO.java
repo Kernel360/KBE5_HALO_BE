@@ -1,4 +1,4 @@
-package com.kernel.common.admin.dto;
+package com.kernel.common.admin.dto.request;
 
 import com.kernel.common.global.enums.UserStatus;
 
@@ -17,7 +17,13 @@ public class AdminSignupReqDTO {
     @NotBlank(message = "핸드폰 번호는 필수 입력 값입니다.")
     private String phone;
 
-    @NotBlank
+    @NotBlank(message = "사용자 이름은 필수 입력 값입니다.")
+    private String userName;
+
+    @NotBlank(message = "이메일은 필수 입력 값입니다.")
+    private String email;
+
+    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     private String password;
 
     @Enumerated(EnumType.STRING)

@@ -16,6 +16,9 @@ public class AdminInquiryDetailRspDTO extends AdminInquirySummaryRspDTO {
     private Long fileId;
 
 
+    // 답변 id
+    private Long answerId;
+
     // 답변 내용
     private String reply;
 

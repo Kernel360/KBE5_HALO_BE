@@ -15,4 +15,6 @@ public class AdminInquirySummaryRspDTO {
     private String title;
 
     private LocalDateTime createdAt;
+
+    private Boolean replyStatus;
 }
