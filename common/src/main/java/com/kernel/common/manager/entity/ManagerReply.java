@@ -31,7 +31,7 @@ public class ManagerReply extends BaseEntity {
 
     // 매니저 상담 게시글ID
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inquiry_id")
+    @JoinColumn(name = "inquiry_id", unique = true)
     private ManagerInquiry managerInquiry;
 
     // 작성자ID(= 관리자ID)
