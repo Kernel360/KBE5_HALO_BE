@@ -139,7 +139,7 @@ public class SecurityConfig {
         http
             .securityMatcher("/api/admin/**", "/api/admin/auth/login")
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/admin/auth/login", "/api/admin/auth/signup").permitAll()
+                    .requestMatchers("/api/admin/auth/login").permitAll()
                     .requestMatchers("/api/admin/**").hasRole(UserType.ADMIN.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
@@ -153,7 +153,7 @@ public class SecurityConfig {
     private CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173")); // 3000: React (CRA), 5173: Vite (Vue, React 지원)
+            config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173", "https://halocare.site", "https://www.halocare.site", "https://api.halocare.site")); // 3000: React (CRA), 5173: Vite (Vue, React 지원)
             config.setAllowedMethods(Collections.singletonList("*"));
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowCredentials(true);
