@@ -19,9 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -72,21 +70,58 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        // 예약 ID 조회
+        List<Long> reservationIds = tuples.stream()
+                .map(tuple -> tuple.get(reservation.reservationId))
+                .toList();
+
+        // 리뷰 ID 조회
+        Map<Long, Long> reviewIdByReservationIds = new HashMap<>();
+        if (!reservationIds.isEmpty()) {
+            reviewIdByReservationIds = queryFactory
+                    .select(
+                            review.reservation.reservationId,
+                            review.reviewId
+                    )
+                    .from(review)
+                    .where(
+                            review.reservation.reservationId.in(reservationIds),
+                            review.authorId.eq(customerId),
+                            review.authorType.eq(AuthorType.CUSTOMER)
+                    )
+                    .fetch()
+                    .stream()
+                    .filter(tuple ->
+                            Objects.nonNull(tuple.get(review.reservation.reservationId)) &&
+                            Objects.nonNull(tuple.get(review.reviewId))
+                    )
+                    .collect(Collectors.toMap(
+                            tuple -> tuple.get(review.reservation.reservationId),
+                            tuple -> tuple.get(review.reviewId)
+                    ));
+        }
+
+        // Make reservationIdToReviewId effectively final for lambda
+        Map<Long, Long> finalReviewIdByReservationIds = reviewIdByReservationIds;
+
         // Tuple -> DTO 로 변환
         List<CustomerReservationRspDTO> content = tuples.stream()
-                .map(tuple-> CustomerReservationRspDTO.builder()
-                        .reservationId(tuple.get(reservation.reservationId))
-                        .roadAddress(tuple.get(reservation.roadAddress))
-                        .detailAddress(tuple.get(reservation.detailAddress))
-                        .managerName(tuple.get(manager.userName))
-                        .reservationStatus(tuple.get(reservation.status))
-                        .serviceName(tuple.get(serviceCategory.serviceName))
-                        .requestDate(tuple.get(reservation.requestDate))
-                        .startTime(tuple.get(reservation.startTime))
-                        .turnaround(tuple.get(reservation.turnaround))
-                        .price(tuple.get(reservation.price))
-                        .build()
-                )
+                .map(tuple -> {
+                    Long resId = tuple.get(reservation.reservationId);
+                    return CustomerReservationRspDTO.builder()
+                            .reservationId(resId)
+                            .roadAddress(tuple.get(reservation.roadAddress))
+                            .detailAddress(tuple.get(reservation.detailAddress))
+                            .managerName(tuple.get(manager.userName))
+                            .reservationStatus(tuple.get(reservation.status))
+                            .serviceName(tuple.get(serviceCategory.serviceName))
+                            .requestDate(tuple.get(reservation.requestDate))
+                            .startTime(tuple.get(reservation.startTime))
+                            .turnaround(tuple.get(reservation.turnaround))
+                            .price(tuple.get(reservation.price))
+                            .reviewId(finalReviewIdByReservationIds.get(resId)) // ← 없는 경우 null 반환됨
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         // 전체 개수 조회
@@ -120,12 +155,14 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                         reservation.status,             // 예약상태
                         reservation.requestDate,        // 요청 날짜
                         reservation.startTime,          // 시작 시간
-                        reservation.turnaround,         // 소요 시간
+                        reservation.turnaround,         // 총 소요 시간
                         reservation.price,              // 총 가격
                         reservation.cancelReason,       // 취소 사유
                         reservation.cancelDate,         // 취소 일자
+                        reservation.memo,               // 메모
                         reservation.serviceCategory.serviceId, // 서비스 ID
                         serviceCategory.serviceName,    // 서비스 이름(대분류)
+                        serviceCategory.serviceTime,    // 서비스 시간
                         manager.userName,               // 매니저 이름
                         manager.bio,                    // 매니저 한줄 소개
                         manager.averageRating,          // 매니저 평점 평균
@@ -157,6 +194,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 .leftJoin(extraService.serviceCategory, serviceCategory)
                 .where(extraService.reservation.reservationId.eq(reservationId))
                 .fetch();
+        // null-safe for extraServiceList
+        List<ExtraServiceRspDTO> extraServices = extraServiceList != null ? extraServiceList : Collections.emptyList();
 
         // 수요자 리뷰 조회
         Tuple foundReview = queryFactory
@@ -186,19 +225,21 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 tuple.get(reservation.startTime),
                 tuple.get(reservation.turnaround),
                 tuple.get(reservation.price),
+                tuple.get(reservation.memo),
                 tuple.get(reservation.serviceCategory.serviceId),
                 tuple.get(serviceCategory.serviceName),
-                extraServiceList,
+                tuple.get(serviceCategory.serviceTime),
+                extraServices,
                 tuple.get(manager.userName),
                 tuple.get(manager.bio),
                 tuple.get(manager.averageRating),
                 tuple.get(manager.reviewCount),
                 tuple.get(reservation.cancelReason),
                 tuple.get(reservation.cancelDate),
-                tuple.get(review.reviewId),
-                tuple.get(review.content),
-                tuple.get(review.rating),
-                tuple.get(review.createdAt)
+                Optional.ofNullable(foundReview).map(m -> m.get(review.reviewId)).orElse(null),
+                Optional.ofNullable(foundReview).map(m -> m.get(review.content)).orElse(null),
+                Optional.ofNullable(foundReview).map(m -> m.get(review.rating)).orElse(null),
+                Optional.ofNullable(foundReview).map(m -> m.get(review.createdAt)).orElse(null)
         );
         return detailRspDTO;
     }
@@ -265,10 +306,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
             condition = condition.and(reservation.status.eq(status));
         }
 
-        condition = condition.and(reservation.status.notIn(ReservationStatus.PRE_CANCELED));
+        condition = condition.and(reservation.status.ne(ReservationStatus.PRE_CANCELED));
 
         return condition;
     }
-
-
 }
