@@ -4,8 +4,10 @@ import com.kernel.common.admin.dto.mapper.AdminInquiryMapper;
 import com.kernel.common.admin.dto.mapper.AdminReplyMapper;
 import com.kernel.common.admin.dto.request.AdminInquiryReplyReqDTO;
 import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
+import com.kernel.common.admin.dto.response.AdminInquiryDetailManagerRspDTO;
 import com.kernel.common.admin.dto.response.AdminInquiryDetailRspDTO;
 import com.kernel.common.admin.dto.response.AdminInquirySummaryManagerRspDTO;
+import com.kernel.common.admin.dto.response.AdminInquirySummaryRspDTO;
 import com.kernel.common.manager.entity.*;
 import com.kernel.common.manager.repository.ManagerInquiryRepository;
 import com.kernel.common.manager.repository.ManagerReplyRepository;
@@ -43,60 +45,20 @@ public class AdminManagerInquiryServiceImpl implements AdminManagerInquiryServic
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<AdminInquirySummaryManagerRspDTO> getManagerInquiryPage(AdminInquirySearchReqDTO request, Pageable pageable) {
+    public Page<AdminInquirySummaryRspDTO> getManagerInquiryPage(AdminInquirySearchReqDTO request, Pageable pageable) {
         boolean isEmptySearchConditions = (request.getAuthorName() == null || request.getAuthorName().isEmpty())
                 && (request.getTitle() == null || request.getTitle().isEmpty());
 
-        // 검색 조건이 비어있으면 모든 문의사항을 조회
-        if (isEmptySearchConditions) {
-            Page<ManagerInquiry> inquiryPage = managerInquiryRepository.findAll(pageable);
-            return inquiryPage.map(inquiry -> adminInquiryMapper.toSummaryManagerRspDTO(inquiry));
-        }
+        Page<ManagerInquiry> inquiryPage = managerInquiryRepository.searchManagerInquiryWithReply(request, pageable);
 
-        // 작성자 이름으로 매니저를 조회
-        List<Manager> authors = managerRepository.findByUserNameContaining(request.getAuthorName().trim());
-
-        if (authors.isEmpty()) {
-            return new PageImpl<>(List.of(), pageable, 0);
-        }
-
-        // request의 작성자 이름인 모든 id를 추출
-        List<Long> authorIds = authors.stream()
-                .map(Manager::getManagerId)
-                .toList();
-
-        // 모든 작성자 ID에 대해 페이지네이션된 문의사항을 조회
-        List<Tuple> allInquiries = new ArrayList<>();
-        for (Long authorId : authorIds) {
-            Page<Tuple> inquiryPage = managerInquiryRepository.searchManagerinquiriesWithPaging(
-                    authorId,
-                    null,
-                    null,
-                    null,
-                    request.getTitle(),
-                    null,
-                    pageable
-            );
-            allInquiries.addAll(inquiryPage.getContent());
-        }
-
-        return new PageImpl<>(
-            allInquiries.stream()
-                    .map(tuple -> {
-                        ManagerInquiry inquiry = tuple.get(managerInquiry);
-                        Long replyId = tuple.get(managerReply.answerId);
-
-                        return AdminInquirySummaryManagerRspDTO.builder()
-                                .inquiryId(inquiry.getInquiryId())
-                                .authorId(inquiry.getAuthorId())
-                                .title(inquiry.getTitle())
-                                .createdAt(inquiry.getCreatedAt())
-                                .build();
-                    })
-                    .toList(),
-            pageable,
-            allInquiries.size()
-        );
+        return inquiryPage.map(inquiry -> {
+            ManagerReply reply = inquiry.getManagerReply() != null
+                    ? managerReplyRepository.findById(inquiry.getManagerReply().getAnswerId()).orElse(null)
+                    : null; // 답변이 없을 수도 있으므로 null 처리
+            Manager author = managerRepository.findById(inquiry.getAuthorId())
+                    .orElseThrow(() -> new NoSuchElementException("작성자를 찾을 수 없습니다."));
+            return adminInquiryMapper.toSummaryRspDTO(inquiry);
+        });
     }
 
     /**
@@ -106,7 +68,7 @@ public class AdminManagerInquiryServiceImpl implements AdminManagerInquiryServic
      */
     @Override
     @Transactional(readOnly = true)
-    public AdminInquiryDetailRspDTO getManagerInquiryDetail(Long inquiryId) {
+    public AdminInquiryDetailManagerRspDTO getManagerInquiryDetail(Long inquiryId) {
         ManagerInquiry inquiry = managerInquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("문의사항을 찾을 수 없습니다."));
 
@@ -114,7 +76,10 @@ public class AdminManagerInquiryServiceImpl implements AdminManagerInquiryServic
                 ? managerReplyRepository.findById(inquiry.getManagerReply().getAnswerId()).orElse(null)
                 : null; // 답변이 없을 수도 있으므로 null 처리
 
-        return adminInquiryMapper.toDetailRspDTO(inquiry, reply);
+        Manager author = managerRepository.findById(inquiry.getAuthorId())
+                .orElseThrow(() -> new NoSuchElementException("작성자를 찾을 수 없습니다."));
+
+        return adminInquiryMapper.toDetailRspDTO(inquiry, reply, author);
     }
 
     /**

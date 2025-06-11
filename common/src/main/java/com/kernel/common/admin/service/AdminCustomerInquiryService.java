@@ -12,7 +12,7 @@ public interface AdminCustomerInquiryService {
 
     // Customer 문의사항 서비스
     Page<AdminInquirySummaryCustomerRspDTO> getCustomerInquiryPage(AdminInquirySearchReqDTO request, Pageable pageable);
-    AdminInquiryDetailRspDTO getCustomerInquiryDetail(Long inquiryId);
+    AdminInquiryDetailRspDTO getCustomerInquiryDetail(Long inquiryId, Long authorId);
     void DeleteCustomerInquiry(Long inquiryId);
     void CreateReplyCustomerInquiry(AdminInquiryReplyReqDTO reply, Long authorId);
     void UpdateReplyCustomerInquiry(AdminInquiryReplyReqDTO reply, Long authorId, Long replyId);

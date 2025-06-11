@@ -1,8 +1,8 @@
 package com.kernel.common.manager.repository;
 
+import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
 import com.kernel.common.global.enums.ReplyStatus;
-import com.kernel.common.manager.entity.QManagerInquiry;
-import com.kernel.common.manager.entity.QManagerReply;
+import com.kernel.common.manager.entity.*;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryRepository {
 
     private final JPQLQueryFactory jpaQueryFactory;
+    private final ManagerRepository managerRepository;
 
     @Override
     public Page<Tuple> searchManagerinquiriesWithPaging(
@@ -70,6 +71,49 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
 
         return new PageImpl<>(results, pageable, total);
     }
+
+
+    public Page<ManagerInquiry> searchManagerInquiryWithReply(AdminInquirySearchReqDTO request, Pageable pageable) {
+        QManagerInquiry managerInquiry = QManagerInquiry.managerInquiry;
+        QManagerReply managerReply = QManagerReply.managerReply;
+
+        // 전체 개수 조회
+        long total = Optional.ofNullable(
+            jpaQueryFactory
+                .select(managerInquiry.count())
+                .from(managerInquiry)
+                .leftJoin(managerInquiry.managerReply, managerReply)
+                .where(
+                    notDeleted(),
+                    titleContains(request.getTitle()),
+                    contentContains(request.getContent()),
+                    createdAtGoe(request.getFromCreatedAt()),
+                    createdAtLoe(request.getToCreatedAt())
+                    //replyStatusCond(request.getReplyStatus(), managerInquiry)
+                )
+                .fetchOne()
+        ).orElse(0L);
+
+        // 페이지 결과 조회
+        List<ManagerInquiry> results = jpaQueryFactory
+            .selectFrom(managerInquiry)
+            .leftJoin(managerInquiry.managerReply, managerReply)
+            .where(
+                notDeleted(),
+                titleContains(request.getTitle()),
+                contentContains(request.getContent()),
+                createdAtGoe(request.getFromCreatedAt()),
+                createdAtLoe(request.getToCreatedAt())
+                //replyStatusCond(request.getReplyStatus(), managerInquiry)
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(managerInquiry.inquiryId.desc())
+            .fetch();
+
+        return new PageImpl<>(results, pageable, total);
+    }
+
 
     // 작성자 ID 일치
     private BooleanExpression authorEq(Long authorId) {

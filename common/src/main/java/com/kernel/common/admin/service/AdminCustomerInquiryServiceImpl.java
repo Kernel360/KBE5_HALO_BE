@@ -4,17 +4,24 @@ import com.kernel.common.admin.dto.mapper.AdminInquiryMapper;
 import com.kernel.common.admin.dto.mapper.AdminReplyMapper;
 import com.kernel.common.admin.dto.request.AdminInquiryReplyReqDTO;
 import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
+import com.kernel.common.admin.dto.response.AdminInquiryDetailCustomerRspDTO;
 import com.kernel.common.admin.dto.response.AdminInquiryDetailRspDTO;
 import com.kernel.common.admin.dto.response.AdminInquirySummaryCustomerRspDTO;
+import com.kernel.common.customer.entity.Customer;
 import com.kernel.common.customer.entity.CustomerInquiry;
 import com.kernel.common.customer.entity.CustomerReply;
+import com.kernel.common.customer.repository.CustomCustomerInquiryRepository;
 import com.kernel.common.customer.repository.CustomerInquiryRepository;
 import com.kernel.common.customer.repository.CustomerReplyRepository;
+import com.kernel.common.customer.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.swing.text.html.Option;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +29,7 @@ public class AdminCustomerInquiryServiceImpl implements AdminCustomerInquiryServ
 
     private final CustomerInquiryRepository customerInquiryRepository;
     private final CustomerReplyRepository customerReplyRepository;
+    private final CustomerRepository customerRepository;
     private final AdminInquiryMapper adminInquiryMapper;
     private final AdminReplyMapper adminReplyMapper;
 
@@ -49,15 +57,21 @@ public class AdminCustomerInquiryServiceImpl implements AdminCustomerInquiryServ
      */
     @Override
     @Transactional(readOnly = true)
-    public AdminInquiryDetailRspDTO getCustomerInquiryDetail(Long inquiryId) {
-        CustomerInquiry inquiry = customerInquiryRepository.findById(inquiryId)
+    public AdminInquiryDetailCustomerRspDTO getCustomerInquiryDetail(Long inquiryId, Long authorId) {
+        /*CustomerInquiry inquiry = customerInquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new IllegalArgumentException("문의사항을 찾을 수 없습니다."));*/
+
+        CustomerInquiry inquiry = customerInquiryRepository.getCustomerInquiryDetails(authorId, inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException("문의사항을 찾을 수 없습니다."));
 
         CustomerReply reply = inquiry.getCustomerReply() != null
                 ? customerReplyRepository.findById(inquiry.getCustomerReply().getAnswerId()).orElse(null)
                 : null; // 답변이 없을 수도 있으므로 null 처리
 
-        return adminInquiryMapper.toDetailRspDTO(inquiry, reply);
+        Customer author = customerRepository.findById(inquiry.getAuthorId())
+                .orElseThrow(() -> new IllegalArgumentException("작성자를 찾을 수 없습니다."));
+
+        return adminInquiryMapper.toDetailRspDTO(inquiry, reply, author);
     }
 
     /**
