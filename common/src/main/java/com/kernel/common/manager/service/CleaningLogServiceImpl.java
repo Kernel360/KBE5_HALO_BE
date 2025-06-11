@@ -54,6 +54,9 @@ public class CleaningLogServiceImpl implements CleaningLogService {
         // 체크인
         CleaningLog savedCheckIn = cleaningLogRepository.save(checkedInEntity);
 
+        // 서비스 진행 중으로 변경
+        foundReservation.updateStatus(ReservationStatus.IN_PROGRESS);
+
         // Entity -> ResponseDTO 변환 후, return
         return cleaningLogMapper.toCheckInResponseDTO(savedCheckIn);
     }
