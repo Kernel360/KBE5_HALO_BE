@@ -6,26 +6,17 @@ import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.global.enums.UserType;
 import com.kernel.common.manager.dto.request.ManagerTerminationReqDTO;
 import com.kernel.common.manager.dto.request.ManagerUpdateReqDTO;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "manager")
@@ -146,6 +137,11 @@ public class Manager extends BaseEntity {
     @Builder.Default
     private BigDecimal averageRating = BigDecimal.ZERO;
 
+    // 매칭 여부
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isMatching = Boolean.FALSE;
+
 
     @PrePersist
     public void prePersist() {
@@ -214,5 +210,10 @@ public class Manager extends BaseEntity {
     // 매니저의 권한 타입 반환(ROLE_MANAGER)
     public String getUserType() {
         return "ROLE_"+ UserType.MANAGER;
+    }
+
+    // 매칭 여부 수정
+    public void updateMatching(Boolean matching) {
+        this.isMatching = matching;
     }
 }

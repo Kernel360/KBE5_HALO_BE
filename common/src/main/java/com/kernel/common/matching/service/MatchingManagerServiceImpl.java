@@ -1,12 +1,11 @@
 package com.kernel.common.matching.service;
 
-import com.kernel.common.global.enums.UserStatus;
 import com.kernel.common.manager.entity.Manager;
 import com.kernel.common.matching.dto.ManagerMatchingRspDTO;
 import com.kernel.common.matching.dto.MatchingManagerMapper;
 import com.kernel.common.matching.repository.MatchingManagerRepository;
-import com.kernel.common.reservation.dto.request.CustomerReservationReqDTO;
 import com.kernel.common.reservation.dto.request.ReservationConfirmReqDTO;
+import com.kernel.common.reservation.dto.response.ReservationRspDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +26,18 @@ public class MatchingManagerServiceImpl implements MatchingManagerService {
      */
     @Override
     @Transactional
-    public List<ManagerMatchingRspDTO> getMatchingManagers(CustomerReservationReqDTO reservationReqDTO) {
-        // TODO 매칭 알고리즘 구현
-        List<Manager> matchedManagers = matchingRepository.findByStatus(UserStatus.ACTIVE);
+    public List<ManagerMatchingRspDTO> getMatchingManagers(ReservationRspDTO reservationReqDTO, Long customerId) {
+        List<Manager> matchedManagers = matchingRepository.getMatchedManagers(reservationReqDTO);
 
-        // 매칭 매니저 상태값 변경
-        matchedManagers.forEach(manager -> {
-            manager.updateStatus(UserStatus.MATCHING);
-        });
+        matchedManagers.forEach(manager -> manager.updateMatching(true));
 
-        return matchingMapper.toRspDTOList(matchedManagers);
+        List<Long> matchedManagerIds = matchedManagers.stream()
+            .map(Manager::getManagerId)
+            .toList();
+
+        List<ManagerMatchingRspDTO> matchedManagersInfo = matchingRepository.getMatchingManagersInfo(customerId, matchedManagerIds);
+
+        return matchedManagersInfo;
     }
 
     /**
@@ -52,7 +53,7 @@ public class MatchingManagerServiceImpl implements MatchingManagerService {
 
         // 매칭 매니저 상태값 변경
         matchedManagers.forEach(manager -> {
-            manager.updateStatus(UserStatus.ACTIVE);
+            manager.updateMatching(false);
         });
 
     }

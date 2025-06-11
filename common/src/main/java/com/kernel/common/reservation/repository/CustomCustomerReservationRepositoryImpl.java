@@ -1,11 +1,13 @@
 package com.kernel.common.reservation.repository;
 
+import com.kernel.common.global.enums.AuthorType;
 import com.kernel.common.manager.entity.QManager;
 import com.kernel.common.reservation.dto.response.CustomerReservationDetailRspDTO;
 import com.kernel.common.reservation.dto.response.CustomerReservationRspDTO;
 import com.kernel.common.reservation.dto.response.ExtraServiceRspDTO;
 import com.kernel.common.reservation.entity.QExtraService;
 import com.kernel.common.reservation.entity.QReservation;
+import com.kernel.common.reservation.entity.QReview;
 import com.kernel.common.reservation.entity.QServiceCategory;
 import com.kernel.common.reservation.enums.ReservationStatus;
 import com.querydsl.core.Tuple;
@@ -30,6 +32,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
     private final QManager manager = QManager.manager;
     private final QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
     private final QExtraService extraService = QExtraService.extraService;
+    private final QReview review = QReview.review;
 
     /**
      * 수요자 예약 내역 조회
@@ -47,6 +50,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         List<Tuple> tuples = queryFactory
                 .select(
                         reservation.reservationId,      // 예약ID
+                        reservation.roadAddress,        // 도로명 주소
+                        reservation.detailAddress,      // 상세 주소
                         manager.userName,               // 매니저 이름
                         reservation.status,             // 예약 상태
                         serviceCategory.serviceName,    // 서비스 카테고리 이름
@@ -71,6 +76,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         List<CustomerReservationRspDTO> content = tuples.stream()
                 .map(tuple-> CustomerReservationRspDTO.builder()
                         .reservationId(tuple.get(reservation.reservationId))
+                        .roadAddress(tuple.get(reservation.roadAddress))
+                        .detailAddress(tuple.get(reservation.detailAddress))
                         .managerName(tuple.get(manager.userName))
                         .reservationStatus(tuple.get(reservation.status))
                         .serviceName(tuple.get(serviceCategory.serviceName))
@@ -97,7 +104,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
     /**
      * 예약 내역 상세 조회
      * @param reservationId 예약 ID
-     * @param customerId 수요자ID
+     * @param customerId 수요자 ID
      * @return 조회된 예약 상세 정보
      */
     @Override
@@ -106,7 +113,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         // 예약 내역 상세 조회
         Tuple tuple = queryFactory
                 .select(
-                        reservation.reservationId,      // 예약ID
+                        reservation.reservationId,      // 예약 ID
+                        reservation.phone,              // 핸드폰 번호
                         reservation.roadAddress,        // 도로명 주소
                         reservation.detailAddress,      // 상세 주소
                         reservation.status,             // 예약상태
@@ -114,6 +122,9 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                         reservation.startTime,          // 시작 시간
                         reservation.turnaround,         // 소요 시간
                         reservation.price,              // 총 가격
+                        reservation.cancelReason,       // 취소 사유
+                        reservation.cancelDate,         // 취소 일자
+                        reservation.serviceCategory.serviceId, // 서비스 ID
                         serviceCategory.serviceName,    // 서비스 이름(대분류)
                         manager.userName,               // 매니저 이름
                         manager.bio,                    // 매니저 한줄 소개
@@ -137,17 +148,37 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         // 추가 서비스 조회
         List<ExtraServiceRspDTO> extraServiceList = queryFactory
                 .select(Projections.constructor(ExtraServiceRspDTO.class,
+                        serviceCategory.serviceId,
                         serviceCategory.serviceName,        // 카테고리 이름
-                        serviceCategory.serviceTime         // 카테고리 소요 시간
+                        serviceCategory.price,               // 카테고리 가격
+                        serviceCategory.serviceTime        // 카테고리 소요 시간
                 ))
                 .from(extraService)
                 .leftJoin(extraService.serviceCategory, serviceCategory)
                 .where(extraService.reservation.reservationId.eq(reservationId))
                 .fetch();
 
+        // 수요자 리뷰 조회
+        Tuple foundReview = queryFactory
+                .select(
+                        review.reviewId,
+                        review.rating,
+                        review.content,
+                        review.createdAt
+                )
+                .from(review)
+                .where(
+                        review.reservation.reservationId.eq(reservationId),
+                        review.authorId.eq(customerId),
+                        review.authorType.eq(AuthorType.CUSTOMER)
+                )
+                .fetchOne();
+
+
         // DTO 생성
         CustomerReservationDetailRspDTO detailRspDTO = new CustomerReservationDetailRspDTO(
                 tuple.get(reservation.reservationId),
+                tuple.get(reservation.phone),
                 tuple.get(reservation.roadAddress),
                 tuple.get(reservation.detailAddress),
                 tuple.get(reservation.status),
@@ -155,14 +186,20 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 tuple.get(reservation.startTime),
                 tuple.get(reservation.turnaround),
                 tuple.get(reservation.price),
+                tuple.get(reservation.serviceCategory.serviceId),
                 tuple.get(serviceCategory.serviceName),
                 extraServiceList,
                 tuple.get(manager.userName),
                 tuple.get(manager.bio),
                 tuple.get(manager.averageRating),
-                tuple.get(manager.reviewCount)
+                tuple.get(manager.reviewCount),
+                tuple.get(reservation.cancelReason),
+                tuple.get(reservation.cancelDate),
+                tuple.get(review.reviewId),
+                tuple.get(review.content),
+                tuple.get(review.rating),
+                tuple.get(review.createdAt)
         );
-
         return detailRspDTO;
     }
 
@@ -227,6 +264,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         if (status != null) {
             condition = condition.and(reservation.status.eq(status));
         }
+
+        condition = condition.and(reservation.status.notIn(ReservationStatus.PRE_CANCELED));
 
         return condition;
     }

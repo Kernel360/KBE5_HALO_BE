@@ -6,6 +6,7 @@ import com.kernel.common.matching.dto.ManagerMatchingRspDTO;
 import com.kernel.common.matching.service.MatchingManagerService;
 import com.kernel.common.reservation.dto.request.CustomerReservationCancelReqDTO;
 import com.kernel.common.reservation.dto.request.CustomerReservationReqDTO;
+import com.kernel.common.reservation.dto.request.PreCancelReqDTO;
 import com.kernel.common.reservation.dto.request.ReservationConfirmReqDTO;
 import com.kernel.common.reservation.dto.response.*;
 import com.kernel.common.reservation.enums.ReservationStatus;
@@ -102,7 +103,7 @@ public class CustomerReservationController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<CustomerReservationRspDTO>>> getCustomerReservations(
             @RequestParam(required = false) ReservationStatus status,
-            @PageableDefault(size = 10) Pageable pageable,
+            @PageableDefault(size = 5) Pageable pageable,
             @AuthenticationPrincipal AuthenticatedUser customer
     ) {
         Page<CustomerReservationRspDTO> rspDTOPage
@@ -129,7 +130,7 @@ public class CustomerReservationController {
     }
 
     /**
-     * 예약 취소
+     * 예약 확정 후 취소
      * @param customer 수요자ID
      * @param cancelReqDTO 예약 취소 요청 DTO
      */
@@ -140,5 +141,21 @@ public class CustomerReservationController {
     ){
         customerReservationService.cancelReservationByCustomer(customer.getUserId(), cancelReqDTO);
         return ResponseEntity.ok(new ApiResponse<Void>(true, "수요자 예약 취소 성공", null));
+    }
+
+    /**
+     * 예약 확정 전 취소
+     * @param reservationId 예약ID
+     * @param preCancelReqDTO 매칭된 매니저들 ID
+     * @param customer 수요자ID
+     */
+    @PatchMapping("/{reservation_id}/pre-cancel")
+    public ResponseEntity<ApiResponse<Void>> cancelBeforeConfirmReservation(
+            @PathVariable("reservation_id") Long reservationId,
+            @RequestBody PreCancelReqDTO preCancelReqDTO,
+            @AuthenticationPrincipal AuthenticatedUser customer
+    ){
+        customerReservationService.cancelBeforeConfirmReservation(customer.getUserId(), reservationId, preCancelReqDTO.getMatchedManagers());
+        return ResponseEntity.ok(new ApiResponse<Void>(true, "수요자 예약 확정 전 취소 성공", null));
     }
 }

@@ -10,7 +10,6 @@ public enum UserStatus {
     DELETED("탈퇴"),                   // 탈퇴
     PENDING("승인대기"),                // 매니저 승인 대기
     REJECTED("승인거절"),               // 매니저 승인 거절
-    MATCHING("매칭 중"),                // 예약 매칭 중
     TERMINATION_PENDING("계약해지대기"), // 매니저 계약 해지 대기
     TERMINATED("계약해지");             // 매니저 계약 해지
 

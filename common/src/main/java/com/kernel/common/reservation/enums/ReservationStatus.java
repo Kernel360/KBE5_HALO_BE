@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ReservationStatus {
 
+    PRE_CANCELED("예약 확정 전 취소"),
     REQUESTED("예약 요청"),
     IN_PROGRESS("예약 진행 중"),
     CONFIRMED("예약 완료"),
