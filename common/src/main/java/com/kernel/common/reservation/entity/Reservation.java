@@ -115,7 +115,7 @@ public class Reservation extends BaseEntity {
         this.status = ReservationStatus.CONFIRMED;
     }
 
-    // 예약상태 변경 (=매니저 체크아웃)
+    // 예약상태 변경 (=매니저 체크인/체크아웃)
     public void updateStatus(ReservationStatus status) {
         this.status = status;
     }

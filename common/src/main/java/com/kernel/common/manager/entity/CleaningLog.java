@@ -31,7 +31,7 @@ public class CleaningLog extends BaseEntity {
 
     // 예약
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id", nullable = false)
+    @JoinColumn(name = "reservation_id", nullable = false, unique = true)
     private Reservation reservation;
 
     // 체크인 일시 (INSERT 시 자동 생성)
