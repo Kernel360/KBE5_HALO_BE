@@ -35,6 +35,9 @@ public interface AdminInquiryMapper {
     @Mapping(source = "reply.fileId", target = "replyFileId")
     @Mapping(source = "reply.createdAt", target = "replyCreatedAt")
     @Mapping(source = "reply.authorId", target = "replyAuthorId")
+    @Mapping(source = "author.userName", target = "userName")
+    @Mapping(source = "author.phone", target = "phone")
+    @Mapping(source = "author.email", target = "email")
     AdminInquiryDetailCustomerRspDTO toDetailRspDTO(CustomerInquiry inquiry, CustomerReply reply, Customer author);
 
     // ManagerInquiry -> AdminInquiryDetailRspDTO
@@ -48,5 +51,8 @@ public interface AdminInquiryMapper {
     @Mapping(source = "reply.fileId", target = "replyFileId")
     @Mapping(source = "reply.createdAt", target = "replyCreatedAt")
     @Mapping(source = "reply.authorId", target = "replyAuthorId")
+    @Mapping(source = "author.userName", target = "userName")
+    @Mapping(source = "author.phone", target = "phone")
+    @Mapping(source = "author.email", target = "email")
     AdminInquiryDetailManagerRspDTO toDetailRspDTO(ManagerInquiry inquiry, ManagerReply reply, Manager author);
 }

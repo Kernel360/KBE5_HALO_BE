@@ -8,8 +8,14 @@ import lombok.Setter;
 @Setter
 public class AdminInquiryDetailCustomerRspDTO extends AdminInquiryDetailRspDTO {
 
-    // 고객 정보
-    private Customer author;
+    // 고객 이름
+    private String userName;
+
+    // 고객 연락처
+    private String phone;
+
+    // 고객 이메일
+    private String email;
 
     // 고객 문의사항 유형
     private String categoryName;
