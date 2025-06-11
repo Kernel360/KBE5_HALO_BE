@@ -7,6 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AdminInquiryDetailManagerRspDTO extends AdminInquiryDetailRspDTO {
-    // 관리자 정보
-    private Manager author;
+    // 매니저 이름
+    private String userName;
+
+    // 매니저 연락처
+    private String phone;
+
+    // 매니저 이메일
+    private String email;
 }
