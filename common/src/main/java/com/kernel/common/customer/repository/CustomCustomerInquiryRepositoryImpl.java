@@ -1,7 +1,12 @@
 package com.kernel.common.customer.repository;
 
 import com.kernel.common.admin.dto.request.AdminInquirySearchReqDTO;
-import com.kernel.common.admin.repository.AdminRepository;
+import com.kernel.common.customer.dto.response.CustomerInquiryRspDTO;
+import com.kernel.common.customer.entity.CustomerInquiry;
+import com.kernel.common.customer.entity.QCustomerInquiry;
+import com.kernel.common.customer.entity.QCustomerReply;
+import com.kernel.common.customer.entity.QInquiryCategory;
+import com.querydsl.core.Tuple;
 import com.kernel.common.customer.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -10,8 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquiryRepository {
@@ -25,30 +32,58 @@ public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquir
     /**
      * 수요자 게시글 조회 및 검색
      * @param customerId 수요자 ID
-     * @param keyword 검색 키워드 (제목 기준)
+     * @param startDate 최근 검색 날짜
      * @param pageable 페이징 정보
      * @return 검색된 문의사항 목록 (페이징 적용)
      */
     @Override
-    public Page<CustomerInquiry> searchByAuthorIdAndKeyword(Long customerId, String keyword, Pageable pageable) {
+    public Page<CustomerInquiryRspDTO> searchByAuthorIdAndKeyword(Long customerId, LocalDateTime startDate, Pageable pageable) {
 
-        BooleanExpression byAuthorIdAndKeywordAndNotDeleted = authorIdAndKeywordAndNotDeleted(customerId, keyword);
+        BooleanExpression byAuthorIdAndStartDateAndNotDeleted = authorIdAndKeywordAndNotDeleted(customerId, startDate);
 
-        List<CustomerInquiry> content = queryFactory
-                .selectFrom(inquiry)
-                .where(byAuthorIdAndKeywordAndNotDeleted)
+        // 총 개수 조회
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(inquiry.count())
+                        .from(inquiry)
+                        .where(byAuthorIdAndStartDateAndNotDeleted)
+                        .fetchOne()
+        ).orElse(0L);
+
+        if (total == 0)
+            return new PageImpl<>(List.of(), pageable, 0);
+
+
+        // 2) Tuple 조회
+        List<Tuple> tuples = queryFactory
+                .select(
+                        inquiry.inquiryId,
+                        inquiry.title,
+                        inquiry.createdAt,
+                        inquiry.category.categoryId,
+                        inquiry.category.categoryName,
+                        reply.answerId.isNotNull()        // BooleanExpression 도 Tuple 로 뽑을 수 있습니다
+                )
+                .from(inquiry)
+                .leftJoin(inquiry.customerReply, reply)
+                .where(byAuthorIdAndStartDateAndNotDeleted)
                 .orderBy(inquiry.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = Optional.ofNullable(
-                queryFactory
-                        .select(inquiry.count())
-                        .from(inquiry)
-                        .where(byAuthorIdAndKeywordAndNotDeleted)
-                        .fetchOne()
-        ).orElse(0L);
+        // 3) Tuple → DTO(builder) 매핑
+        List<CustomerInquiryRspDTO> content = tuples.stream()
+                .map(t -> CustomerInquiryRspDTO.builder()
+                        .inquiryId(t.get(inquiry.inquiryId))
+                        .categoryId(t.get(inquiry.category.categoryId))
+                        .categoryName(t.get(inquiry.category.categoryName))
+                        .title(t.get(inquiry.title))
+                        .createdAt(t.get(inquiry.createdAt))
+                        .isReplied(t.get(reply.answerId.isNotNull()))
+                        .build()
+                )
+                .collect(Collectors.toList());
 
         return new PageImpl<>(content, pageable, total);
     }
@@ -76,16 +111,16 @@ public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquir
     }
 
     /**
-     * 문의사항 검색 조건 (작성자 ID + 키워드 + 삭제 여부)
+     * 문의사항 검색 조건 (작성자 ID + 작성일자 + 삭제 여부)
      * @param customerId 수요자 ID
-     * @param keyword 검색 키워드
+     * @param startDate 작성일자
      * @return BooleanExpression 조건
      */
-    private BooleanExpression authorIdAndKeywordAndNotDeleted(Long customerId, String keyword) {
+    private BooleanExpression authorIdAndKeywordAndNotDeleted(Long customerId, LocalDateTime startDate) {
         BooleanExpression condition = inquiry.authorId.eq(customerId);
 
-        if (keyword != null && !keyword.isBlank()) {
-            condition = condition.and(inquiry.title.containsIgnoreCase(keyword));
+        if (startDate != null ) {
+            condition = condition.and(inquiry.createdAt.goe(startDate));
         }
 
         condition = condition.and(inquiry.isDeleted.eq(false));
