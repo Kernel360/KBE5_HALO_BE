@@ -3,6 +3,7 @@ package com.kernel.common.customer.dto.response;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -27,5 +28,8 @@ public class CustomerReviewRspDTO {
 
     // 리뷰 내용
     private String content;
+
+    // 리뷰 작성 일자
+    private LocalDateTime createdAt;
 
 }

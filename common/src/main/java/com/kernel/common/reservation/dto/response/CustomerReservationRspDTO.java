@@ -48,6 +48,9 @@ public class CustomerReservationRspDTO {
     // 총 결제 금액
     private Integer price;
 
+    // 리뷰 id
+    private Long reviewId;
+
     public void updateExtraServices(ServiceCategoryTreeDTO categoryTreeDTO){
         this.extraServices = categoryTreeDTO;
     }

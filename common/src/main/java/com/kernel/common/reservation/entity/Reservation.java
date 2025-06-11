@@ -99,7 +99,7 @@ public class Reservation extends BaseEntity {
     @Column
     private String cancelReason;
 
-    @Column
+    @Column(columnDefinition = "datetime(0)")
     private LocalDateTime cancelDate;
 
     // 예약 취소

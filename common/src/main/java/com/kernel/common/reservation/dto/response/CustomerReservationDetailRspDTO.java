@@ -44,11 +44,17 @@ public class CustomerReservationDetailRspDTO {
     // 총 결제 금액
     private Integer totalPrice;
 
+    // 메모
+    private String memo;
+
     // 서비스ID
     private Long serviceId;
 
     // 서비스 종류(대분류)
     private String serviceName;
+
+    // 서비스 대분류 시간
+    private Integer serviceTime;
 
     // 추가 서비스
     private List<ExtraServiceRspDTO> extraServices;
