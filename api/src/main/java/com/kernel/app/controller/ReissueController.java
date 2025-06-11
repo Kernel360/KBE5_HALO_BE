@@ -8,6 +8,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ public class ReissueController {
     private final JwtProperties jwtProperties;
 
     @PostMapping("/reissue")
+    @Transactional
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
 
         String refreshToken = extractRefreshTokenFromCookies(request);
