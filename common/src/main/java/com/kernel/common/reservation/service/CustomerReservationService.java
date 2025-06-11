@@ -32,4 +32,7 @@ public interface CustomerReservationService {
 
     // 수요자 추가 서비스 조회
     List<Long> getExtraService(Long reservationId);
+
+    // 예약 확정 전 취소
+    void cancelBeforeConfirmReservation(Long userId, Long reservationId, List<Long> matchedManagerIds);
 }

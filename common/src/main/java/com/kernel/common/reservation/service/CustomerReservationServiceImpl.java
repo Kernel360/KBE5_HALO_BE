@@ -152,4 +152,29 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 예약 확정 전 취소
+     * @param reservationId 예약ID
+     * @param matchedManagerIds 매칭된 매니저들 ID
+     * @param customerId 수요자ID
+     */
+    @Override
+    @Transactional
+    public void cancelBeforeConfirmReservation(Long customerId, Long reservationId, List<Long> matchedManagerIds) {
+
+        // 예약 조회
+        Reservation foundReservation = customerReservationRepository.findByReservationIdAndCustomer_CustomerId(reservationId, customerId)
+                .orElseThrow(()-> new NoSuchElementException("취소 가능한 예약이 없습니다."));
+
+        // 매니저 조회
+        List<Manager> foundManager = matchingManagerRepository.findByManagerIdIn(matchedManagerIds);
+
+        // 예약, 매니저 상태 변경
+        foundReservation.updateStatus(ReservationStatus.PRE_CANCELED);
+
+        foundManager.forEach(manager -> {
+            manager.updateMatching(false);
+        });
+    }
+
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class CustomerReservationDetailRspDTO {
 
     // 예약 ID
     private Long reservationId;
+
+    // 핸드폰 번호
+    private String phone;
 
     // 예약 도로명 주소
     private String roadAddress;
@@ -40,6 +44,9 @@ public class CustomerReservationDetailRspDTO {
     // 총 결제 금액
     private Integer totalPrice;
 
+    // 서비스ID
+    private Long serviceId;
+
     // 서비스 종류(대분류)
     private String serviceName;
 
@@ -58,7 +65,25 @@ public class CustomerReservationDetailRspDTO {
     // 매니저 리뷰 수
     private Integer reviewCount;
 
+    // 예약 취소 사유
+    private String cancelReason;
+
+    // 예약 취소 날짜
+    private LocalDateTime cancelDate;
+
     // 결제 수단 //TODO 가격관리 정의 후 수정
     //private String payment;
+
+    // 리뷰ID
+    private Long reviewId;
+
+    //  리뷰 내용
+    private String reviewContent;
+
+    // 리뷰 별점
+    private Integer reviewRating;
+
+    // 리뷰 작성일자
+    private LocalDateTime reviewDate;
 
 }
