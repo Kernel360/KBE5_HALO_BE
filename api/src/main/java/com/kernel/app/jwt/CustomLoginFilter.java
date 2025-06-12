@@ -105,7 +105,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
                 AdminUserDetails userDetails = (AdminUserDetails) authentication.getPrincipal();
                 phone = userDetails.getUsername();
                 userId = userDetails.getUserId();
-                name = userDetails.getUsername();
+                name = userDetails.getName();
                 status = userDetails.getStatus();
             }
             default -> throw new IllegalStateException("Unsupported user type: " + userType);
