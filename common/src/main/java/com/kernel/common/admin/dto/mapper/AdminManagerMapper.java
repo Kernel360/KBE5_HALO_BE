@@ -19,16 +19,26 @@ public class AdminManagerMapper {
         return AdminManagerRspDTO.builder()
                 .managerId(manager.getManagerId())
                 .userName(manager.getUserName())
+                .birthDate(manager.getBirthDate())
+                .gender(manager.getGender())
                 .email(manager.getEmail())
                 .phone(manager.getPhone())
+                .roadAddress(manager.getRoadAddress())
+                .detailAddress(manager.getDetailAddress())
                 .status(manager.getStatus())
-                .createdAt(manager.getCreatedAt())
-                .updatedAt(manager.getUpdatedAt())
+                .averageRating(manager.getAverageRating())
                 .reservationCount(manager.getReservationCount())
+                .reviewCount(manager.getReviewCount())
                 .bio(manager.getBio())
                 .profileImageId(manager.getProfileImageId())
+                .fileId(manager.getFileId())  // 첨부파일 ID
+                .availableTimes(manager.getAvailableTimes())
                 //.availableArea(manager.getAvailableArea())    // availableArea는 Manager 패키지에서 정의된 Entity라고 가정
-                //.availableTime(manager.getAvailableTime())    // availableTime는 Manager 패키지에서 정의된 Entity라고 가정
+                .createdAt(manager.getCreatedAt())
+                .updatedAt(manager.getUpdatedAt())
+                .contractAt(manager.getContractAt())
+                .terminatedAt(manager.getTerminatedAt())
+                .terminationReason(manager.getTerminationReason())
                 .build();
     }
 
@@ -38,6 +48,9 @@ public class AdminManagerMapper {
                 .managerId(manager.getManagerId())
                 .userName(manager.getUserName())
                 .userstatus(manager.getStatus())
+                .phone(manager.getPhone())
+                .email(manager.getEmail())
+                .averageRating(manager.getAverageRating())
                 .reservationCount(manager.getReservationCount())
                 .reviewCount(manager.getReviewCount())
                 .build();
