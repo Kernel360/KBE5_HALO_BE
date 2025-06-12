@@ -17,6 +17,8 @@ public interface AdminManagerService {
 
     void processAppliedManager(Long managerId, String status);
 
+    void terminateManager(Long managerId);
+
     Page<AdminManagerSummaryRspDTO> getReportedManagers(String keyword, Pageable pageable);
 
 }

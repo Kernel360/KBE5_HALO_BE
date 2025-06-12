@@ -83,6 +83,19 @@ public class AdminManagerServiceImpl implements AdminManagerService {
     }
 
     /**
+     * 매니저 계약 해지 처리
+     * @param managerId 매니저 ID
+     */
+    @Transactional
+    @Override
+    public void terminateManager(Long managerId) {
+        Manager manager = managerRepository.findById(managerId)
+                .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));
+
+        manager.updateStatus(UserStatus.TERMINATED);
+    }
+
+    /**
      * 신고된 매니저 목록 조회
      * @param keyword 검색어
      * @param pageable 페이징 정보

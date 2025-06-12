@@ -66,6 +66,15 @@ public class AdminManagerController {
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 신청 처리 성공", null));
     }
 
+    // 매니저 강제 종료
+    @PatchMapping("/terminate/{manager_id}")
+    public ResponseEntity<ApiResponse<Void>> terminateManager(
+            @PathVariable("manager_id") Long managerId
+    ) {
+        adminManagerService.terminateManager(managerId);
+        return ResponseEntity.ok(new ApiResponse<>(true, "매니저 계약 해지 성공", null));
+    }
+
     // 신고된 매니저 목록 조회
     @GetMapping("/suspended")
     public ResponseEntity<ApiResponse<Page<AdminManagerSummaryRspDTO>>> getReportedManagers(
