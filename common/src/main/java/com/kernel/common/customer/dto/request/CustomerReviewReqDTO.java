@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 
 @Getter
-public class CustomerReviewCreateReqDTO {
+public class CustomerReviewReqDTO {
 
     // 리뷰 평점
     @NotNull(message = "리뷰 평점은 필수입니다.")

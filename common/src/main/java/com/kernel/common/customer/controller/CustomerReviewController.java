@@ -1,8 +1,9 @@
 package com.kernel.common.customer.controller;
 
-import com.kernel.common.customer.dto.request.CustomerReviewCreateReqDTO;
+import com.kernel.common.customer.dto.request.CustomerReviewReqDTO;
 import com.kernel.common.customer.dto.response.CustomerReviewRspDTO;
 import com.kernel.common.customer.service.CustomerReviewService;
+import com.kernel.common.global.AuthenticatedUser;
 import com.kernel.common.global.entity.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,54 +23,69 @@ public class CustomerReviewController {
 
     /**
      * 수요자 리뷰 목록 조회
-     * @param customerId 수요자ID
+     * @param customer 수요자ID
      * @param pageable 페이징
      * @return reviewRspDTO
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<CustomerReviewRspDTO>>> getCustomerReviews(
-            @RequestParam Long customerId,
-            // TODO @AuthenticatedUser AuthenticatedUser customer
-            @PageableDefault(size=10) Pageable pageable
+            @AuthenticationPrincipal AuthenticatedUser customer,
+            @PageableDefault(size=5) Pageable pageable
     ){
-        Page<CustomerReviewRspDTO> rspDTOPage = reviewService.getCustomerReviews(customerId,pageable);
+        Page<CustomerReviewRspDTO> rspDTOPage = reviewService.getCustomerReviews(customer.getUserId(), pageable);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 리뷰 목록 조회 성공", rspDTOPage));
     }
 
     /**
      * 수요자 리뷰 조회 by 예약ID
-     * @param customerId 수요자ID
+     * @param customer 수요자ID
      * @param reservationId 예약ID
      * @return reviewRspDTO
      */
     @GetMapping("{reservation-id}")
     public ResponseEntity<ApiResponse<CustomerReviewRspDTO>> getCustomerReviewsByReservationId(
-            @RequestParam Long customerId,
-            // TODO @AuthenticatedUser AuthenticatedUser customer
+            @AuthenticationPrincipal AuthenticatedUser customer,
             @PathVariable("reservation-id") Long reservationId
     ){
-        CustomerReviewRspDTO rspDTO = reviewService.getCustomerReviewsByReservationId(customerId,reservationId);
+        CustomerReviewRspDTO rspDTO = reviewService.getCustomerReviewsByReservationId(customer.getUserId(), reservationId);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 리뷰 조회 성공", rspDTO));
     }
 
     /**
-     * 수요자 리뷰 등록/수정
+     * 수요자 리뷰 등록
      * @param reservationId 예약ID
-     * @param customerId 수요자ID
-     * @param reviewCreateReqDTO 리뷰등록요청DTO
+     * @param customer 수요자ID
+     * @param reviewReqDTO 리뷰요청DTO
      * @return reviewRspDTO
      */
     @PostMapping("{reservation-id}")
-    public ResponseEntity<ApiResponse<CustomerReviewRspDTO>> createOrUpdateCustomerReview(
+    public ResponseEntity<ApiResponse<CustomerReviewRspDTO>> createCustomerReview(
             @PathVariable("reservation-id") Long reservationId,
-            // TODO @AuthenticatedUser AuthenticatedUser customer
-            @RequestParam Long customerId,
-            @Valid @RequestBody CustomerReviewCreateReqDTO reviewCreateReqDTO
+            @AuthenticationPrincipal AuthenticatedUser customer,
+            @Valid @RequestBody CustomerReviewReqDTO reviewReqDTO
     ){
-        CustomerReviewRspDTO rspDTO = reviewService.createOrUpdateCustomerReview(customerId,reservationId, reviewCreateReqDTO);
+        CustomerReviewRspDTO rspDTO = reviewService.createOrUpdateCustomerReview(customer.getUserId() ,reservationId, reviewReqDTO);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 리뷰 등록 성공", rspDTO));
+    }
+
+    /**
+     * 수요자 리뷰 수정
+     * @param reservationId 예약ID
+     * @param customer 수요자ID
+     * @param reviewReqDTO 리뷰요청DTO
+     * @return reviewRspDTO
+     */
+    @PatchMapping("{reservation-id}")
+    public ResponseEntity<ApiResponse<CustomerReviewRspDTO>> updateCustomerReview(
+            @PathVariable("reservation-id") Long reservationId,
+            @AuthenticationPrincipal AuthenticatedUser customer,
+            @Valid @RequestBody CustomerReviewReqDTO reviewReqDTO
+    ){
+        CustomerReviewRspDTO rspDTO = reviewService.createOrUpdateCustomerReview(customer.getUserId() ,reservationId, reviewReqDTO);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "수요자 리뷰 수정 성공", rspDTO));
     }
 }
