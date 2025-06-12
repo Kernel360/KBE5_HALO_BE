@@ -19,8 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class CustomCustomerReservationRepositoryImpl implements CustomCustomerReservationRepository {
@@ -47,82 +49,51 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         // 수요자 예약 내역 조회
         List<Tuple> tuples = queryFactory
                 .select(
-                        reservation.reservationId,      // 예약ID
-                        reservation.roadAddress,        // 도로명 주소
-                        reservation.detailAddress,      // 상세 주소
-                        manager.userName,               // 매니저 이름
-                        reservation.status,             // 예약 상태
-                        serviceCategory.serviceName,    // 서비스 카테고리 이름
-                        reservation.requestDate,        // 서비스 요청 날짜
-                        reservation.startTime,          // 서비스 시작 시간
-                        reservation.turnaround,         // 서비스 소요 시간
-                        reservation.price               // 예약 금액
+                        reservation.reservationId,
+                        reservation.roadAddress,
+                        reservation.detailAddress,
+                        manager.userName,
+                        reservation.status,
+                        serviceCategory.serviceName,
+                        reservation.requestDate,
+                        reservation.startTime,
+                        reservation.turnaround,
+                        reservation.price,
+                        review.reviewId
                 )
-                .from (reservation)
+                .from(reservation)
                 .leftJoin(reservation.manager, manager)
                 .leftJoin(reservation.serviceCategory, serviceCategory)
+                .leftJoin(review).on(
+                        review.reservation.reservationId.eq(reservation.reservationId),
+                        review.authorId.eq(customerId),
+                        review.authorType.eq(AuthorType.CUSTOMER)
+                )
                 .where(byCustomerIdAndStatus)
                 .orderBy(
-                        reservation.requestDate.desc(),     // 예약 날짜 최신순
-                        reservation.startTime.desc()        // 예약 시간 최신순
+                        reservation.requestDate.desc(),
+                        reservation.startTime.desc()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // 예약 ID 조회
-        List<Long> reservationIds = tuples.stream()
-                .map(tuple -> tuple.get(reservation.reservationId))
-                .toList();
-
-        // 리뷰 ID 조회
-        Map<Long, Long> reviewIdByReservationIds = new HashMap<>();
-        if (!reservationIds.isEmpty()) {
-            reviewIdByReservationIds = queryFactory
-                    .select(
-                            review.reservation.reservationId,
-                            review.reviewId
-                    )
-                    .from(review)
-                    .where(
-                            review.reservation.reservationId.in(reservationIds),
-                            review.authorId.eq(customerId),
-                            review.authorType.eq(AuthorType.CUSTOMER)
-                    )
-                    .fetch()
-                    .stream()
-                    .filter(tuple ->
-                            Objects.nonNull(tuple.get(review.reservation.reservationId)) &&
-                            Objects.nonNull(tuple.get(review.reviewId))
-                    )
-                    .collect(Collectors.toMap(
-                            tuple -> tuple.get(review.reservation.reservationId),
-                            tuple -> tuple.get(review.reviewId)
-                    ));
-        }
-
-        // Make reservationIdToReviewId effectively final for lambda
-        Map<Long, Long> finalReviewIdByReservationIds = reviewIdByReservationIds;
-
-        // Tuple -> DTO 로 변환
         List<CustomerReservationRspDTO> content = tuples.stream()
-                .map(tuple -> {
-                    Long resId = tuple.get(reservation.reservationId);
-                    return CustomerReservationRspDTO.builder()
-                            .reservationId(resId)
-                            .roadAddress(tuple.get(reservation.roadAddress))
-                            .detailAddress(tuple.get(reservation.detailAddress))
-                            .managerName(tuple.get(manager.userName))
-                            .reservationStatus(tuple.get(reservation.status))
-                            .serviceName(tuple.get(serviceCategory.serviceName))
-                            .requestDate(tuple.get(reservation.requestDate))
-                            .startTime(tuple.get(reservation.startTime))
-                            .turnaround(tuple.get(reservation.turnaround))
-                            .price(tuple.get(reservation.price))
-                            .reviewId(finalReviewIdByReservationIds.get(resId)) // ← 없는 경우 null 반환됨
-                            .build();
-                })
-                .collect(Collectors.toList());
+                .map(tuple -> CustomerReservationRspDTO.builder()
+                        .reservationId(tuple.get(reservation.reservationId))
+                        .roadAddress(tuple.get(reservation.roadAddress))
+                        .detailAddress(tuple.get(reservation.detailAddress))
+                        .managerName(tuple.get(manager.userName))
+                        .reservationStatus(tuple.get(reservation.status))
+                        .serviceName(tuple.get(serviceCategory.serviceName))
+                        .requestDate(tuple.get(reservation.requestDate))
+                        .startTime(tuple.get(reservation.startTime))
+                        .turnaround(tuple.get(reservation.turnaround))
+                        .price(tuple.get(reservation.price))
+                        .reviewId(tuple.get(review.reviewId))
+                        .build()
+                )
+                .toList();
 
         // 전체 개수 조회
         long total = Optional.ofNullable(
