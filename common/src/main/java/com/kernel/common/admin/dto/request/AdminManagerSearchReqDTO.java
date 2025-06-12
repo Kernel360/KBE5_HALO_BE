@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,6 +27,9 @@ public class AdminManagerSearchReqDTO {
 
     // 매니저 상태
     private String status;
+
+    // 제외시킬 매니저 상태
+    private List<String> excludeStatus;
 
     // 매니저 평점 범위
     @Min(value = 0, message = "최소 평점은 0 이상이어야 합니다.")

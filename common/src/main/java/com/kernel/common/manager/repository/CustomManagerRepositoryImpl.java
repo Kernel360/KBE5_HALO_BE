@@ -34,6 +34,7 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository {
                         phoneEq(request.getPhone()),
                         emailEq(request.getEmail()),
                         statusEq(request.getStatus()),
+                        statusNotIn(request.getExcludeStatus()),
                         averageRatingGoe(request.getMinRating()),
                         averageRatingLoe(request.getMaxRating())
                 )
@@ -47,6 +48,7 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository {
                         phoneEq(request.getPhone()),
                         emailEq(request.getEmail()),
                         statusEq(request.getStatus()),
+                        statusNotIn(request.getExcludeStatus()),
                         averageRatingGoe(request.getMinRating()),
                         averageRatingLoe(request.getMaxRating())
                 )
@@ -73,6 +75,15 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository {
         }
         UserStatus userStatus = UserStatus.valueOf(status);
         return status != null ? QManager.manager.status.eq(userStatus) : null;
+    }
+
+    private BooleanExpression statusNotIn(List<String> excludeStatus) {
+        if (excludeStatus == null || excludeStatus.isEmpty()) {
+            return null;
+        }
+        return QManager.manager.status.notIn(excludeStatus.stream()
+                .map(UserStatus::valueOf)
+                .toList());
     }
 
     private BooleanExpression averageRatingGoe(BigDecimal minRating) {
