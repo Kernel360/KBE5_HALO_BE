@@ -1,6 +1,6 @@
 package com.kernel.common.customer.service;
 
-import com.kernel.common.customer.dto.request.CustomerReviewCreateReqDTO;
+import com.kernel.common.customer.dto.request.CustomerReviewReqDTO;
 import com.kernel.common.customer.dto.response.CustomerReviewRspDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,5 +14,6 @@ public interface CustomerReviewService {
     CustomerReviewRspDTO getCustomerReviewsByReservationId(Long customerId, Long reservationId);
 
     // 수요자 리뷰 등록/수정
-    CustomerReviewRspDTO createOrUpdateCustomerReview(Long customerId, Long reservationId, CustomerReviewCreateReqDTO reviewCreateReqDTO);
+    CustomerReviewRspDTO createOrUpdateCustomerReview(Long userId, Long reservationId, CustomerReviewReqDTO reviewReqDTO);
+
 }
