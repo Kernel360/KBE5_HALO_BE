@@ -77,7 +77,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
 
                 // 고객 주소
                 Expressions.stringTemplate(
-                    "CONCAT({0}, ' ', {1})",
+                    "CONCAT({0}, ', ', {1})",
                     reservation.customer.roadAddress,
                     reservation.customer.detailAddress
                 ).as("customerAddress"),
