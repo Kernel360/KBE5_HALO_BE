@@ -1,5 +1,6 @@
 package com.kernel.common.admin.service;
 
+import com.kernel.common.admin.dto.request.AdminManagerSearchReqDTO;
 import com.kernel.common.admin.dto.response.AdminManagerSummaryRspDTO;
 import com.kernel.common.admin.dto.response.AdminManagerRspDTO;
 
@@ -8,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface AdminManagerService {
 
-    Page<AdminManagerSummaryRspDTO> getManagers(String keyword, Pageable pageable);
+    Page<AdminManagerSummaryRspDTO> getManagers(AdminManagerSearchReqDTO request, Pageable pageable);
 
     AdminManagerRspDTO getManager(Long managerId);
 
