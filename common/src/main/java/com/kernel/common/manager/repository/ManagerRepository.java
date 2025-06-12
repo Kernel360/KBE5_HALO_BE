@@ -6,11 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface ManagerRepository extends JpaRepository<Manager, Long> {
+public interface ManagerRepository extends JpaRepository<Manager, Long>, CustomManagerRepository {
+    Page<Manager> findByStatusNot(UserStatus status, Pageable pageable);
+    Page<Manager> findByUserNameContainingAndStatusNot(String keyword, UserStatus status, Pageable pageable);
     Page<Manager> findByUserNameContaining(String keyword, Pageable pageable);
     Page<Manager> findByStatus(UserStatus status, Pageable pageable);
 
-    List<Manager> findByUserNameContaining(String userName);
 }

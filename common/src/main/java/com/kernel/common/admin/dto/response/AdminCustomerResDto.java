@@ -1,6 +1,5 @@
 package com.kernel.common.admin.dto.response;
 
-import com.kernel.common.admin.entity.AdminCustomer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
