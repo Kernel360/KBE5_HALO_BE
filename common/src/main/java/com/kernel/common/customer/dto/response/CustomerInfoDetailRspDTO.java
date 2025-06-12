@@ -31,9 +31,6 @@ public class CustomerInfoDetailRspDTO {
     // 성별
     private Gender gender;
 
-    // 우편번호
-    private String zipcode;
-
     // 도로명주소
     private String roadAddress;
 

@@ -86,9 +86,6 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
         // 탈퇴 여부 확인
         foundCustomer.validateDelete();
 
-        // 비밀번호 일치 여부 확인
-        validatePassword(updateReqDTO.getPassword(), foundCustomer.getPassword());
-
         // 수정
         foundCustomer.update(updateReqDTO);
 
