@@ -46,6 +46,8 @@ public class AdminUserDetails implements UserDetails, AuthenticatedUser {
         return admin.getAdminId();
     }
 
+    public String getName() { return admin.getUserName(); }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

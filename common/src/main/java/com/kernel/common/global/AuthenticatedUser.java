@@ -8,6 +8,7 @@ import java.util.Collection;
 public interface AuthenticatedUser {
     String getUsername();
     Long getUserId();
+
     UserStatus getStatus();
     Collection<? extends GrantedAuthority> getAuthorities();
 }
