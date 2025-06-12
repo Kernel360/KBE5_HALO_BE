@@ -12,7 +12,6 @@ import com.kernel.common.reservation.dto.response.ReservationRspDTO;
 import com.kernel.common.reservation.entity.QReservation;
 import com.kernel.common.reservation.enums.ReservationStatus;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -72,12 +71,12 @@ public class CustomMatchingRepositoryImpl implements CustomMatchingRepository {
                 .selectFrom(manager)
                 .where(
                         manager.status.eq(UserStatus.ACTIVE),
-
+/* 반경 5KM
                         Expressions.numberTemplate(Double.class,
                                 "6371 * acos(cos(radians({0})) * cos(radians({1}.latitude)) * cos(radians({1}.longitude) - radians({2})) + sin(radians({0})) * sin(radians({1}.latitude)))",
                                 reservationReqDTO.getLatitude(), manager, reservationReqDTO.getLongitude()
-                        ).loe(20),
-
+                        ).loe(5),
+*/
                         manager.managerId.in(availableManagerIds),
 
                         JPAExpressions
