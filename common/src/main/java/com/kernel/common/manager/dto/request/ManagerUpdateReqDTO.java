@@ -46,11 +46,11 @@ public class ManagerUpdateReqDTO {
     private String bio;
 
     // 프로필이미지ID
-//    @NotNull(message = "프로필 이미지는 필수입니다.")
+    @NotNull(message = "프로필 이미지는 필수입니다.")
     private Long profileImageId;
 
     // 첨부파일ID
-//    @NotNull(message = "첨부파일은 필수입니다.")
+    @NotNull(message = "첨부파일은 필수입니다.")
     private Long fileId;
 
     // 매니저 업무 가능 시간
