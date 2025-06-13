@@ -56,7 +56,7 @@ public class AdminManagerInquiryServiceImpl implements AdminManagerInquiryServic
                     ? managerReplyRepository.findById(inquiry.getManagerReply().getAnswerId()).orElse(null)
                     : null; // 답변이 없을 수도 있으므로 null 처리
             Manager author = managerRepository.findById(inquiry.getAuthorId())
-                    .orElseThrow(() -> new NoSuchElementException("작성자를 찾을 수 없습니다."));
+                    .orElse(null);
             return adminInquiryMapper.toSummaryRspDTO(inquiry);
         });
     }

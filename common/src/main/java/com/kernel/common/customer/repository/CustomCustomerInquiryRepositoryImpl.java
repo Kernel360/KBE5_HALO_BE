@@ -6,6 +6,7 @@ import com.kernel.common.customer.entity.CustomerInquiry;
 import com.kernel.common.customer.entity.QCustomerInquiry;
 import com.kernel.common.customer.entity.QCustomerReply;
 import com.kernel.common.customer.entity.QInquiryCategory;
+import com.kernel.common.global.enums.ReplyStatus;
 import com.querydsl.core.Tuple;
 import com.kernel.common.customer.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -136,42 +137,68 @@ public class CustomCustomerInquiryRepositoryImpl implements CustomCustomerInquir
      */
     @Override
     public Page<CustomerInquiry> searchCustomerInquiryByKeyword(AdminInquirySearchReqDTO query, Pageable pageable) {
-        BooleanExpression condition = inquiry.isDeleted.eq(false);
 
-        if (query.getAuthorName() != null && !query.getAuthorName().isBlank()) {
-            Optional<Customer> customer = customerRepository.findByUserName(query.getAuthorName());
-            if (customer.isEmpty()) {
-                return new PageImpl<>(List.of(), pageable, 0);
-            }
-            condition = condition.and(inquiry.authorId.eq(customer.get().getCustomerId()));
-        }
-
-        if (query.getTitle() != null && !query.getTitle().isBlank()) {
-            condition = condition.and(inquiry.title.containsIgnoreCase(query.getTitle()));
-        }
-
-        if (query.getCategory() != null) {
-            condition = condition.and(inquiry.category.categoryName.eq(query.getCategory()));
-        }
-
-        List<CustomerInquiry> content = queryFactory
+        List<CustomerInquiry> results = queryFactory
                 .selectFrom(inquiry)
                 .leftJoin(inquiry.category, category).fetchJoin()
                 .leftJoin(inquiry.customerReply, reply).fetchJoin()
-                .where(condition)
+                .where(
+                        titleContains(query.getTitle()),
+                        contentContains(query.getContent()),
+                        createdAtGoe(query.getFromCreatedAt()),
+                        createdAtLoe(query.getToCreatedAt()),
+                        replyStatusCond(query.replyStatusFilter(), inquiry)
+                )
                 .orderBy(inquiry.inquiryId.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = Optional.ofNullable(
-                queryFactory
-                        .select(inquiry.count())
-                        .from(inquiry)
-                        .where(condition)
-                        .fetchOne()
-        ).orElse(0L);
+        long total = queryFactory
+                .select(inquiry.count())
+                .from(inquiry)
+                .leftJoin(inquiry.category, category)
+                .leftJoin(inquiry.customerReply, reply)
+                .where(
+                        titleContains(query.getTitle()),
+                        contentContains(query.getContent()),
+                        createdAtGoe(query.getFromCreatedAt()),
+                        createdAtLoe(query.getToCreatedAt()),
+                        replyStatusCond(query.replyStatusFilter(), inquiry)
+                )
+                .fetchOne();
 
-        return new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(results, pageable, total);
+    }
+
+    private BooleanExpression titleContains(String title) {
+        return title != null ? inquiry.title.containsIgnoreCase(title) : null;
+    }
+
+    private BooleanExpression contentContains(String content) {
+        return content != null ? inquiry.content.containsIgnoreCase(content) : null;
+    }
+
+    private BooleanExpression createdAtGoe(LocalDateTime fromCreatedAt) {
+        return fromCreatedAt != null ? inquiry.createdAt.goe(fromCreatedAt) : null;
+    }
+
+    private BooleanExpression createdAtLoe(LocalDateTime toCreatedAt) {
+        return toCreatedAt != null ? inquiry.createdAt.loe(toCreatedAt) : null;
+    }
+
+    private BooleanExpression replyStatusCond(ReplyStatus replyStatus, QCustomerInquiry inquiry) {
+        if (replyStatus == null) {
+            return null;
+        }
+
+        switch (replyStatus.name()) {
+            case "ANSWERED":
+                return inquiry.customerReply.answerId.isNotNull();
+            case "PENDING":
+                return inquiry.customerReply.answerId.isNull();
+            default:
+                return null; // 유효하지 않은 상태 값인 경우 null 반환
+        }
     }
 }

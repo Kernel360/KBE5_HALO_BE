@@ -74,6 +74,7 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
 
 
     public Page<ManagerInquiry> searchManagerInquiryWithReply(AdminInquirySearchReqDTO request, Pageable pageable) {
+
         QManagerInquiry managerInquiry = QManagerInquiry.managerInquiry;
         QManagerReply managerReply = QManagerReply.managerReply;
 
@@ -88,8 +89,8 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
                     titleContains(request.getTitle()),
                     contentContains(request.getContent()),
                     createdAtGoe(request.getFromCreatedAt()),
-                    createdAtLoe(request.getToCreatedAt())
-                    //replyStatusCond(request.getReplyStatus(), managerInquiry)
+                    createdAtLoe(request.getToCreatedAt()),
+                    replyStatusCond(request.replyStatusFilter(), managerInquiry)
                 )
                 .fetchOne()
         ).orElse(0L);
@@ -103,8 +104,8 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
                 titleContains(request.getTitle()),
                 contentContains(request.getContent()),
                 createdAtGoe(request.getFromCreatedAt()),
-                createdAtLoe(request.getToCreatedAt())
-                //replyStatusCond(request.getReplyStatus(), managerInquiry)
+                createdAtLoe(request.getToCreatedAt()),
+                replyStatusCond(request.replyStatusFilter(), managerInquiry)
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -113,7 +114,6 @@ public class CustomManagerInquiryRepositoryImpl implements CustomManagerInquiryR
 
         return new PageImpl<>(results, pageable, total);
     }
-
 
     // 작성자 ID 일치
     private BooleanExpression authorEq(Long authorId) {
