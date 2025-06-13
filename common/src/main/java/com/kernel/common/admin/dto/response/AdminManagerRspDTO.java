@@ -3,6 +3,7 @@ package com.kernel.common.admin.dto.response;
 import com.kernel.common.global.enums.Gender;
 import com.kernel.common.global.enums.UserStatus;
 
+import com.kernel.common.manager.dto.response.AvailableTimeRspDTO;
 import com.kernel.common.manager.entity.AvailableTime;
 import lombok.*;
 
@@ -33,7 +34,7 @@ public class AdminManagerRspDTO {
     private Long profileImageId;
     private Long fileId;  // 첨부파일 ID
     ///private List<AvailableAreaResponseDTO> availableArea;   // AvailableArea는 Manager 패키지에서 정의된 DTO라고 가정
-    private List<AvailableTime> availableTimes;   // AvailableTime는 Manager 패키지에서 정의된 DTO라고 가정
+    private List<AvailableTimeRspDTO> availableTimes;   // AvailableTime는 Manager 패키지에서 정의된 DTO라고 가정
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime contractAt;
