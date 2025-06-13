@@ -10,6 +10,7 @@ import com.kernel.common.manager.entity.QManager;
 import com.kernel.common.matching.dto.ManagerMatchingRspDTO;
 import com.kernel.common.reservation.dto.response.ReservationRspDTO;
 import com.kernel.common.reservation.entity.QReservation;
+import com.kernel.common.reservation.entity.QReview;
 import com.kernel.common.reservation.enums.ReservationStatus;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPAExpressions;
@@ -33,6 +34,7 @@ public class CustomMatchingRepositoryImpl implements CustomMatchingRepository {
     private final QReservation reservation = QReservation.reservation;
     private final QAvailableTime availableTime = QAvailableTime.availableTime;
     private final QFeedback feedback = QFeedback.feedback;
+    private final QReview review = QReview.review;
 
     /**
      * 매니저 매칭 리스트 조회
@@ -106,11 +108,12 @@ public class CustomMatchingRepositoryImpl implements CustomMatchingRepository {
      */
     @Override
     public List<ManagerMatchingRspDTO> getMatchingManagersInfo(Long customerId, List<Long> managerIds) {
+
         // 최근 예약 일자
         List<Tuple> recentReservationDate = queryFactory
                 .select(
                         reservation.manager.managerId,
-                        reservation.requestDate
+                        reservation.requestDate.max()
                 )
                 .from(reservation)
                 .where(
@@ -118,6 +121,7 @@ public class CustomMatchingRepositoryImpl implements CustomMatchingRepository {
                         reservation.manager.managerId.in(managerIds),
                         reservation.status.eq(ReservationStatus.COMPLETED)
                 )
+                .groupBy(reservation.manager.managerId)
                 .fetch();
 
         // 좋아요/아쉬워요 여부
@@ -134,27 +138,32 @@ public class CustomMatchingRepositoryImpl implements CustomMatchingRepository {
                 )
                 .fetch();
 
-        // 1. recentReservationDate 튜플 → Map<Long, LocalDate>
+        // 1. 매니저별 최근 예약일자 설정
         Map<Long, LocalDate> recentDateMap = recentReservationDate.stream()
                 .collect(Collectors.toMap(
-                        tuple -> tuple.get(reservation.manager.managerId),
-                        tuple -> tuple.get(reservation.requestDate)
+                        r -> r.get(reservation.manager.managerId),
+                        r -> {
+                            LocalDate date = r.get(reservation.requestDate);
+                            return date == null ? LocalDate.MIN : date;
+                        },
+                        (v1, v2) -> v1
                 ));
 
-        // 2. feedbackTypes 튜플 → Map<Long, FeedbackType>
+        // 2. 매니저별 피드백 타입 설정
         Map<Long, FeedbackType> feedbackMap = feedbackTypes.stream()
                 .collect(Collectors.toMap(
-                        tuple -> tuple.get(feedback.manager.managerId),
-                        tuple -> tuple.get(feedback.type)
+                        f -> f.get(feedback.manager.managerId),
+                        f -> f.get(feedback.type)
                 ));
 
-        // 3. Fetch Manager entities by managerIds
+        // 3. 예약 가능한 매니저 정보 추출
         List<Tuple> matchedManagers = queryFactory
             .select(
                     manager.managerId,
                     manager.userName,
                     manager.averageRating,
                     manager.reviewCount,
+                    manager.reservationCount,
                     manager.profileImageId,
                     manager.bio
             )
@@ -162,7 +171,9 @@ public class CustomMatchingRepositoryImpl implements CustomMatchingRepository {
             .where(manager.managerId.in(managerIds))
             .fetch();
 
-        // 4. Merge data and construct DTOs
+        //TODO 매니저 리뷰조회
+
+        // 4. DTO Mapping
         return matchedManagers.stream()
             .map(tuple -> {
                 Long managerId = tuple.get(manager.managerId);
@@ -175,6 +186,7 @@ public class CustomMatchingRepositoryImpl implements CustomMatchingRepository {
                     .bio(tuple.get(manager.bio))
                     .recentReservationDate(recentDateMap.get(managerId))
                     .feedbackType(feedbackMap.get(managerId))
+                    .reservationCount(tuple.get(manager.reservationCount))
                     .build();
             })
             .toList();

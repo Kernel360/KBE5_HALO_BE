@@ -35,6 +35,9 @@ public class ManagerMatchingRspDTO {
     // 최근 예약 일자
     private LocalDate recentReservationDate;
 
+    // 예약 건수
+    private Integer reservationCount;
+
 
 
 }
