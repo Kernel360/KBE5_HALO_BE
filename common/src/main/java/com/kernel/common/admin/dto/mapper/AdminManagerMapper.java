@@ -2,6 +2,8 @@ package com.kernel.common.admin.dto.mapper;
 
 import com.kernel.common.admin.dto.response.AdminManagerSummaryRspDTO;
 import com.kernel.common.admin.dto.response.AdminManagerRspDTO;
+import com.kernel.common.manager.dto.response.AvailableTimeRspDTO;
+import com.kernel.common.manager.entity.AvailableTime;
 import com.kernel.common.manager.entity.Manager;
 
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,14 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class AdminManagerMapper {
+
+    // AvailableTime → AvailableTimeRspDTO
+    private AvailableTimeRspDTO toAvailableTimeRspDTO(AvailableTime time) {
+        return AvailableTimeRspDTO.builder()
+                .dayOfWeek(time.getDayOfWeek()) // 가능 요일
+                .time(time.getTime())           // 가능 시간
+                .build();
+    }
 
     // Manager Entity -> AdminManagerRspDTO
     public AdminManagerRspDTO toAdminManagerRspDTO(Manager manager) {
@@ -32,7 +42,9 @@ public class AdminManagerMapper {
                 .bio(manager.getBio())
                 .profileImageId(manager.getProfileImageId())
                 .fileId(manager.getFileId())  // 첨부파일 ID
-                .availableTimes(manager.getAvailableTimes())
+                .availableTimes(manager.getAvailableTimes().stream()
+                        .map(this::toAvailableTimeRspDTO)
+                        .toList())
                 //.availableArea(manager.getAvailableArea())    // availableArea는 Manager 패키지에서 정의된 Entity라고 가정
                 .createdAt(manager.getCreatedAt())
                 .updatedAt(manager.getUpdatedAt())
