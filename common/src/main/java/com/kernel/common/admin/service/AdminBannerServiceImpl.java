@@ -69,10 +69,10 @@ public class AdminBannerServiceImpl implements AdminBannerService {
         // 배너 생성 후 파일 정보 업데이트
         Long bannerId = banner.getBannerId();
 
-        UploadedFiles file = uploadedFileRepository.findById(bannerDto.getFileId())
-                .orElseThrow(() -> new NoSuchElementException("File not found"));
+//        UploadedFiles file = uploadedFileRepository.findById(bannerDto.getFileId())
+//                .orElseThrow(() -> new NoSuchElementException("File not found"));
 
-        file.updatePostId(bannerId);
+//        file.updatePostId(bannerId);
     }
 
     /**
@@ -100,11 +100,10 @@ public class AdminBannerServiceImpl implements AdminBannerService {
         Banner banner = bannerRepository.findById(bannerId)
                 .orElseThrow(() -> new NoSuchElementException("Banner not found"));
 
-        UploadedFiles file = uploadedFileRepository.findById(banner.getFileId())
+      /*  UploadedFiles file = uploadedFileRepository.findById(banner.getFileId())
                 .orElseThrow(() -> new NoSuchElementException("File not found"));
-
+*/
         // 배너 삭제 전 업로드 파일 삭제
-        file.delete();
         banner.delete();
     }
 }

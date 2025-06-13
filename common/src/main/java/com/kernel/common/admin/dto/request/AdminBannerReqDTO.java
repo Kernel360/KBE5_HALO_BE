@@ -35,7 +35,7 @@ public class AdminBannerReqDTO {
     @Future(message = "게시 종료일은 게시 시작 날짜 이후여야 합니다.")
     private LocalDate endAt;
 
-    //@NotNull(message = "배너 첨부파일 ID 지정이 필요합니다.")
+
     private Long fileId;
 
 
