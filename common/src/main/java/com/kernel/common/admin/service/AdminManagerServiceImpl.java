@@ -75,6 +75,7 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
         if (status.equalsIgnoreCase("ACTIVE")) {
             manager.updateStatus(UserStatus.ACTIVE);
+            manager.updateContractAt();
         } else if (status.equalsIgnoreCase("REJECTED")) {
             manager.updateStatus(UserStatus.REJECTED);
         } else {

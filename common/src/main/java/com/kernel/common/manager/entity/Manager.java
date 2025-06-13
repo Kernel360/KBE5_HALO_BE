@@ -194,6 +194,11 @@ public class Manager extends BaseEntity {
         this.status = status;
     }
 
+    // 매니저 계약 날짜 수정
+    public void updateContractAt() {
+        this.contractAt = LocalDateTime.now();
+    }
+
     // 매니저 계약 해지 요청
     public void requestTermination(ManagerTerminationReqDTO terminationReqDTO) {
         this.status = UserStatus.TERMINATION_PENDING;                      // 계약해지대기
