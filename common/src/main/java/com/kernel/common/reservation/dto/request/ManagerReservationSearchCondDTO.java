@@ -2,6 +2,7 @@ package com.kernel.common.reservation.dto.request;
 
 import com.kernel.common.reservation.enums.ReservationStatus;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +17,7 @@ public class ManagerReservationSearchCondDTO {
     public LocalDate toRequestDate;
 
     // 예약 상태
-    public ReservationStatus reservationStatus;
+    private List<ReservationStatus> reservationStatus;
 
     // 체크인 여부
     private Boolean isCheckedIn;

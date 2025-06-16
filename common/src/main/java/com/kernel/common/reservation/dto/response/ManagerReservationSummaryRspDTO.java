@@ -1,6 +1,7 @@
 package com.kernel.common.reservation.dto.response;
 
 import com.kernel.common.reservation.enums.ReservationStatus;
+import java.time.LocalTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -18,6 +19,12 @@ public class ManagerReservationSummaryRspDTO {
 
     // 청소 요청 날짜
     private LocalDate requestDate;
+
+    // 예약시간
+    private LocalTime startTime;
+
+    // 소요시간
+    private Integer turnaround;
 
     // 고객명
     private String customerName;
