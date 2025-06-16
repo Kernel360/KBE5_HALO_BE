@@ -39,9 +39,9 @@ public class FileUploadServiceImpl implements FileUploadService{
 
     /**
      * 파일 목록 조회 메서드
-     * 이 메서드는 파일 ID를 기반으로 S3에 저장된 파일 목록을 조회합니다.
-     * @param request 파일 요청 DTO
-     * @return 파일 업로드 응답 DTO
+     * 이 메서드는 파일 ID를 기반으로 UploadedFiles 엔티티를 조회하고, 해당 엔티티를 DTO로 변환하여 반환합니다.
+     * @param fileId 조회할 파일의 ID
+     * @return 파일 정보가 담긴 응답 DTO
      */
     @Transactional(readOnly = true)
     @Override
