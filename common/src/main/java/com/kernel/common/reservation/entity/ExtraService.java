@@ -32,4 +32,8 @@ public class ExtraService extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
     private ServiceCategory serviceCategory;
+
+    // 가격
+    @Column
+    private Integer price;
 }
