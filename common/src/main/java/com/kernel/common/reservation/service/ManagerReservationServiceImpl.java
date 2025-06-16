@@ -7,6 +7,7 @@ import com.kernel.common.reservation.enums.ReservationStatus;
 import com.kernel.common.reservation.repository.CustomManagerReservationRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -49,6 +50,8 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
                 return ManagerReservationSummaryRspDTO.builder()
                     .reservationId(tuple.get(Expressions.numberPath(Long.class, "reservationId")))
                     .requestDate(tuple.get(Expressions.datePath(LocalDate.class, "requestDate")))
+                    .startTime(tuple.get(Expressions.timePath(LocalTime.class, "startTime")))
+                    .turnaround(tuple.get(Expressions.numberPath(Integer.class, "turnaround")))
                     .customerName(tuple.get(Expressions.stringPath("customerName")))
                     .customerAddress(tuple.get(Expressions.stringPath("customerAddress")))
                     .serviceName(tuple.get(Expressions.stringPath("serviceName")))

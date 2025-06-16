@@ -19,6 +19,12 @@ public class ManagerReservationRspDTO {
     // 청소 요청 날짜
     private String requestDate;
 
+    // 예약시간
+    private String startTime;
+
+    // 소요시간
+    private Integer turnaround;
+
     // 서비스명
     private String serviceName;
 

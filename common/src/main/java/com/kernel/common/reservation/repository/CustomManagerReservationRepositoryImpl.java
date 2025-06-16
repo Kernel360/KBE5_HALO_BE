@@ -77,6 +77,12 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 // 요청 날짜
                 reservation.requestDate.as("requestDate"),
 
+                // 예약 시간
+                reservation.startTime.as("startTime"),
+
+                // 소요 시간
+                reservation.turnaround.as("turnaround"),
+
                 // 고객명
                 reservation.customer.userName.as("customerName"),
 
@@ -183,6 +189,10 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 reservation.reservationId.stringValue().as("reservationId"),
                 // 청소 요청 날짜
                 reservation.requestDate.stringValue().as("requestDate"),
+                // 예약 시간
+                reservation.startTime.stringValue().as("startTime"),
+                // 소요 시간
+                reservation.turnaround.as("turnaround"),
                 // 서비스명
                 reservation.serviceCategory.serviceName.as("serviceName"),
                 // 상태
@@ -270,9 +280,9 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
     }
 
     // 예약 상태
-    private BooleanExpression reservationStatus(ReservationStatus reservationStatus) {
-        return reservationStatus != null
-            ? QReservation.reservation.status.eq(reservationStatus)
+    private BooleanExpression reservationStatus(List<ReservationStatus> statuses) {
+        return (statuses != null && !statuses.isEmpty())
+            ? QReservation.reservation.status.in(statuses)
             : null;
     }
 
