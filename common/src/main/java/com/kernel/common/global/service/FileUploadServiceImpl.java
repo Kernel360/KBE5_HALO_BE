@@ -13,7 +13,6 @@ import com.kernel.common.global.entity.UploadedFiles;
 import com.kernel.common.global.repository.UploadedFileRepository;
 import com.kernel.common.global.util.ListJsonConverter;
 import com.kernel.common.global.util.S3Processor;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,17 +30,15 @@ import java.util.UUID;
 public class FileUploadServiceImpl implements FileUploadService{
 
     private final AwsProperties awsProperties;
-    private final S3Processor s3Processor;
     private final S3Presigner s3Presigner;
     private final UploadedFileRepository uploadedFileRepository;
     private final FileUploadMapper fileUploadMapper;
-    private final ListJsonConverter listJsonConverter;
 
     /**
      * 파일 목록 조회 메서드
      * 이 메서드는 파일 ID를 기반으로 S3에 저장된 파일 목록을 조회합니다.
-     * @param request 파일 요청 DTO
-     * @return 파일 업로드 응답 DTO
+     * @param fileId 조회할 파일 ID
+     * @return 파일 목록 응답 DTO
      */
     @Transactional(readOnly = true)
     @Override
