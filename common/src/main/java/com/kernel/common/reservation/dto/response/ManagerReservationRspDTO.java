@@ -41,6 +41,8 @@ public class ManagerReservationRspDTO {
 
 
     /* 서비스 상세 ************************************/
+    // 추가 서비스
+    private String extraServiceName;
     // 고객 요청사항
     private String memo;
 
