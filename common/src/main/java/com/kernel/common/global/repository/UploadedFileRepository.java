@@ -1,4 +1,4 @@
-package com.kernel.common.repository;
+package com.kernel.common.global.repository;
 
 import com.kernel.common.global.entity.UploadedFiles;
 import org.springframework.data.jpa.repository.JpaRepository;

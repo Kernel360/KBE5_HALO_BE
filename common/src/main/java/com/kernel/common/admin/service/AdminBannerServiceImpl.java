@@ -8,7 +8,7 @@ import com.kernel.common.global.entity.UploadedFiles;
 import com.kernel.common.global.enums.PostStatus;
 import com.kernel.common.repository.BannerRepository;
 
-import com.kernel.common.repository.UploadedFileRepository;
+import com.kernel.common.global.repository.UploadedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
