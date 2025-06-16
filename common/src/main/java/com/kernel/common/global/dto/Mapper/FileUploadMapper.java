@@ -5,6 +5,7 @@ import com.kernel.common.global.dto.response.FileUploadRspDTO;
 import com.kernel.common.global.dto.response.PresignedUrlRspDTO;
 import com.kernel.common.global.entity.UploadedFiles;
 
+import com.kernel.common.global.enums.PostStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
@@ -22,6 +23,14 @@ public class FileUploadMapper {
                         .preSignedUrls(List.of(url.url().toString()))
                         .build())
                 .toList();
+    }
+
+    // FilePathJson to UploadedFiles
+    public UploadedFiles toUploadedFiles(String filePathJson) {
+        return UploadedFiles.builder()
+                .filePathsJson(filePathJson)
+                .postStatus(PostStatus.REGISTERED)
+                .build();
     }
 
     // UploadedFiles Entity to FileUploadRspDTO

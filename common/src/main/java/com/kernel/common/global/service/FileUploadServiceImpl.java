@@ -1,34 +1,30 @@
 package com.kernel.common.global.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.kernel.common.config.AwsProperties;
-import com.kernel.common.config.S3Config;
-import com.kernel.common.global.dto.request.PresignedUrlReqDTO;
-import com.kernel.common.global.dto.response.PresignedUrlRspDTO;
-import com.kernel.common.global.util.ListJsonConverter;
-import com.kernel.common.global.util.S3Processor;
 import com.kernel.common.global.dto.Mapper.FileUploadMapper;
-import com.kernel.common.global.dto.request.FileDeleteReqDTO;
+import com.kernel.common.global.dto.request.FileUpdateReqDTO;
 import com.kernel.common.global.dto.request.FileUploadReqDTO;
-import com.kernel.common.global.dto.response.FileDeleteRspDTO;
+import com.kernel.common.global.dto.request.PresignedUrlReqDTO;
 import com.kernel.common.global.dto.response.FileUploadRspDTO;
+import com.kernel.common.global.dto.response.PresignedUrlRspDTO;
 import com.kernel.common.global.entity.UploadedFiles;
 import com.kernel.common.global.repository.UploadedFileRepository;
+import com.kernel.common.global.util.ListJsonConverter;
+import com.kernel.common.global.util.S3Processor;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
-import java.net.URL;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +36,21 @@ public class FileUploadServiceImpl implements FileUploadService{
     private final UploadedFileRepository uploadedFileRepository;
     private final FileUploadMapper fileUploadMapper;
     private final ListJsonConverter listJsonConverter;
+
+    /**
+     * 파일 목록 조회 메서드
+     * 이 메서드는 파일 ID를 기반으로 S3에 저장된 파일 목록을 조회합니다.
+     * @param request 파일 요청 DTO
+     * @return 파일 업로드 응답 DTO
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public FileUploadRspDTO getFileList(Long fileId) {
+        UploadedFiles uploadedFiles = uploadedFileRepository.findById(fileId)
+                .orElseThrow(() -> new IllegalArgumentException("파일을 찾을 수 없습니다."));
+
+        return fileUploadMapper.toFileUploadRspDTO(uploadedFiles);
+    }
 
     /**
      * Presigned URL 생성 메서드
@@ -79,30 +90,43 @@ public class FileUploadServiceImpl implements FileUploadService{
     @Transactional
     @Override
     public FileUploadRspDTO uploadFiles(FileUploadReqDTO request) {
-        UploadedFiles existingFiles;
+        Gson gson = new Gson();
+        String filePathsJson;
 
-        // UploadedFiles 엔티티가 존재하지 않으면 새로 생성
-        if (request.getFileId() == null) {
-            existingFiles = UploadedFiles.builder().filePathsJson("[]").build();
-        } else {
-            existingFiles = uploadedFileRepository.findById(request.getFileId())
-                    .orElseThrow(() -> new NoSuchElementException("File을 찾을 수 없습니다."));
+        try {
+            filePathsJson = gson.toJson(request.getFileUrls());
+        } catch (JsonSyntaxException e) {
+            throw new IllegalArgumentException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다: " + e.getMessage());
         }
 
-        List<String> fileUrls = listJsonConverter.parseJsonToList((existingFiles.getFilePathsJson()));
+        UploadedFiles uploadedFiles = fileUploadMapper.toUploadedFiles(filePathsJson);
+        UploadedFiles savedEntity = uploadedFileRepository.save(uploadedFiles);
 
-        for (MultipartFile file : request.getFiles()) {
-            // S3에 파일 업로드
-            String s3Url = s3Processor.upload(file, "uploads");
+        return fileUploadMapper.toFileUploadRspDTO(savedEntity); // uploadedFiles에 save를 사용한 이유는 새로운 엔터티를 생성한 경우가 있기 때문
+    }
 
-            // fileUrls에 업로드된 파일 URL 추가
-            if (!fileUrls.contains(s3Url)) {
-                fileUrls.add(s3Url);
-            }
+    /**
+     * 파일 업데이트 메서드
+     * 이 메서드는 파일 업로드 요청을 처리하고, S3에 파일을 업로드한 후, UploadedFiles 엔티티에 파일 경로를 업데이트합니다.
+     * @param request 파일 업로드 요청 DTO
+     */
+    @Transactional
+    @Override
+    public FileUploadRspDTO updateFiles(FileUpdateReqDTO request) {
+        Gson gson = new Gson();
+        String filePathsJson;
+
+        try {
+            filePathsJson = gson.toJson(request.getFileUrls());
+        } catch (JsonSyntaxException e) {
+            throw new IllegalArgumentException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다: " + e.getMessage());
         }
 
-        existingFiles.updateFiles(listJsonConverter.convertListToJson(fileUrls));
+        UploadedFiles existingFiles = uploadedFileRepository.findById(request.getFileId())
+                .orElseThrow(() -> new IllegalArgumentException("업데이트할 파일을 찾을 수 없습니다."));
 
-        return fileUploadMapper.toFileUploadRspDTO(uploadedFileRepository.save(existingFiles)); // uploadedFiles에 save를 사용한 이유는 새로운 엔터티를 생성한 경우가 있기 때문
+        existingFiles.updateFiles(filePathsJson);
+
+        return fileUploadMapper.toFileUploadRspDTO(existingFiles); // 기존 엔티티를 업데이트한 후 반환
     }
 }

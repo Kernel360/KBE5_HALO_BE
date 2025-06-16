@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "file")
 @Getter
@@ -32,7 +34,7 @@ public class UploadedFiles {
     // 게시 시각
     @Column(columnDefinition = "datetime(0)", updatable = false)
     @CreationTimestamp
-    private Long uploadedAt;
+    private LocalDateTime uploadedAt;
 
     /**
      * 게시물 업로드 전 첨부파일이 추가 혹은 삭제 되는 경우 update

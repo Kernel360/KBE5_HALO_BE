@@ -7,14 +7,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Setter
 @Getter
 public class FileUploadReqDTO {
 
-    // UploadedFiles 객체 ID
-    private Long fileId;
-
-    // 업로드 할 파일
+    // 업로드한 파일 URL 목록
     @NotEmpty(message = "파일 목록은 필수입니다.")
-    private List<MultipartFile> files;
+    private List<String> fileUrls;
 }
