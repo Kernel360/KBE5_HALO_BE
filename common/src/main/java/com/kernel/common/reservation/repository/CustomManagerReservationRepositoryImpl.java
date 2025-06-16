@@ -4,16 +4,21 @@ import com.kernel.common.customer.entity.QCustomer;
 import com.kernel.common.global.enums.AuthorType;
 import com.kernel.common.manager.entity.QCleaningLog;
 import com.kernel.common.manager.entity.QManager;
+import com.kernel.common.reservation.entity.QExtraService;
 import com.kernel.common.reservation.entity.QReservation;
 import com.kernel.common.reservation.entity.QReview;
+import com.kernel.common.reservation.entity.QServiceCategory;
 import com.kernel.common.reservation.enums.ReservationStatus;
 import com.kernel.common.reservation.dto.request.ManagerReservationSearchCondDTO;
 import com.kernel.common.reservation.dto.response.ManagerReservationRspDTO;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQueryFactory;
 import java.time.LocalDate;
 import java.util.List;
@@ -153,6 +158,24 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
         QCleaningLog cleaningLog = QCleaningLog.cleaningLog;
         QReview customerReview = new QReview("customerReview");
         QReview managerReview = new QReview("managerReview");
+        QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
+        QExtraService extraService = QExtraService.extraService;
+
+
+        // 추가 서비스 조회
+        Expression<String> extraServiceNameExpr = ExpressionUtils.as(
+            JPAExpressions
+                .select(
+                    Expressions.stringTemplate(
+                        "COALESCE(GROUP_CONCAT({0}), '-')",
+                        serviceCategory.serviceName
+                    )
+                )
+                .from(extraService)
+                .leftJoin(serviceCategory).on(serviceCategory.serviceId.eq(extraService.serviceCategory.serviceId))
+                .where(extraService.reservation.reservationId.eq(reservation.reservationId)),
+            "extraServiceName"
+        );
 
         return jpaQueryFactory
             .select(Projections.bean(ManagerReservationRspDTO.class,
@@ -173,6 +196,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 Expressions.stringTemplate("CONCAT({0}, ', ', {1})",
                     customer.roadAddress, customer.detailAddress).as("customerAddress"),
 
+                // 고객 추가 서비스
+                extraServiceNameExpr,
                 // 고객 요청사항
                 reservation.memo.as("memo"),
 
