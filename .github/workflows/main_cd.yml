@@ -1,3 +1,10 @@
+name: Main Branch CD
+
+on:
+  pull_request:
+    branches:
+      - main
+
 jobs:
   BuildAndPushImage:
     runs-on: ubuntu-latest
