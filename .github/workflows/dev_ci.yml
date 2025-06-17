@@ -28,14 +28,6 @@ jobs:
             ${{ runner.os }}-
             ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-      - name: MySQL setup
-        uses: samin/mysql-action@v1
-        with:
-          mysql version: '8.0'
-          mysql database: 'test_db'
-          mysql user: ${{ secrets.DB_USER }}
-          mysql password: ${{ secrets.DB_PASSWORD }}
-
       - name: Run Test
         run: |
           gradle clean build -x test

@@ -1,13 +1,5 @@
-name: Master Branch CI
-
-on:
-  pull_request:
-    branches:
-      - main
-      - server/dev
-
 jobs:
-  TESTING:
+  BuildAndPushImage:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -17,7 +9,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: 'amazon-corretto'
 
       - name: Cache Gradle packages
         uses: actions/cache@v4
@@ -29,37 +21,33 @@ jobs:
             ${{ runner.os }}-
             ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-      - name: Run Tests
-        run: |
-          gradle clean build -x test
-
-  BUILD_AND_PUBLISH:
-    needs: TESTING
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build Docker Image
-        run: |
-          docker build -t ${{ secrets.SERVICE_NAME }}-${{ secrets.ECR_REPO_NAME }}:latest .
-
-      # Amazon ECR 로그인 및 이미지 푸시
-      ## AWS 자격 증명 설명
       - name: Configure AWS credentials
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set default.region ${{ secrets.AWS_REGION }}
 
-      ## Amazon ECR 로그인
       - name: Login to AWS ECR
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
           | docker login --username AWS \
           --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-      - name: Push to AWS ECR
+      - name: Determine Image Tag
+        id: tag
         run: |
-          docker tag ${{ secrets.SERVICE_NAME }}-${{ secrets.ECR_REPO_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:latest
+          EXISTING_TAGS=$(aws ecr list-images --repository-name ${{ secrets.ECR_REPO_NAME }} --region ${{ secrets.AWS_REGION }} --query 'imageIds[*].imageTag' --output text)
+          VERSION_TAG="arm64-v8-v0.1"
+          while echo "$EXISTING_TAGS" | grep -q "$VERSION_TAG"; do
+            VERSION_NUMBER=$(echo "$VERSION_TAG" | grep -o '[0-9]*$')
+            NEXT_VERSION=$((VERSION_NUMBER + 1))
+            VERSION_TAG="arm64-v8-v0.$NEXT_VERSION"
+          done
+          echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
+        run: |
+          docker buildx create --use
+          docker buildx build --platform linux/arm64/v8 \
+          -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{ env.VERSION_TAG }} \
+          --push .
