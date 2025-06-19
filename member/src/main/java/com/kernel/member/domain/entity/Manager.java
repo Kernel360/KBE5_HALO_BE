@@ -1,6 +1,6 @@
 package com.kernel.member.domain.entity;
 
-import com.kernel.member.domain.enumerate.ContractStatus;
+import com.kernel.member.common.enumerate.ContractStatus;
 
 
 import java.time.LocalDateTime;
