@@ -1,4 +1,4 @@
-package com.kernel.common.domain.entity;
+package com.kernel.global.domain.entity;
 
 public class Notification {
 

@@ -1,4 +1,4 @@
-package com.kernel.common.global.enums;
+package com.kernel.global.common.enumerate;
 
 public enum PostStatus {
     TEMP("임시"),
