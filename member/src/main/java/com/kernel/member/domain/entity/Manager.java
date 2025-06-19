@@ -2,6 +2,7 @@ package com.kernel.member.domain.entity;
 
 import com.kernel.member.domain.enumerate.ContractStatus;
 
+
 import java.time.LocalDateTime;
 
 public class Manager {
@@ -18,8 +19,11 @@ public class Manager {
     // 한 줄 소개
     private String bio;
 
-    // 프로필 이미지 URL
+    // 프로필 URL
     private long profileImageFileId;
+
+    // 서류 파일 ID
+    // private File fileId;
 
     // 계약상태
     private ContractStatus contractStatus;
