@@ -4,7 +4,8 @@ on:
   pull_request:
     branches:
       - main
-      - server/dev
+      - dev
+      - refactor/#170
     types: [opened, synchronize]
 
 jobs:
