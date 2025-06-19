@@ -37,7 +37,7 @@ out/
 .vscode/
 
 *application*
-*dev.env
+*.env
 
 
 # QueryDSL Q파일 자동 생성 위치 무시
