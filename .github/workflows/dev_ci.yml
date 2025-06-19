@@ -3,9 +3,11 @@ name: Server Dev Branch CI
 on:
   pull_request:
     branches:
-      - server/dev
+      - dev
+      - refactor/#170
 
 jobs:
+
   TESTING:
     runs-on: ubuntu-latest
     steps:
