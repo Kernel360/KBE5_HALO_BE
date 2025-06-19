@@ -3,9 +3,11 @@ name: Server Dev Branch CI
 on:
   pull_request:
     branches:
-      - server/dev
+      - dev
+      - refactor/#170
 
 jobs:
+
   TESTING:
     runs-on: ubuntu-latest
     steps:
@@ -28,14 +30,8 @@ jobs:
             ${{ runner.os }}-
             ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-      - name: MySQL setup
-        uses: samin/mysql-action@v1
-        with:
-          mysql version: '8.0'
-          mysql database: 'test_db'
-          mysql user: ${{ secrets.DB_USER }}
-          mysql password: ${{ secrets.DB_PASSWORD }}
 
       - name: Run Test
         run: |
-          gradle clean build -x test
+          gradle cle
+          an build -x test
