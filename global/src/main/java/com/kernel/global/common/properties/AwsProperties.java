@@ -1,4 +1,4 @@
-package com.kernel.common.config;
+package com.kernel.global.common.properties;
 
 import lombok.Getter;
 import lombok.Setter;
