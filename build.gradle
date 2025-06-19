@@ -43,7 +43,8 @@ dependencies {
 	//testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-bootJar {
+tasks.named('bootJar') {
+	mainClass.set('com.kernel.ApiApplication')
 	enabled = true
 }
 
