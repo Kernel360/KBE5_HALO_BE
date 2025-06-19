@@ -1,9 +1,5 @@
 rootProject.name = 'HaloCare'
 
-include (":api")
-include (":common")
-
-
 include (":admin")
 include (":evaluation")
 include (":global")
