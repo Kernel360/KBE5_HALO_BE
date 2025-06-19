@@ -40,5 +40,4 @@ jobs:
 
       - name: Run Test
         run: |
-          gradle cle
-          an build -x test
+          gradle clean build -x test
