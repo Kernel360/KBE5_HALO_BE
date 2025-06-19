@@ -1,4 +1,4 @@
-package com.kernel.app.jwt;
+package com.kernel.global.common.properties;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
