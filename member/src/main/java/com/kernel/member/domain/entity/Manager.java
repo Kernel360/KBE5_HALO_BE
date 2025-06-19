@@ -1,6 +1,6 @@
 package com.kernel.member.domain.entity;
 
-import com.kernel.member.domain.enumerate.ContractStatus;
+import com.kernel.member.common.enumerate.ContractStatus;
 
 
 import java.time.LocalDateTime;
@@ -30,13 +30,4 @@ public class Manager {
 
     // 계약 일시
     private LocalDateTime contractDate;
-
-    // 계약 해지 요청 일시
-    private String requestDate;
-
-    // 계약 해지 사유
-    private String reason;
-
-    // 계약 해지 일시
-    private String terminationDate;
 }
