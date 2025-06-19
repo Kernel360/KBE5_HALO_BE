@@ -1,4 +1,8 @@
-package com.kernel.common.domain.entity;
+package com.kernel.global.domain.entity;
+
+import com.kernel.global.common.enumerate.PostStatus;
+
+import java.time.LocalDateTime;
 
 public class File {
 
