@@ -1,4 +1,4 @@
-package com.kernel.global.common.enumerate;
+package com.kernel.global.common.enums;
 
 public enum ReceiverType {
 

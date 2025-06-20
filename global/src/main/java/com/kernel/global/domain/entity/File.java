@@ -1,6 +1,6 @@
 package com.kernel.global.domain.entity;
 
-import com.kernel.global.common.enumerate.PostStatus;
+import com.kernel.global.common.enums.PostStatus;
 
 import java.time.LocalDateTime;
 
