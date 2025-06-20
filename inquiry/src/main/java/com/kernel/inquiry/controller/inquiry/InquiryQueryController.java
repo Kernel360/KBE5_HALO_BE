@@ -1,6 +1,6 @@
 package com.kernel.inquiry.controller.inquiry;
 
-import com.kernel.global.domain.entity.ApiResponse;
+import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.inquiry.service.dto.request.InquirySearchReqDTO;
 import com.kernel.inquiry.service.dto.response.InquiryDetailRspDTO;
 import com.kernel.inquiry.service.dto.response.InquirySummaryRspDTO;
@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
