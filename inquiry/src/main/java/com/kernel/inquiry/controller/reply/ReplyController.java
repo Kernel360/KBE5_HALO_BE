@@ -1,6 +1,6 @@
 package com.kernel.inquiry.controller.reply;
 
-import com.kernel.global.domain.entity.ApiResponse;
+import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.inquiry.service.dto.request.ReplyCreateReqDTO;
 import com.kernel.inquiry.service.reply.ReplyService;
 

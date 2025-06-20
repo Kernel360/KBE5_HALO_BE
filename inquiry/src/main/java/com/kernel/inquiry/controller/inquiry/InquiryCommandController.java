@@ -1,6 +1,6 @@
 package com.kernel.inquiry.controller.inquiry;
 
-import com.kernel.global.domain.entity.ApiResponse;
+import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.service.dto.request.InquiryCreateReqDTO;
 import com.kernel.inquiry.service.dto.request.InquiryDeleteReqDTO;
