@@ -1,7 +1,7 @@
 package com.kernel.admin.service.dto.responsse;
 
 import com.kernel.admin.domain.entity.Banner;
-import com.kernel.admin.domain.enumerate.BannerStatus;
+import com.kernel.admin.domain.enums.BannerStatus;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
 package com.kernel.admin.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.kernel.admin.domain.enumerate.BannerStatus;
+import com.kernel.admin.domain.enums.BannerStatus;
 import com.kernel.admin.service.dto.request.AdminBannerReqDTO;
 import jakarta.persistence.*;
 import lombok.*;

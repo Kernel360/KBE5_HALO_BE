@@ -5,7 +5,7 @@ import com.kernel.admin.repository.AdminBannerRepository;
 import com.kernel.admin.service.dto.request.AdminBannerReqDTO;
 import com.kernel.admin.service.dto.responsse.AdminBannerRspDTO;
 
-import com.kernel.admin.service.banner.UploadedFileRepository;
+import com.kernel.global.domain.entity.UploadedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

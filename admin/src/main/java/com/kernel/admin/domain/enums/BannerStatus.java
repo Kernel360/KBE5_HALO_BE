@@ -1,4 +1,4 @@
-package com.kernel.admin.domain.enumerate;
+package com.kernel.admin.domain.enums;
 
 public enum BannerStatus {
     ACTIVE("활성"),
