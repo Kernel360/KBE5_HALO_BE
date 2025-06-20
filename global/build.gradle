@@ -1,0 +1,78 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.kernel'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3' // JSON 처리용
+
+    // Lombok (개발 편의)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // MapStruct
+    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+
+    // Mapping 구현체
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+    // 공통 예외 처리를 위한 Web 패키지
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 필요시 Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+
+    // mysql
+    implementation 'com.mysql:mysql-connector-j'
+
+    // QueryDSL dependencies
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:5.1.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Amazon S3
+    implementation  'software.amazon.awssdk:s3:2.20.0'
+    implementation  'software.amazon.awssdk:core:2.20.0'
+    implementation  'software.amazon.awssdk:auth:2.20.0'
+    implementation  'software.amazon.awssdk:regions:2.20.0'
+
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

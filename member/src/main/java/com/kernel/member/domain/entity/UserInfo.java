@@ -1,6 +1,6 @@
 package com.kernel.member.domain.entity;
 
-import com.kernel.member.domain.enumerate.Gender;
+import com.kernel.member.common.enumerate.Gender;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
