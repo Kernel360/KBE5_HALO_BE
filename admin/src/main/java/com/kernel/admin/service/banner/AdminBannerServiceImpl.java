@@ -5,7 +5,7 @@ import com.kernel.admin.repository.AdminBannerRepository;
 import com.kernel.admin.service.dto.request.AdminBannerReqDTO;
 import com.kernel.admin.service.dto.responsse.AdminBannerRspDTO;
 
-import com.kernel.global.domain.entity.UploadedFileRepository;
+// import com.kernel.global.domain.entity.UploadedFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 public class AdminBannerServiceImpl implements AdminBannerService {
 
     private final AdminBannerRepository adminBannerRepository;
-    private final UploadedFileRepository uploadedFileRepository;
+    // private final UploadedFileRepository uploadedFileRepository;
 
     /**
      * 배너 목록 조회

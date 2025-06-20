@@ -15,7 +15,8 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder
 @ToString
-public class Banner extends BaseEntity {
+//extends BaseEntity
+public class Banner {
 
     // Banner ID
     @Id

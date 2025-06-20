@@ -3,10 +3,9 @@ package com.kernel.admin.controller.banner;
 import com.kernel.admin.service.banner.AdminBannerService;
 import com.kernel.admin.service.dto.request.AdminBannerReqDTO;
 import com.kernel.admin.service.dto.responsse.AdminBannerRspDTO;
-import com.kernel.global.service.dto.responsse.ApiResponse;
+import com.kernel.global.service.dto.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
