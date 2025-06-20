@@ -2,7 +2,7 @@ package com.kernel.admin.controller.board;
 
 
 import com.kernel.admin.domain.entity.Board;
-import com.kernel.admin.domain.enumerate.BoardType;
+import com.kernel.admin.domain.enums.BoardType;
 import com.kernel.admin.repository.AdminBoardRepository;
 import com.kernel.admin.service.board.AdminBoardsService;
 import com.kernel.admin.service.dto.request.AdminBoardsReqDTO;

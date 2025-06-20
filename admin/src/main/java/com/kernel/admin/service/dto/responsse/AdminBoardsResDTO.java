@@ -1,7 +1,7 @@
 package com.kernel.admin.service.dto.responsse;
 
 import com.kernel.admin.domain.entity.Board;
-import com.kernel.admin.domain.enumerate.BoardType;
+import com.kernel.admin.domain.enums.BoardType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

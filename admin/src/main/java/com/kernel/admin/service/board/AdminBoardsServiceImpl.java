@@ -38,7 +38,7 @@ public class AdminBoardsServiceImpl implements AdminBoardsService {
 
     // 공지사항 / 이벤트 목록 조회
     @Override
-    public List<AdminBoardsResDTO> getBoardList(com.kernel.admin.domain.enumerate.BoardType boardType) {
+    public List<AdminBoardsResDTO> getBoardList(com.kernel.admin.domain.enums.BoardType boardType) {
         return adminBoardRepository.findByBoardType(boardType).stream()
                 .map(AdminBoardsResDTO::fromEntity)
                 .collect(Collectors.toList());

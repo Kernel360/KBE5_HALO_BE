@@ -1,6 +1,6 @@
 package com.kernel.admin.service.board;
 
-import com.kernel.admin.domain.enumerate.BoardType;
+import com.kernel.admin.domain.enums.BoardType;
 import com.kernel.admin.service.dto.request.AdminBoardsReqDTO;
 import com.kernel.admin.service.dto.responsse.AdminBoardsResDTO;
 
