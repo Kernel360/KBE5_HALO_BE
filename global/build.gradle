@@ -24,9 +24,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // JWT
-    //implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-    //runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
-    //runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3' // JSON 처리용
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3' // JSON 처리용
 
     // Lombok (개발 편의)
     compileOnly 'org.projectlombok:lombok'
@@ -62,7 +62,6 @@ dependencies {
     implementation  'software.amazon.awssdk:core:2.20.0'
     implementation  'software.amazon.awssdk:auth:2.20.0'
     implementation  'software.amazon.awssdk:regions:2.20.0'
-
 
 }
 

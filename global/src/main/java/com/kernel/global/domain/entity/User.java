@@ -1,8 +1,12 @@
 package com.kernel.global.domain.entity;
 
-import com.kernel.global.common.enumerate.UserRole;
-import com.kernel.global.common.enumerate.UserStatus;
+import com.kernel.global.common.enums.UserRole;
+import com.kernel.global.common.enums.UserStatus;
+import lombok.Builder;
+import lombok.Getter;
 
+@Getter
+@Builder
 public class User {
     // 사용자 ID
     private Long userId;
