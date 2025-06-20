@@ -1,6 +1,6 @@
-package com.kernel.common.config;
+package com.kernel.global.config;
 
-import lombok.RequiredArgsConstructor;
+import com.kernel.global.common.properties.AwsProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
