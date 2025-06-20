@@ -2,7 +2,6 @@ package com.kernel.inquiry.service.inquiry;
 
 import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.service.dto.request.InquiryCreateReqDTO;
-import com.kernel.inquiry.service.dto.request.InquiryDeleteReqDTO;
 import com.kernel.inquiry.service.dto.request.InquiryUpdateReqDTO;
 
 public interface InquiryCommandService {
@@ -14,6 +13,6 @@ public interface InquiryCommandService {
     void updateInquiry(InquiryUpdateReqDTO request, Long authorId);
 
     // 문의사항 삭제
-    void deleteInquiry(InquiryDeleteReqDTO request, Long authorId);
+    void deleteInquiry(Long inquiryId, Long authorId);
 
 }
