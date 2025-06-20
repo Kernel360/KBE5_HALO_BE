@@ -1,4 +1,4 @@
-package com.kernel.member.common.enumerate;
+package com.kernel.member.common.enums;
 
 
 public enum Gender {
