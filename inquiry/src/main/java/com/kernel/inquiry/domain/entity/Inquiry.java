@@ -20,7 +20,7 @@ public class Inquiry extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "inquiry_id")
+    @Column
     private Long inquiryId;
 
     // 카테고리 조회용
@@ -28,33 +28,33 @@ public class Inquiry extends BaseEntity {
     private Enum<?> category;
 
     // 작성자 ID
-    @Column(name = "author_id")
+    @Column
     @CreatedBy
     private Long authorId;
 
     // 작성자 유형
-    @Column(name = "author_type")
+    @Column
     private AuthorType authorType;
 
     // 제목
-    @Column(name = "title", length = 50)
+    @Column(length = 50)
     private String title;
 
     // 내용
-    @Column(name = "content", length = 5000)
+    @Column(length = 5000)
     private String content;
 
     // 첨부파일 ID
-    @Column(name = "file_id")
+    @Column
     private Long fileId;
 
     // 답변 여부
-    @Column(name = "is_replied")
+    @Column
     @Builder.Default
     private Boolean isReplied = Boolean.FALSE;
 
     // 삭제 여부
-    @Column(name = "is_deleted")
+    @Column
     @Builder.Default
     private Boolean isDeleted = Boolean.FALSE;
 
