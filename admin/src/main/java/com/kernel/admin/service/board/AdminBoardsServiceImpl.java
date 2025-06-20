@@ -1,4 +1,4 @@
-package com.kernel.admin.service;
+package com.kernel.admin.service.board;
 
 import com.kernel.admin.domain.entity.Board;
 import com.kernel.admin.repository.AdminBoardRepository;
