@@ -75,4 +75,3 @@ public class AdminBoardsController {
         return ResponseEntity.ok(new ApiResponse<>(true, "게시글 삭제 완료", null));
     }
 }
-}
