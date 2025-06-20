@@ -7,7 +7,7 @@ import com.kernel.admin.repository.AdminBoardRepository;
 import com.kernel.admin.service.board.AdminBoardsService;
 import com.kernel.admin.service.dto.request.AdminBoardsReqDTO;
 import com.kernel.admin.service.dto.responsse.AdminBoardsResDTO;
-import com.kernel.global.service.dto.responsse.ApiResponse;
+import com.kernel.global.service.dto.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

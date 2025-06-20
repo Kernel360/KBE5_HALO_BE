@@ -12,7 +12,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board extends BaseEntity{
+//extends BaseEntity
+public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
