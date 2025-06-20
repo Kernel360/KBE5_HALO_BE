@@ -5,21 +5,17 @@ import com.kernel.inquiry.service.dto.request.InquirySearchReqDTO;
 import com.kernel.inquiry.service.dto.response.InquiryDetailRspDTO;
 import com.kernel.inquiry.service.dto.response.InquirySummaryRspDTO;
 import com.kernel.inquiry.service.inquiry.InquiryQueryService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/inquiry/query")
+@RequestMapping("/api/customer/inquiry/query")
 @RequiredArgsConstructor
-public class InquiryQueryController {
+public class InquiryCustomerQueryController {
 
     private final InquiryQueryService inquiryQueryService;
 
@@ -35,10 +31,10 @@ public class InquiryQueryController {
         return ResponseEntity.ok(new ApiResponse<>(true, "문의사항 목록 조회 성공", inquiries));
     }
 
-    @GetMapping("/detail")
+    @GetMapping("{inquiry-id}")
     public ResponseEntity<ApiResponse<InquiryDetailRspDTO>> getInquiryDetails(
-            @RequestBody Long inquiryId
-            ) {
+            @PathVariable("inquiry-id") Long inquiryId
+    ) {
         InquiryDetailRspDTO inquiryDetails = inquiryQueryService.getInquiryDetails(inquiryId);
         return ResponseEntity.ok(new ApiResponse<>(true, "문의사항 상세 조회 성공", inquiryDetails));
     }
