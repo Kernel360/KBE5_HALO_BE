@@ -2,8 +2,6 @@ package com.kernel.global.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.kernel.global.common.enums.PostStatus;
 import com.kernel.global.common.properties.AwsProperties;
 import com.kernel.global.domain.entity.File;
