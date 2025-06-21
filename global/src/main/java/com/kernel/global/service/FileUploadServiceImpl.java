@@ -24,6 +24,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -93,7 +94,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         try {
             filePathsJson = gson.toJson(request.getFileUrls());
         } catch (JsonSyntaxException e) {
-            throw new IllegalArgumentException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다.");
+            throw new NoSuchElementException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다.");
         }
 
         File uploadedFiles = File.builder()
@@ -120,7 +121,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         try {
             filePathsJson = gson.toJson(request.getFileUrls());
         } catch (JsonSyntaxException e) {
-            throw new IllegalArgumentException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다: " + e.getMessage());
+            throw new NoSuchElementException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다: " + e.getMessage());
         }
 
         File existingFiles = fileRepository.findById(request.getFileId())
