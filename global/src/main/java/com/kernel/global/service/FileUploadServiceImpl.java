@@ -45,7 +45,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public FileGetRspDTO getFileList(Long fileId) {
         File file = fileRepository.findById(fileId)
-                .orElseThrow(() -> new IllegalArgumentException("파일을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("파일을 찾을 수 없습니다."));
 
         return FileGetRspDTO.fromEntity(file);
     }
@@ -94,7 +94,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         try {
             filePathsJson = objectMapper.writeValueAsString(request.getFileUrls());
         } catch (JsonProcessingException e) {
-            throw new NoSuchElementException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다.");
+            throw new RuntimeException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다");
         }
 
         File uploadedFiles = File.builder()
@@ -121,11 +121,11 @@ public class FileUploadServiceImpl implements FileUploadService {
         try {
             filePathsJson = objectMapper.writeValueAsString(request.getFileUrls());
         } catch (JsonProcessingException e) {
-            throw new NoSuchElementException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다: " + e.getMessage());
+            throw new RuntimeException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다");
         }
 
         File existingFiles = fileRepository.findById(request.getFileId())
-                .orElseThrow(() -> new IllegalArgumentException("업데이트할 파일을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("업데이트할 파일을 찾을 수 없습니다."));
 
         existingFiles.updateFiles(filePathsJson);
 
