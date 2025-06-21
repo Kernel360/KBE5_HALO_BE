@@ -1,13 +1,27 @@
 package com.kernel.member.domain.entity;
 
+import com.kernel.global.domain.entity.User;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "customer")
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Customer {
 
-    // 수요자 ID
+    @Id
     private Long userId;
 
-    // 정보ID
-    private Long infoId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId  // PK이자 FK
+    @JoinColumn(name = "user_id")
+    private User user;
 
     // 포인트
-    private Integer point;
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer point = 0;
 }
