@@ -23,12 +23,12 @@ public class ReplyCreateReqDTO {
     private Long fileId;
 
     // reqDTO to Entity Mapping
-    public Reply toEntity(Inquiry inquiry, Long authorId) {
+    public static Reply toEntity(ReplyCreateReqDTO request, Inquiry inquiry, Long authorId) {
         return Reply.builder()
                 .inquiryId(inquiry)
                 .authorId(authorId)
-                .content(content)
-                .fileId(fileId)
+                .content(request.getContent())
+                .fileId(request.getFileId() != null ? request.getFileId() : null) // 파일 ID가 null인 경우 처리
                 .build();
     }
 }
