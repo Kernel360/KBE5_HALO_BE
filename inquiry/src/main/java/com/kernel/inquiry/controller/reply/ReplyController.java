@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/admin/reply")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ReplyController {
 
     private final ReplyService replyService;
