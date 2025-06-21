@@ -1,5 +1,7 @@
 package com.kernel.global.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.kernel.global.common.enums.PostStatus;
@@ -88,12 +90,12 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Transactional
     @Override
     public FileUploadRspDTO uploadFiles(FileUploadReqDTO request) {
-        Gson gson = new Gson();
+        ObjectMapper objectMapper = new ObjectMapper();
         String filePathsJson;
 
         try {
-            filePathsJson = gson.toJson(request.getFileUrls());
-        } catch (JsonSyntaxException e) {
+            filePathsJson = objectMapper.writeValueAsString(request.getFileUrls());
+        } catch (JsonProcessingException e) {
             throw new NoSuchElementException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다.");
         }
 
@@ -115,12 +117,12 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Transactional
     @Override
     public FileUpdateRspDTO updateFiles(FileUpdateReqDTO request) {
-        Gson gson = new Gson();
+        ObjectMapper objectMapper = new ObjectMapper();
         String filePathsJson;
 
         try {
-            filePathsJson = gson.toJson(request.getFileUrls());
-        } catch (JsonSyntaxException e) {
+            filePathsJson = objectMapper.writeValueAsString(request.getFileUrls());
+        } catch (JsonProcessingException e) {
             throw new NoSuchElementException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다: " + e.getMessage());
         }
 
