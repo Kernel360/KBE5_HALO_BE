@@ -63,9 +63,9 @@ public class SecurityConfig {
     public SecurityFilterChain commonFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .securityMatcher("/api/logout", "/api/reissue")
+            .securityMatcher("/api/logout", "/api/reissue", "/api/files/**")
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/logout","/api/reissue").permitAll())
+                    .requestMatchers("/api/logout","/api/reissue", "/api/files/**").permitAll())
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
