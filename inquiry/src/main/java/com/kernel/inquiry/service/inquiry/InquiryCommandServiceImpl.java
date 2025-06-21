@@ -1,6 +1,8 @@
 package com.kernel.inquiry.service.inquiry;
 
 import com.kernel.inquiry.common.enums.AuthorType;
+import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
+import com.kernel.inquiry.common.enums.ManagerInquiryCategory;
 import com.kernel.inquiry.domain.entity.Inquiry;
 import com.kernel.inquiry.repository.InquiryRepository;
 import com.kernel.inquiry.service.dto.request.InquiryCreateReqDTO;
@@ -30,13 +32,13 @@ public class InquiryCommandServiceImpl implements InquiryCommandService {
     public void createInquiry(InquiryCreateReqDTO request, Long authorId, AuthorType authorType) {
 
         // 문의 카테고리 검증
-        if (authorType == AuthorType.CUSTOMER && !(request.getCategory() instanceof com.kernel.inquiry.common.enums.CustomerInquiryCategory)) {
+        if (authorType == AuthorType.CUSTOMER && !(request.getCategory() instanceof CustomerInquiryCategory)) {
             throw new IllegalArgumentException("잘못된 고객 문의 카테고리입니다.");
-        } else if (authorType == AuthorType.MANAGER && !(request.getCategory() instanceof com.kernel.inquiry.common.enums.ManagerInquiryCategory)) {
-            throw new IllegalArgumentException("잘못된 관리자 문의 카테고리입니다.");
+        } else if (authorType == AuthorType.MANAGER && !(request.getCategory() instanceof ManagerInquiryCategory)) {
+            throw new IllegalArgumentException("잘못된 매니저 문의 카테고리입니다.");
         }
 
-        Inquiry inquiry = request.toEntity(authorId, authorType);
+        Inquiry inquiry = request.toEntity(request, authorId, authorType);
         inquiryRepository.save(inquiry);
     }
 
@@ -59,13 +61,13 @@ public class InquiryCommandServiceImpl implements InquiryCommandService {
 
         // 문의 카테고리 검증
         if (authorId != null && inquiry.getAuthorType() == AuthorType.CUSTOMER &&
-                !(request.getCategory() instanceof com.kernel.inquiry.common.enums.CustomerInquiryCategory)) {
+                !(request.getCategory() instanceof CustomerInquiryCategory)) {
             throw new IllegalArgumentException("잘못된 고객 문의 카테고리입니다.");
         } else if (authorId != null && inquiry.getAuthorType() == AuthorType.MANAGER &&
-                !(request.getCategory() instanceof com.kernel.inquiry.common.enums.ManagerInquiryCategory)) {
-            throw new IllegalArgumentException("잘못된 관리자 문의 카테고리입니다.");
+                !(request.getCategory() instanceof ManagerInquiryCategory)) {
+            throw new IllegalArgumentException("잘못된 매니저 문의 카테고리입니다.");
         }
-        inquiry.update(request.toEntity());
+        inquiry.update(request.toEntity(request));
     }
 
     /**
