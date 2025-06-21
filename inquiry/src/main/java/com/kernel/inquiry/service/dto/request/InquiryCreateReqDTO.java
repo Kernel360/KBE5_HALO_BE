@@ -32,14 +32,14 @@ public class InquiryCreateReqDTO {
     private Enum<?> category;
 
     // reqDTO to Entity Mapping
-    public Inquiry toEntity(Long authorId, AuthorType authorType) {
+    public static Inquiry toEntity(InquiryCreateReqDTO request, Long authorId, AuthorType authorType) {
         return Inquiry.builder()
                 .authorId(authorId)
                 .authorType(authorType)
-                .title(title)
-                .content(content)
-                .fileId(filePaths != null && !filePaths.isEmpty() ? Long.parseLong(filePaths.get(0)) : null) // 첫 번째 파일 ID 사용
-                .category(category)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .fileId(request.getFilePaths() != null && !request.getFilePaths().isEmpty() ? Long.parseLong(request.getFilePaths().get(0)) : null) // 첫 번째 파일 ID 사용
+                .category(request.getCategory())
                 .build();
     }
 }

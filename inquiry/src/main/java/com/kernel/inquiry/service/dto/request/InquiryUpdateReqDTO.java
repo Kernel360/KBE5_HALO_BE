@@ -28,13 +28,13 @@ public class InquiryUpdateReqDTO {
     private Enum<?> category;
 
     // reqDTO to Entity Mapping
-    public Inquiry toEntity() {
+    public static Inquiry toEntity(InquiryUpdateReqDTO request) {
         return Inquiry.builder()
-                .inquiryId(inquiryId)
-                .title(title)
-                .content(content)
-                .fileId(fileId)
-                .category(category)
+                .inquiryId(request.getInquiryId())
+                .title(request.getTitle() != null ? request.getTitle() : null) // 제목이 null인 경우 처리
+                .content(request.getContent() != null ? request.getContent() : null) // 내용이 null인 경우 처리
+                .fileId(request.getFileId() != null ? request.getFileId() : null) // 파일 ID가 null인 경우 처리
+                .category(request.getCategory() != null ? request.getCategory() : null) // 카테고리가 null인 경우 처리
                 .build();
     }
 }

@@ -23,6 +23,6 @@ public class ReplyServiceImpl implements ReplyService {
                 .orElseThrow(() -> new IllegalArgumentException("문의사항을 찾을 수 없습니다."));
 
         // 답변 생성
-        replyRepository.save(request.toEntity(inquiry, authorId));
+        replyRepository.save(request.toEntity(request, inquiry, authorId));
     }
 }
