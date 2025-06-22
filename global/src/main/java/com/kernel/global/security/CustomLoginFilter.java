@@ -1,5 +1,6 @@
 package com.kernel.global.security;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kernel.global.common.enums.ErrorCode;
 import com.kernel.global.common.enums.UserStatus;
@@ -137,7 +138,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
     private Credentials extractCredentials(HttpServletRequest request) {
         try {
             if (request.getContentType() != null && request.getContentType().contains(APPLICATION_JSON)) {
-                Map<String, String> requestMap = objectMapper.readValue(request.getInputStream(), Map.class);
+                Map<String, String> requestMap = objectMapper.readValue(request.getInputStream(), new TypeReference<Map<String, String>>() {});
                 return new Credentials(requestMap.get("phone"), requestMap.get("password"));
             } else {
                 return new Credentials(obtainUsername(request), obtainPassword(request));
