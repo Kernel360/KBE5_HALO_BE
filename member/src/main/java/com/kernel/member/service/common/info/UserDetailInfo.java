@@ -1,4 +1,4 @@
-package com.kernel.member.service.common.response;
+package com.kernel.member.service.common.info;
 
 import com.kernel.member.common.enums.Gender;
 import com.kernel.member.domain.entity.UserInfo;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInfoRspDTO {
+public class UserDetailInfo {
 
     // 생년월일
     private LocalDate birthDate;
@@ -34,9 +34,9 @@ public class UserInfoRspDTO {
     // 상세주소
     private String detailAddress;
 
-    // UserInfo -> UserInfoRspDTO
-    public static UserInfoRspDTO fromEntity(UserInfo userInfo) {
-        return UserInfoRspDTO.builder()
+    // UserInfo -> UserDetailInfo
+    public static UserDetailInfo fromEntity(UserInfo userInfo) {
+        return UserDetailInfo.builder()
                 .birthDate(userInfo.getBirthDate())
                 .gender(userInfo.getGender())
                 .latitude(userInfo.getLatitude())

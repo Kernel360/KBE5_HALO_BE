@@ -1,4 +1,4 @@
-package com.kernel.member.service.common.response;
+package com.kernel.member.service.common.info;
 
 import com.kernel.global.domain.entity.User;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRspDTO {
+public class UserAccountInfo {
 
     // 핸드폰 번호
     private String phone;
@@ -21,9 +21,9 @@ public class UserRspDTO {
     // 이름
     private String userName;
 
-    // User -> UserRspDTO
-    public static UserRspDTO fromEntity(User user) {
-        return UserRspDTO.builder()
+    // User -> UserAccountInfo
+    public static UserAccountInfo fromEntity(User user) {
+        return UserAccountInfo.builder()
                 .phone(user.getPhone())
                 .email(user.getEmail())
                 .userName(user.getUserName())

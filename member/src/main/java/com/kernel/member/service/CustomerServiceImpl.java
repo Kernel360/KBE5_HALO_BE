@@ -11,19 +11,17 @@ import com.kernel.member.domain.entity.UserInfo;
 import com.kernel.member.repository.CustomerRepository;
 import com.kernel.member.service.common.UserInfoService;
 import com.kernel.member.service.common.UserService;
-import com.kernel.member.service.common.response.UserInfoRspDTO;
-import com.kernel.member.service.common.response.UserRspDTO;
+import com.kernel.member.service.common.info.UserDetailInfo;
+import com.kernel.member.service.common.info.UserAccountInfo;
 import com.kernel.member.service.request.CustomerSignupReqDTO;
 import com.kernel.member.service.request.CustomerUpdateReqDTO;
 import com.kernel.member.service.response.CustomerDetailRspDTO;
-import com.kernel.member.service.response.CustomerRspDTO;
+import com.kernel.member.service.response.CustomerDetailInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -77,10 +75,10 @@ public class CustomerServiceImpl implements CustomerService {
         UserInfo foundUserInfo = userInfoService.getUserById(foundUser.getUserId());
 
         // Entity -> rspDTO 변환 후 return
-        return  CustomerDetailRspDTO.fromDTOs(
-                    UserRspDTO.fromEntity(foundUser),
-                    UserInfoRspDTO.fromEntity(foundUserInfo),
-                    CustomerRspDTO.fromEntity(foundCustomer)
+        return  CustomerDetailRspDTO.fromInfos(
+                    UserAccountInfo.fromEntity(foundUser),
+                    UserDetailInfo.fromEntity(foundUserInfo),
+                    CustomerDetailInfo.fromEntity(foundCustomer)
                 );
     }
 
@@ -116,10 +114,10 @@ public class CustomerServiceImpl implements CustomerService {
         );
 
         // DTO 변환 후 return
-        return CustomerDetailRspDTO.fromDTOs(
-                UserRspDTO.fromEntity(foundUser),
-                UserInfoRspDTO.fromEntity(foundUserInfo),
-                CustomerRspDTO.fromEntity(foundCustomer)
+        return CustomerDetailRspDTO.fromInfos(
+                UserAccountInfo.fromEntity(foundUser),
+                UserDetailInfo.fromEntity(foundUserInfo),
+                CustomerDetailInfo.fromEntity(foundCustomer)
         );
     }
 }

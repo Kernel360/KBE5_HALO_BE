@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerRspDTO {
+public class CustomerDetailInfo {
 
     // 포인트
     private Integer point;
 
-    // Customer -> CustomerRspDTO
-    public static CustomerRspDTO fromEntity(Customer customer) {
-        return CustomerRspDTO.builder()
+    // Customer -> CustomerDetailInfo
+    public static CustomerDetailInfo fromEntity(Customer customer) {
+        return CustomerDetailInfo.builder()
                 .point(customer.getPoint())
                 .build();
     }
