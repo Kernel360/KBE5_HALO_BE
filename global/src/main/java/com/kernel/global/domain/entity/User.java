@@ -3,26 +3,24 @@ package com.kernel.global.domain.entity;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name ="user")
+@Table(name = "user")
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class User {
+@SuperBuilder
+public class User extends BaseEntity {
 
     // 사용자 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long userId;
 
     // 사용자 연락처
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String phone;
 
     // 사용자 이름
@@ -30,7 +28,7 @@ public class User {
     private String userName;
 
     // 사용자 이메일
-    @Column(nullable = false)
+    @Column
     private String email;
 
     // 사용자 비밀번호
@@ -38,6 +36,7 @@ public class User {
     private String password;
 
     // 사용자 권한
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
 
