@@ -1,16 +1,18 @@
 package com.kernel.member.domain.entity;
 
+import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.global.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "customer")
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Customer {
+public class Customer extends BaseEntity {
 
     @Id
     private Long userId;

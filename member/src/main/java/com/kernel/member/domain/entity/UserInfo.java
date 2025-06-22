@@ -1,9 +1,11 @@
 package com.kernel.member.domain.entity;
 
+import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.global.domain.entity.User;
 import com.kernel.member.common.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,10 +13,10 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "user_info")
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserInfo {
+public class UserInfo extends BaseEntity {
 
     @Id
     private Long userId;
