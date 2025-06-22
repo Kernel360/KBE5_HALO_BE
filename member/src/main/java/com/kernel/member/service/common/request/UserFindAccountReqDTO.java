@@ -1,4 +1,4 @@
-package com.kernel.common.customer.dto.request;
+package com.kernel.member.service.common.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @Builder
-public class CustomerFindAccountReqDTO {
+public class UserFindAccountReqDTO {
 
     // 핸드폰 번호
     @NotBlank(message = "핸드폰 번호를 입력해주세요.")

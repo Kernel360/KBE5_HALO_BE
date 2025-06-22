@@ -10,10 +10,12 @@ public enum ErrorCode {
     // 회원가입/인증 관련
     DUPLICATE_USER(400, "AUTH001", "이미 존재하는 사용자입니다."),
     INVALID_SIGNUP_DATA(400, "AUTH002", "회원가입 정보가 올바르지 않습니다."),
+    USER_NOT_FOUND(404, "AUTH006", "존재하지 않는 사용자입니다."),
 
     // 로그인 관련
     INVALID_CREDENTIALS(401, "AUTH003", "아이디 또는 비밀번호가 올바르지 않습니다."),
     ACCOUNT_LOCKED(401, "AUTH004", "계정이 잠겨있습니다."),
+    INVALID_PASSWORD(401, "AUTH005", "비밀번호가 올바르지 않습니다."),
 
     // JWT 토큰 관련
     INVALID_TOKEN(401, "JWT001", "유효하지 않은 토큰입니다."),

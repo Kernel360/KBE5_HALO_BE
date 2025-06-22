@@ -1,7 +1,8 @@
-package com.kernel.global.common.exception;
+package com.kernel.member.common.exception;
 
 
 import com.kernel.global.common.enums.ErrorCode;
+import com.kernel.global.common.exception.AuthException;
 
 public class DuplicateUserException extends AuthException {
     public DuplicateUserException() {

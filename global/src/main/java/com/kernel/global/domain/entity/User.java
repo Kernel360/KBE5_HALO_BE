@@ -3,20 +3,20 @@ package com.kernel.global.domain.entity;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "user")
 @Getter
 @SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User extends BaseEntity {
 
     // 사용자 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long userId;
 
     // 사용자 연락처
@@ -41,7 +41,25 @@ public class User extends BaseEntity {
     private UserRole role;
 
     // 사용자 상태값
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserStatus status;
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
+
+    // 사용자 email 수정
+    public void updateEmail(String email) {
+        if(!email.isBlank() && !this.email.equals(email)) {
+            this.email = email;
+        }
+    }
+
+    // 회원 탈퇴
+    public void delete(){
+        this.status = UserStatus.DELETED;
+    }
+
+    // 비밀번호 변경
+    public void resetPassword(String password) {
+        this.password = password;
+    }
+
 }
