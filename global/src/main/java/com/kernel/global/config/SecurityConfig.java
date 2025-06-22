@@ -1,6 +1,7 @@
 package com.kernel.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kernel.global.common.constant.SecurityUrlConstants;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.handler.JwtAccessDeniedHandler;
 import com.kernel.global.common.handler.JwtAuthenticationEntryPoint;
@@ -29,6 +30,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 @Configuration
 @EnableWebSecurity
@@ -62,10 +64,17 @@ public class SecurityConfig {
     @Order(0)
     public SecurityFilterChain commonFilterChain(HttpSecurity http) throws Exception {
 
+        String[] commonUrls = Stream.concat(
+                Arrays.stream(SecurityUrlConstants.PUBLIC_URLS),
+                Arrays.stream(SecurityUrlConstants.AUTHENTICATED_URLS)
+        ).toArray(String[]::new);
+
         http
-            .securityMatcher("/api/logout", "/api/reissue", "/api/files/**")
+            .securityMatcher(commonUrls)
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/logout","/api/reissue", "/api/files/**").permitAll())
+                    .requestMatchers(SecurityUrlConstants.PUBLIC_URLS).permitAll()
+                    .requestMatchers(SecurityUrlConstants.AUTHENTICATED_URLS).authenticated()
+            )
             .csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
@@ -97,10 +106,10 @@ public class SecurityConfig {
         loginFilter.setFilterProcessesUrl("/api/customers/auth/login");
 
         http
-            .securityMatcher("/api/customers/**", "/api/customers/auth/login", "/api/reissue")
+            .securityMatcher(SecurityUrlConstants.CUSTOMER_URLS)
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/customers/auth/login", "/api/customers/auth/signup").permitAll()
-                    .requestMatchers("/api/customers/**").hasRole(UserRole.CUSTOMER.name()))
+                    .requestMatchers(SecurityUrlConstants.CUSTOMER_URLS).hasRole(UserRole.CUSTOMER.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
@@ -119,10 +128,10 @@ public class SecurityConfig {
         loginFilter.setFilterProcessesUrl("/api/managers/auth/login");
 
         http
-            .securityMatcher("/api/managers/**", "/api/managers/auth/login")
+            .securityMatcher(SecurityUrlConstants.MANAGER_URLS)
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/managers/auth/login", "/api/managers/auth/signup").permitAll()
-                    .requestMatchers("/api/managers/**").hasRole(UserRole.MANAGER.name()))
+                    .requestMatchers(SecurityUrlConstants.MANAGER_URLS).hasRole(UserRole.MANAGER.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
@@ -141,10 +150,10 @@ public class SecurityConfig {
         loginFilter.setFilterProcessesUrl("/api/admin/auth/login");
 
         http
-            .securityMatcher("/api/admin/**", "/api/admin/auth/login")
+            .securityMatcher(SecurityUrlConstants.ADMIN_URLS)
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/admin/auth/login").permitAll()
-                    .requestMatchers("/api/admin/**").hasRole(UserRole.ADMIN.name()))
+                    .requestMatchers(SecurityUrlConstants.ADMIN_URLS).hasRole(UserRole.ADMIN.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class);
@@ -167,7 +176,7 @@ public class SecurityConfig {
         };
     }
 
-    // 공통 Security 설정 (private 메서드로 복원)
+    // 공통 Security 설정
     private HttpSecurity applyCommonSecurityConfig(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)

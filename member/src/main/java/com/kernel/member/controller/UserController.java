@@ -14,34 +14,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     /**
-     * 사용자 비밀번호 확인
-     * @param user 로그인한 사용자
-     * @param jsonPassword 확인용 비밀번호
-     */
-    @PostMapping("/password-check")
-    public ResponseEntity<ApiResponse<Void>> checkPassword(
-            @RequestBody Map<String, String> jsonPassword,
-            @AuthenticationPrincipal CustomUserDetails user
-    ){
-        userService.checkPassword(user.getUserId(), jsonPassword.get("password"));
-        return ResponseEntity.ok(new ApiResponse<>(true, "사용자 비밀번호 확인 성공", null));
-    }
-
-    /**
      * 사용자 아이디 찾기
      * @param findAccountReqDTO 아이디 찾기 요청 DTO
      * @return 수요자 계정 존재 여부
      */
-    @PostMapping("/recovery-id")
+    @PostMapping("/common/recovery-id")
     public ResponseEntity<ApiResponse<Boolean>> findUserId(
-           @Valid @RequestBody UserFindAccountReqDTO findAccountReqDTO
+            @Valid @RequestBody UserFindAccountReqDTO findAccountReqDTO
     ){
         Boolean existsCustomer = userService.findUserId(findAccountReqDTO);
 
@@ -53,7 +39,7 @@ public class UserController {
      * @param findAccountReqDTO 비밀번호 찾기 요청 DTO
      * @return 랜덤 비밀번호
      */
-    @PostMapping("/recovery-pwd")
+    @PostMapping("/common/recovery-pwd")
     public ResponseEntity<ApiResponse<String>> findCustomerPassword(
             @Valid @RequestBody UserFindAccountReqDTO findAccountReqDTO
     ) {
@@ -62,11 +48,25 @@ public class UserController {
     }
 
     /**
+     * 사용자 비밀번호 확인
+     * @param user 로그인한 사용자
+     * @param jsonPassword 확인용 비밀번호
+     */
+    @PostMapping("/auth/password-check")
+    public ResponseEntity<ApiResponse<Void>> checkPassword(
+            @RequestBody Map<String, String> jsonPassword,
+            @AuthenticationPrincipal CustomUserDetails user
+    ){
+        userService.checkPassword(user.getUserId(), jsonPassword.get("password"));
+        return ResponseEntity.ok(new ApiResponse<>(true, "사용자 비밀번호 확인 성공", null));
+    }
+
+    /**
      * 수요자 비밀번호 수정
      * @param user 로그인한 사용자
      * @param resetReqDTO 새로운 비밀번호 요청 DTO
      */
-    @PatchMapping("/reset-pwd")
+    @PatchMapping("/auth/reset-pwd")
     public ResponseEntity<ApiResponse<Void>> resetPassword(
             @AuthenticationPrincipal CustomUserDetails user,
             @Valid @RequestBody UserResetPwdReqDTO resetReqDTO
@@ -80,7 +80,7 @@ public class UserController {
      * @param user 로그인한 사용자
      * @param jsonPassword 확인용 비밀번호
      */
-    @DeleteMapping("/my")
+    @DeleteMapping("/auth/my")
     public ResponseEntity<ApiResponse<Void>> deleteCustomer(
             @RequestBody Map<String, String> jsonPassword,
             @AuthenticationPrincipal CustomUserDetails user

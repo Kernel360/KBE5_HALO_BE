@@ -1,5 +1,6 @@
 package com.kernel.global.jwt;
 
+import com.kernel.global.common.constant.SecurityUrlConstants;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.security.CustomUserDetails;
@@ -26,15 +27,10 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // 토큰이 없는 로그인(login)과 회원가입(signup) 요청은 JWT 필터에서 제외
+        // 토큰이 없는 요청은 JWT 필터에서 제외
         String uri = request.getRequestURI();
-        if (uri.equals("/api/customers/auth/login")
-            || uri.equals("/api/managers/auth/login")
-            || uri.equals("/api/admin/auth/login")
-            || uri.equals("/api/customers/auth/signup")
-            || uri.equals("/api/managers/auth/signup")) {
-
-            filterChain.doFilter(request, response); // JWT 검사 없이 통과
+        if (SecurityUrlConstants.JWT_FILTER_EXCLUDE_PATHS.contains(uri)) {
+            filterChain.doFilter(request, response);
             return;
         }
         
