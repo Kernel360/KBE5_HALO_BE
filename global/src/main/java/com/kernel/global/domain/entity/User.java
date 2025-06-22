@@ -3,20 +3,20 @@ package com.kernel.global.domain.entity;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "user")
 @Getter
 @SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User extends BaseEntity {
 
     // 사용자 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long userId;
 
     // 사용자 연락처
