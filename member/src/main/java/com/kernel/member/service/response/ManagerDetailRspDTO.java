@@ -3,10 +3,7 @@ package com.kernel.member.service.response;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.member.common.enums.Gender;
 
-import com.kernel.member.service.common.info.AvailableTimeInfo;
-import com.kernel.member.service.common.info.ManagerDetailInfo;
-import com.kernel.member.service.common.info.UserAccountInfo;
-import com.kernel.member.service.common.info.UserDetailInfo;
+import com.kernel.member.service.common.info.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -71,12 +68,22 @@ public class ManagerDetailRspDTO {
     // 업무가능시간
     private List<AvailableTimeInfo> availableTimes;
 
+    // 계약 해지 요청 일시
+    private LocalDateTime requestedAt;
+
+    // 계약 해지 요청 사유
+    private String terminationReason;
+
+    // 계약 해지 일시
+    private LocalDateTime terminatedAt;
+
     // Info -> DTO 변환
     public static ManagerDetailRspDTO fromInfos(
             UserAccountInfo userAccountInfo,
             UserDetailInfo userDetailInfo,
             ManagerDetailInfo managerDetailInfo,
-            List<AvailableTimeInfo> availableTimes
+            List<AvailableTimeInfo> availableTimes,
+            ManagerTerminationInfo managerTerminationInfo
     ) {
         return ManagerDetailRspDTO.builder()
                 .phone(userAccountInfo.getPhone())
@@ -94,6 +101,9 @@ public class ManagerDetailRspDTO {
                 .status(userAccountInfo.getStatus())
                 .contractAt(managerDetailInfo.getContractDate())
                 .availableTimes(availableTimes)
+                .requestedAt(managerTerminationInfo.getRequestAt())
+                .terminationReason(managerTerminationInfo.getTerminationReason())
+                .terminatedAt(managerTerminationInfo.getTerminatedAt())
                 .build();
     }
 }

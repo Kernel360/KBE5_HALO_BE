@@ -9,15 +9,14 @@ import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.FileRepository;
 import com.kernel.member.domain.entity.AvailableTime;
 import com.kernel.member.domain.entity.Manager;
+import com.kernel.member.domain.entity.ManagerTermination;
 import com.kernel.member.domain.entity.UserInfo;
-import com.kernel.member.repository.AvailableTImeRepository;
+import com.kernel.member.repository.AvailableTimeRepository;
 import com.kernel.member.repository.ManagerRepository;
+import com.kernel.member.repository.ManagerTerminationRepository;
 import com.kernel.member.service.common.UserInfoService;
 import com.kernel.member.service.common.UserService;
-import com.kernel.member.service.common.info.AvailableTimeInfo;
-import com.kernel.member.service.common.info.ManagerDetailInfo;
-import com.kernel.member.service.common.info.UserAccountInfo;
-import com.kernel.member.service.common.info.UserDetailInfo;
+import com.kernel.member.service.common.info.*;
 import com.kernel.member.service.request.ManagerSignupReqDTO;
 import com.kernel.member.service.request.ManagerUpdateReqDTO;
 import com.kernel.member.service.response.ManagerDetailRspDTO;
@@ -36,7 +35,8 @@ public class ManagerServiceImpl implements ManagerService {
     private final UserService userService;
     private final UserInfoService userInfoService;
     private final ManagerRepository managerRepository;
-    private final AvailableTImeRepository availableTImeRepository;
+    private final AvailableTimeRepository availableTImeRepository;
+    private final ManagerTerminationRepository managerTerminationRepository;
     private final FileRepository fileRepository;
 
     /**
@@ -89,15 +89,19 @@ public class ManagerServiceImpl implements ManagerService {
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
         // 4. Available Time 조회
-        List<AvailableTime> foundAvailableTimeList = availableTImeRepository.findByManager(foundManager)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 매니저의 이용 가능 시간입니다."));
+        List<AvailableTime> foundAvailableTimeList = availableTImeRepository.findByManager(foundManager);
+
+        // 5. ManagerTermination 조회
+        ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager)
+                .orElseThrow(() -> new NoSuchElementException("매니저 해지 정보가 존재하지 않습니다."));
 
         // 5. 응답 DTO 생성 및 반환
         return ManagerDetailRspDTO.fromInfos(
                 UserAccountInfo.fromEntity(foundUser),
                 UserDetailInfo.fromEntity(foundUserInfo),
                 ManagerDetailInfo.fromEntity(foundManager),
-                AvailableTimeInfo.fromEntityList(foundAvailableTimeList)
+                AvailableTimeInfo.fromEntityList(foundAvailableTimeList),
+                ManagerTerminationInfo.fromEntity(foundManagerTermination)
         );
     }
 
@@ -123,8 +127,11 @@ public class ManagerServiceImpl implements ManagerService {
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
         // Available Time 조회
-        List<AvailableTime> foundAvailableTimeList = availableTImeRepository.findByManager(foundManager)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 매니저의 이용 가능 시간입니다."));
+        List<AvailableTime> foundAvailableTimeList = availableTImeRepository.findByManager(foundManager);
+
+        // ManagerTermination 조회
+        ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager)
+                .orElseThrow(() -> new NoSuchElementException("매니저 해지 정보가 존재하지 않습니다."));
 
         // User 수정
         foundUser.updateEmail(updateReqDTO.getUserUpdateReqDTO().getEmail());
@@ -150,7 +157,8 @@ public class ManagerServiceImpl implements ManagerService {
                 UserAccountInfo.fromEntity(foundUser),
                 UserDetailInfo.fromEntity(foundUserInfo),
                 ManagerDetailInfo.fromEntity(foundManager),
-                AvailableTimeInfo.fromEntityList(updatedAvailableTimeList)
+                AvailableTimeInfo.fromEntityList(updatedAvailableTimeList),
+                ManagerTerminationInfo.fromEntity(foundManagerTermination)
         );
     }
 }
