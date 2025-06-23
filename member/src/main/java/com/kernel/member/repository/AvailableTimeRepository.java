@@ -5,8 +5,7 @@ import com.kernel.member.domain.entity.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface AvailableTImeRepository extends JpaRepository<AvailableTime, Long> {
-    Optional<List<AvailableTime>> findByManager(Manager manager);
+public interface AvailableTimeRepository extends JpaRepository<AvailableTime, Long> {
+    List<AvailableTime> findByManager(Manager manager);
 }
