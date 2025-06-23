@@ -18,11 +18,11 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           content: |
-            ## 🛠️ Pull Request 알림
+            # 🛠️ Pull Request 알림
             **제목**: ${{ github.event.pull_request.title }}
             **작성자**: `${{ github.actor }}`
             **URL**: <${{ github.event.pull_request.html_url }}>
-            ## 📝 리뷰 요청
+            # 📝 리뷰 요청
             `${{ github.event.pull_request.body || '리뷰 부탁드립니다!' }}`
 
       - name: 커밋 메시지 가져오기 (synchronize)
