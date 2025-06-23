@@ -27,14 +27,15 @@ public class AvailableTime {
 
     // 매니저 ID
     @OneToOne
-    @JoinColumn
+    @JoinColumn(columnDefinition = "manager_id", nullable = false)
     private Manager manager;
 
-    // 업무 가능 요일 (0: 일요일, 1: 월요일, ..., 6: 토요일)
-    @Column
+    // 업무 가능 요일
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private DayOfWeek dayOfWeek;
 
     // 업무 시작 시간 (HH:mm 형식)
-    @Column
+    @Column(nullable = false)
     private LocalTime time;
 }
