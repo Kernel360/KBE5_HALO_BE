@@ -35,7 +35,7 @@ public class ManagerServiceImpl implements ManagerService {
     private final UserService userService;
     private final UserInfoService userInfoService;
     private final ManagerRepository managerRepository;
-    private final AvailableTimeRepository availableTImeRepository;
+    private final AvailableTimeRepository availableTimeRepository;
     private final ManagerTerminationRepository managerTerminationRepository;
     private final FileRepository fileRepository;
 
@@ -58,7 +58,7 @@ public class ManagerServiceImpl implements ManagerService {
 
         // 4. AvailableTime 저장
         List<AvailableTime> availableTimeList = signupReqDTO.toEntityList(signupReqDTO.getAvailableTimeReqDTOList());
-        availableTImeRepository.saveAll(availableTimeList);
+        availableTimeRepository.saveAll(availableTimeList);
 
         // 5. Manager 저장
         File file = fileRepository.findByFileId(signupReqDTO.getManagerReqDTO().getFileId())
@@ -89,7 +89,7 @@ public class ManagerServiceImpl implements ManagerService {
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
         // 4. Available Time 조회
-        List<AvailableTime> foundAvailableTimeList = availableTImeRepository.findByManager(foundManager);
+        List<AvailableTime> foundAvailableTimeList = availableTimeRepository.findByManager(foundManager);
 
         // 5. ManagerTermination 조회
         ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager)
@@ -127,7 +127,7 @@ public class ManagerServiceImpl implements ManagerService {
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
         // Available Time 조회
-        List<AvailableTime> foundAvailableTimeList = availableTImeRepository.findByManager(foundManager);
+        List<AvailableTime> foundAvailableTimeList = availableTimeRepository.findByManager(foundManager);
 
         // ManagerTermination 조회
         ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager)
@@ -148,9 +148,9 @@ public class ManagerServiceImpl implements ManagerService {
         foundManager.update(updateReqDTO.getManagerUpdateInfoReqDTO());
 
         // Available Time 수정
-        availableTImeRepository.deleteAll(foundAvailableTimeList);
+        availableTimeRepository.deleteAll(foundAvailableTimeList);
         List<AvailableTime> updatedAvailableTimeList = updateReqDTO.toEntityList(updateReqDTO.getAvailableTimeUpdateReqDTOList());
-        availableTImeRepository.saveAll(updatedAvailableTimeList);
+        availableTimeRepository.saveAll(updatedAvailableTimeList);
 
         // DTO 변환 후 return
         return ManagerDetailRspDTO.fromInfos(
