@@ -1,5 +1,6 @@
 package com.kernel.member.service.common.info;
 
+import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,12 +22,16 @@ public class UserAccountInfo {
     // 이름
     private String userName;
 
+    // 계정 상태
+    private UserStatus status;
+
     // User -> UserAccountInfo
     public static UserAccountInfo fromEntity(User user) {
         return UserAccountInfo.builder()
                 .phone(user.getPhone())
                 .email(user.getEmail())
                 .userName(user.getUserName())
+                .status(user.getStatus())
                 .build();
     }
 
