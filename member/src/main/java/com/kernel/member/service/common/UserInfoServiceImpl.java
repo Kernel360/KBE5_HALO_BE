@@ -47,6 +47,6 @@ public class UserInfoServiceImpl implements UserInfoService {
      */
     @Override
     public Boolean existByIdAndBirthDate(Long userId, LocalDate birthDate) {
-        return userInfoRepository.existByIdAndBirthDate(userId, birthDate);
+        return userInfoRepository.existsByUserIdAndBirthDate(userId, birthDate);
     }
 }
