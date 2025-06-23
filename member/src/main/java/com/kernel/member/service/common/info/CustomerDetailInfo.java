@@ -1,4 +1,4 @@
-package com.kernel.member.service.response;
+package com.kernel.member.service.common.info;
 
 
 import com.kernel.member.domain.entity.Customer;

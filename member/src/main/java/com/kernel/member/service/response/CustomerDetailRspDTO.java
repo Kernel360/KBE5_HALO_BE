@@ -1,6 +1,7 @@
 package com.kernel.member.service.response;
 
 import com.kernel.member.common.enums.Gender;
+import com.kernel.member.service.common.info.CustomerDetailInfo;
 import com.kernel.member.service.common.info.UserDetailInfo;
 import com.kernel.member.service.common.info.UserAccountInfo;
 import lombok.AllArgsConstructor;
