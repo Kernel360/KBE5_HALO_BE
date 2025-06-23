@@ -19,7 +19,7 @@ public class AvailableTimeUpdateReqDTO {
     private LocalTime time;
 
     // 요일이 있을 때 시간은 필수
-    @AssertTrue(message = "요일이 있을 때 시간은 필수입니다.")
+    @AssertTrue(message = "요일이 선택된 경우, 업무 시간은 필수입니다.")
     private boolean isTimeRequired() {
         return dayOfWeek != null ? time != null : true;
     }

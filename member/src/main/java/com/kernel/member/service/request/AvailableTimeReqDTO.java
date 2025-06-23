@@ -18,7 +18,7 @@ public class AvailableTimeReqDTO {
     private DayOfWeek dayOfWeek;
 
     // 가능 시간
-    @NotNull(message = "가능 시간은 필수입니다.")
+    @NotNull(message = "업부 가능 시간은 필수입니다.")
     private LocalTime time;
 
     // AvailableTimeReqDTO -> AvailableTime
