@@ -16,7 +16,7 @@ import com.kernel.member.service.common.info.UserAccountInfo;
 import com.kernel.member.service.request.CustomerSignupReqDTO;
 import com.kernel.member.service.request.CustomerUpdateReqDTO;
 import com.kernel.member.service.response.CustomerDetailRspDTO;
-import com.kernel.member.service.response.CustomerDetailInfo;
+import com.kernel.member.service.common.info.CustomerDetailInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

@@ -11,11 +11,11 @@ public class SecurityUrlConstants  {
 
     // 인증 불필요 (모든 사용자 접근 가능)
     public static final String[] PUBLIC_URLS = {
-            "/api/customers/auth/login",
+            //"/api/customers/auth/login",
             "/api/customers/auth/signup",
-            "/api/managers/auth/login",
+            //"/api/managers/auth/login",
             "/api/managers/auth/signup",
-            "/api/admin/auth/login",
+            //"/api/admin/auth/login",
             "/api/common/recovery-id",
             "/api/common/recovery-pwd"
     };

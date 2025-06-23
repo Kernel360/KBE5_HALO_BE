@@ -1,6 +1,7 @@
 package com.kernel.global.jwt;
 
 import com.kernel.global.common.constant.SecurityUrlConstants;
+import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.security.CustomUserDetails;
@@ -75,9 +76,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String phone = jwtTokenProvider.getUsername(accessToken);
         Long userId = jwtTokenProvider.getUserId(accessToken);
         String status = jwtTokenProvider.getStatus(accessToken);
+        String role = jwtTokenProvider.getRole(accessToken);
 
         // UserDetails 객체 생성
-        UserDetails userDetails = createUserDetailsFromToken(phone, userId, status);
+        UserDetails userDetails = createUserDetailsFromToken(phone, userId, status, role);
 
         // 인증 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -90,12 +92,15 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     // 로그인 유저 UserDetails 객체 생성
-    private UserDetails createUserDetailsFromToken(String phone, Long userId, String status) {
+    private UserDetails createUserDetailsFromToken(String phone, Long userId, String status, String role) {
+
+        String formattedRole = role.replace("ROLE_", "");
 
         User user = User.builder()
                 .userId(userId)
                 .phone(phone)
                 .status(UserStatus.valueOf(status))
+                .role(UserRole.valueOf(formattedRole))
                 .build();
 
         return new CustomUserDetails(user);

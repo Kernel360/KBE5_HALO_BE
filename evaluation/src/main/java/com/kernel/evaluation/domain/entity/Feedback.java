@@ -1,7 +1,7 @@
 package com.kernel.evaluation.domain.entity;
 
 
-import com.kernel.evaluation.domain.enumerate.FeedbackType;
+import com.kernel.evaluation.domain.enums.FeedbackType;
 
 public class Feedback {
 

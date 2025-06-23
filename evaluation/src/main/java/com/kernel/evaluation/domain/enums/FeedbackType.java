@@ -1,4 +1,4 @@
-package com.kernel.evaluation.domain.enumerate;
+package com.kernel.evaluation.domain.enums;
 
 public enum FeedbackType {
 
