@@ -1,13 +1,16 @@
-package com.kernel.common.customer.repository;
+package com.kernel.evaluation.repository.review;
 
-import com.kernel.common.customer.dto.response.CustomerReviewRspDTO;
-import com.kernel.common.customer.entity.QCustomer;
-import com.kernel.common.global.enums.AuthorType;
-import com.kernel.common.manager.entity.QManager;
-import com.kernel.common.reservation.entity.QReservation;
-import com.kernel.common.reservation.entity.QReview;
-import com.kernel.common.reservation.entity.QServiceCategory;
-import com.kernel.common.reservation.enums.ReservationStatus;
+
+import com.kernel.evaluation.common.enums.AuthorType;
+import com.kernel.evaluation.domain.entity.QReview;
+import com.kernel.evaluation.domain.info.CustomerReviewInfo;
+import com.kernel.global.domain.entity.QUser;
+import com.kernel.reservation.common.enums.MatchStatus;
+import com.kernel.reservation.domain.entity.QReservation;
+import com.kernel.reservation.domain.entity.QReservationMatch;
+import com.kernel.reservation.domain.entity.QReservationSchedule;
+import com.kernel.reservation.domain.entity.QServiceCategory;
+import com.kernel.reservation.domain.enumerate.ReservationStatus;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -23,20 +26,21 @@ import java.util.Optional;
 public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final QUser user = QUser.user;
     private final QReview review = QReview.review;
-    private final QManager manager = QManager.manager;
     private final QReservation reservation = QReservation.reservation;
+    private final QReservationMatch reservationMatch = QReservationMatch.reservationMatch;
+    private final QReservationSchedule reservationSchedule = QReservationSchedule.reservationSchedule;
     private final QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
-    private final QCustomer customer = QCustomer.customer;
 
     /**
      * 수요자 리뷰 목록 조회
-     * @param customerId 수요자ID
+     * @param userId 로그인 유저
      * @param pageable 페이징
      * @return reviewRspDTO
      */
     @Override
-    public Page<CustomerReviewRspDTO> getCustomerReviews(Long customerId, Pageable pageable) {
+    public Page<CustomerReviewInfo> getCustomerReviews(Long userId, Pageable pageable) {
 
         // 리뷰 내역 조회
         List<Tuple> result = queryFactory
@@ -46,29 +50,36 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         review.content,
                         review.createdAt,
                         reservation.reservationId,
-                        reservation.requestDate,
-                        reservation.startTime,
-                        reservation.turnaround,
+                        reservationSchedule.requestDate,
+                        reservationSchedule.startTime,
+                        reservationSchedule.turnaround,
                         serviceCategory.serviceName,
-                        manager.managerId,
-                        manager.userName
+                        reservationMatch.manager.userId,
+                        reservationMatch.manager.userName
                 )
                 .from(reservation)
                 .leftJoin(review).on(
                         review.reservation.eq(reservation)
-                                .and(review.authorId.eq(customerId))
+                                .and(review.authorId.eq(userId))
                                 .and(review.authorType.eq(AuthorType.CUSTOMER))
                 )
-                .leftJoin(reservation.manager, manager)
+                .leftJoin(reservationSchedule).on(
+                        reservationSchedule.reservationId.eq(reservation.reservationId)
+                )
                 .leftJoin(reservation.serviceCategory, serviceCategory)
-                .innerJoin(reservation.customer, customer)
+                .leftJoin(reservationMatch).on(
+                        reservationMatch.reservation.reservationId.eq(reservation.reservationId)
+                                .and(reservationMatch.manager.userId.eq(review.targetId))
+                                .and(reservationMatch.status.eq(MatchStatus.MATCHED))
+                )
+                .innerJoin(reservation.user, user)
                 .where(
-                        reservation.customer.customerId.eq(customerId),
+                        reservation.user.userId.eq(userId),
                         reservation.status.eq(ReservationStatus.COMPLETED)
                 )
                 .orderBy(
-                        reservation.requestDate.desc(),
-                        reservation.startTime.desc()
+                        reservationSchedule.requestDate.desc(),
+                        reservationSchedule.startTime.desc()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -79,20 +90,20 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
             return Page.empty(pageable);
         }
 
-        // tuple -> DTO 변환
-        List<CustomerReviewRspDTO> content = result.stream()
-                .map(tuple -> CustomerReviewRspDTO.builder()
+        // tuple -> info 변환
+        List<CustomerReviewInfo> content = result.stream()
+                .map(tuple -> CustomerReviewInfo.builder()
                         .reviewId(tuple.get(review.reviewId))
                         .rating(tuple.get(review.rating))
                         .content(tuple.get(review.content))
                         .createdAt(tuple.get(review.createdAt))
                         .reservationId(tuple.get(reservation.reservationId))
-                        .requestDate(tuple.get(reservation.requestDate))
-                        .startTime(tuple.get(reservation.startTime))
-                        .turnaround(tuple.get(reservation.turnaround))
+                        .requestDate(tuple.get(reservationSchedule.requestDate))
+                        .startTime(tuple.get(reservationSchedule.startTime))
+                        .turnaround(tuple.get(reservationSchedule.turnaround))
                         .serviceCategoryName(tuple.get(serviceCategory.serviceName))
-                        .managerId(tuple.get(manager.managerId))
-                        .managerName(tuple.get(manager.userName))
+                        .managerId(tuple.get(reservationMatch.manager.userId))
+                        .managerName(tuple.get(reservationMatch.manager.userName))
                         .build()
                 ).toList();
 
@@ -103,11 +114,11 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         .from(reservation)
                         .leftJoin(review).on(
                                 review.reservation.eq(reservation)
-                                        .and(review.authorId.eq(customerId))
+                                        .and(review.authorId.eq(userId))
                                         .and(review.authorType.eq(AuthorType.CUSTOMER))
                         )
                         .where(
-                                reservation.customer.customerId.eq(customerId),
+                                reservation.user.userId.eq(userId),
                                 reservation.status.eq(ReservationStatus.COMPLETED)
                         )
                         .fetchOne()
@@ -119,12 +130,12 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
 
     /**
      * 수요자 리뷰 조회 by 예약ID
-     * @param customerId 수요자ID
+     * @param userId 로그인 유저
      * @param reservationId 예약ID
      * @return reviewRspDTO
      */
     @Override
-    public CustomerReviewRspDTO getCustomerReviewsByReservationId(Long customerId, Long reservationId) {
+    public CustomerReviewInfo getCustomerReviewsByReservationId(Long userId, Long reservationId) {
 
         Tuple result = queryFactory
                 .select(
@@ -133,25 +144,27 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         review.content,
                         review.createdAt,
                         reservation.reservationId,
-                        reservation.requestDate,
-                        reservation.startTime,
-                        reservation.turnaround,
+                        reservationSchedule.requestDate,
+                        reservationSchedule.startTime,
+                        reservationSchedule.turnaround,
                         serviceCategory.serviceName,
-                        manager.managerId,
-                        manager.userName
+                        reservationMatch.manager.userId,
+                        reservationMatch.manager.userName
                 )
                 .from(reservation)
                 .leftJoin(review).on(
                         review.reservation.eq(reservation)
-                                .and(review.authorId.eq(customerId))
+                                .and(review.authorId.eq(userId))
                                 .and(review.authorType.eq(AuthorType.CUSTOMER))
                 )
-                .leftJoin(reservation.manager, manager)
+                .leftJoin(reservationSchedule).on(
+                        reservationSchedule.reservationId.eq(reservationId)
+                )
                 .leftJoin(reservation.serviceCategory, serviceCategory)
-                .innerJoin(reservation.customer, customer)
+                .innerJoin(reservationMatch)
                 .where(
                         reservation.reservationId.eq(reservationId),
-                        reservation.customer.customerId.eq(customerId),
+                        reservation.user.userId.eq(userId),
                         reservation.status.eq(ReservationStatus.COMPLETED)
                 )
                 .fetchOne();
@@ -160,19 +173,18 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
             throw new NoSuchElementException("예약 정보를 찾을 수 없습니다.");
         }
 
-        return CustomerReviewRspDTO.builder()
+        return CustomerReviewInfo.builder()
                 .reviewId(result.get(review.reviewId))
                 .rating(result.get(review.rating))
                 .content(result.get(review.content))
                 .createdAt(result.get(review.createdAt))
                 .reservationId(result.get(reservation.reservationId))
-                .requestDate(result.get(reservation.requestDate))
-                .startTime(result.get(reservation.startTime))
-                .turnaround(result.get(reservation.turnaround))
+                .requestDate(result.get(reservationSchedule.requestDate))
+                .startTime(result.get(reservationSchedule.startTime))
+                .turnaround(result.get(reservationSchedule.turnaround))
                 .serviceCategoryName(result.get(serviceCategory.serviceName))
-                .managerId(result.get(manager.managerId))
-                .managerName(result.get(manager.userName))
+                .managerId(result.get(reservationMatch.manager.userId))
+                .managerName(result.get(reservationMatch.manager.userName))
                 .build();
     }
-
 }
