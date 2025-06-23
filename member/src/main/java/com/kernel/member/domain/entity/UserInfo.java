@@ -31,6 +31,7 @@ public class UserInfo extends BaseEntity {
     private LocalDate birthDate;
 
     // 성별
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
 
