@@ -6,7 +6,7 @@ import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.User;
 import com.kernel.member.common.exception.DuplicateUserException;
-import com.kernel.member.repository.UserRepository;
+import com.kernel.member.repository.MemberUserRepository;
 import com.kernel.member.service.common.request.UserFindAccountReqDTO;
 import com.kernel.member.service.common.request.UserResetPwdReqDTO;
 import com.kernel.member.service.common.request.UserSignupReqDTO;
@@ -15,14 +15,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final MemberUserRepository memberUserRepository;
     private final UserInfoService userInfoService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -36,7 +35,7 @@ public class UserServiceImpl implements UserService {
     public Boolean findUserId(UserFindAccountReqDTO findAccountReqDTO) {
 
         // 사용자 조회
-        Optional<User> foundUser = userRepository.findByPhoneAndUserNameAndStatus(
+        Optional<User> foundUser = memberUserRepository.findByPhoneAndUserNameAndStatus(
                         findAccountReqDTO.getPhone(),         // 핸드폰번호
                         findAccountReqDTO.getUserName(),      // 사용자 이름
                         UserStatus.ACTIVE                     // 계정 상태
@@ -62,7 +61,7 @@ public class UserServiceImpl implements UserService {
     public String findUserPassword(UserFindAccountReqDTO findAccountReqDTO) {
 
         // 사용자 조회
-        User foundUser = userRepository.findByPhoneAndUserNameAndStatus(
+        User foundUser = memberUserRepository.findByPhoneAndUserNameAndStatus(
                 findAccountReqDTO.getPhone(),         // 핸드폰번호
                 findAccountReqDTO.getUserName(),      // 사용자 이름
                 UserStatus.ACTIVE                     // 계정 상태
@@ -97,7 +96,7 @@ public class UserServiceImpl implements UserService {
     public void resetPassword(Long userId, UserResetPwdReqDTO resetReqDTO) {
 
         // 사용자 조회
-        User foundUser = userRepository.findByUserIdAndStatus(userId, UserStatus.ACTIVE)
+        User foundUser = memberUserRepository.findByUserIdAndStatus(userId, UserStatus.ACTIVE)
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호 일치 여부 확인
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void validateDuplicatePhone(String phone) {
-        if(userRepository.existsByPhone(phone)) {
+        if(memberUserRepository.existsByPhone(phone)) {
             throw new DuplicateUserException();
         }
     }
@@ -128,7 +127,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId, String password) {
 
         // User 조회
-        User foundUser = userRepository.findByUserIdAndStatus(userId, UserStatus.ACTIVE)
+        User foundUser = memberUserRepository.findByUserIdAndStatus(userId, UserStatus.ACTIVE)
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호 확인
@@ -150,7 +149,7 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserSignupReqDTO reqDTO, UserRole userRole) {
 
         // Role 설정, 비밀번호 암호화 후 User 저장
-        return userRepository.save(reqDTO.toEntityWithRole(userRole, bCryptPasswordEncoder));
+        return memberUserRepository.save(reqDTO.toEntityWithRole(userRole, bCryptPasswordEncoder));
     }
 
     /**
@@ -161,7 +160,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User getByUserIdAndStatus(Long userId, UserStatus userStatus) {
-        return userRepository.findByUserIdAndStatus(userId, userStatus)
+        return memberUserRepository.findByUserIdAndStatus(userId, userStatus)
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
     }
 
@@ -174,7 +173,7 @@ public class UserServiceImpl implements UserService {
     public void checkPassword(Long userId, String password) {
 
         // User 조회
-        User foundUser = userRepository.findByUserIdAndStatus(userId, UserStatus.ACTIVE)
+        User foundUser = memberUserRepository.findByUserIdAndStatus(userId, UserStatus.ACTIVE)
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호 확인
