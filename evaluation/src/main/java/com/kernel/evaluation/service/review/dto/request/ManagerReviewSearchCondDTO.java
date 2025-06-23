@@ -1,10 +1,11 @@
-package com.kernel.common.manager.dto.request;
+package com.kernel.evaluation.service.review.dto.request;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter

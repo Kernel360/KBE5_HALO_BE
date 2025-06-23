@@ -1,13 +1,14 @@
-package com.kernel.common.manager.repository;
+package com.kernel.evaluation.repository.review;
 
-import com.kernel.common.manager.dto.response.ManagerReviewSummaryRspDTO;
-import java.time.LocalDateTime;
+import com.kernel.evaluation.domain.info.ManagerReviewInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+
 public interface CustomManagerReviewRepository {
 
-    Page<ManagerReviewSummaryRspDTO> searchManagerReviewWithPaging (
+    Page<ManagerReviewInfo> searchManagerReviewWithPaging (
         Long managerId,
         LocalDateTime fromCreatedAt,
         LocalDateTime toCreatedAt,
