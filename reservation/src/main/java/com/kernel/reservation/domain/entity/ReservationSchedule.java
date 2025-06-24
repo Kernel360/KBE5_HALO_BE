@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reservation_schedule")
@@ -26,7 +27,7 @@ public class ReservationSchedule {
 
     // 시작 시간
     @Column(nullable = false)
-    private String startTime;
+    private LocalDateTime startTime;
 
     // 소요 시간
     @Column(nullable = false)
