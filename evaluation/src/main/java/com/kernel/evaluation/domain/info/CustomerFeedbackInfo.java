@@ -1,15 +1,16 @@
-package com.kernel.common.customer.dto.response;
+package com.kernel.evaluation.domain.info;
 
-import com.kernel.common.global.enums.FeedbackType;
-import lombok.Builder;
-import lombok.Getter;
+import com.kernel.evaluation.common.enums.FeedbackType;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter
 @Builder
-public class CustomerFeedbackRspDTO {
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class CustomerFeedbackInfo {
 
     // 피드백 ID
     private Long feedbackId;
@@ -17,7 +18,7 @@ public class CustomerFeedbackRspDTO {
     // 피드백 타입
     private FeedbackType feedbackType;
 
-    // 매니저ID
+    // 매니저 ID
     private Long managerId;
 
     // 매니저 이름
@@ -31,5 +32,4 @@ public class CustomerFeedbackRspDTO {
 
     // 최근 예약 날짜
     private LocalDate requestDate;
-
 }

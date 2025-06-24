@@ -1,6 +1,6 @@
-package com.kernel.common.customer.repository;
+package com.kernel.evaluation.repository.feedback;
 
-import com.kernel.common.global.entity.Feedback;
+import com.kernel.evaluation.domain.entity.Feedback;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
