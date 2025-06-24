@@ -10,7 +10,7 @@ import com.kernel.reservation.domain.entity.QReservation;
 import com.kernel.reservation.domain.entity.QReservationMatch;
 import com.kernel.reservation.domain.entity.QReservationSchedule;
 import com.kernel.reservation.domain.entity.QServiceCategory;
-import com.kernel.reservation.domain.enumerate.ReservationStatus;
+import com.kernel.reservation.domain.enums.ReservationStatus;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
