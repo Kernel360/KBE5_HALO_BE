@@ -3,6 +3,8 @@ package com.kernel.reservation.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "reservation_location")
 @Getter
@@ -18,12 +20,12 @@ public class ReservationLocation {
     private Reservation reservationId;
 
     // 위도
-    @Column(nullable = false)
-    private Double latitude;
+    @Column(nullable = false, precision = 10, scale = 7)
+    private BigDecimal latitude;
 
     // 경도
-    @Column(nullable = false)
-    private Double longitude;
+    @Column(nullable = false, precision = 10, scale = 7)
+    private BigDecimal longitude;
 
     // 주소
     @Column(nullable = false, length = 200)
