@@ -8,7 +8,7 @@ import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.reservation.domain.entity.QReservation;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,18 +38,19 @@ public class CustomCustomerFeedbackRepositoryImpl implements CustomCustomerFeedb
 
         // 피드백 타입 조건 (nullable 대응)
         BooleanBuilder feedbackTypeCondition = new BooleanBuilder();
+
         if (type != null) {
             feedbackTypeCondition.and(feedback.type.eq(type));
         }
 
-        // 수요자 피드백 조회 (예약일자 제외)
-        List<Tuple> feedbacks = queryFactory
-                .select(
+        // 1. 수요자 피드백 조회 및 info 변환
+        List<CustomerFeedbackInfo> feedbacks = queryFactory
+                .select(Projections.fields(CustomerFeedbackInfo.class,
                         feedback.feedbackId,            // 피드백ID
                         feedback.type,                  // 피드백 타입
                         feedback.manager.userId,        // 매니저ID
                         feedback.manager.userName       // 매니저 이름
-                )
+                ))
                 .from(feedback)
                 .leftJoin(feedback.manager, user)
                 .where(
@@ -67,23 +68,6 @@ public class CustomCustomerFeedbackRepositoryImpl implements CustomCustomerFeedb
             return Page.empty(pageable);
         }
 
-        // 매니저ID 모으기
-        List<Long> managerIds = feedbacks.stream()
-                .map(t -> t.get( feedback.manager.userId))
-                .distinct()
-                .toList();
-
-        // tuple -> DTO 변환
-        List<CustomerFeedbackInfo> content = feedbacks.stream()
-                .map(tuple ->
-                        CustomerFeedbackInfo.builder()
-                            .feedbackId(tuple.get(feedback.feedbackId))
-                            .feedbackType(tuple.get(feedback.type))
-                            .managerId(tuple.get(user.userId))
-                            .managerName(tuple.get(user.userName))
-                            .build()
-                ).toList();
-
         // 전체 개수 조회
         Long total = queryFactory
                 .select(feedback.count())
@@ -95,7 +79,7 @@ public class CustomCustomerFeedbackRepositoryImpl implements CustomCustomerFeedb
                 )
                 .fetchOne();
 
-        return new PageImpl<>(content, pageable, total != null ? total : 0L);
+        return new PageImpl<>(feedbacks, pageable, total != null ? total : 0L);
     }
 
 

@@ -19,7 +19,7 @@ public class ManagerReviewInfo {
     private Long authorId;
 
     // 작성자명
-    private String authorName;
+    private String userName;
 
     // 리뷰 평점
     private Integer rating;

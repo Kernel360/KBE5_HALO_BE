@@ -1,30 +1,19 @@
 package com.kernel.evaluation.domain.info;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class CustomerReviewInfo {
-
-    // 리뷰ID
-    private Long reviewId;
 
     // 예약ID
     private Long reservationId;
-
-    // 매니저ID
-    private Long managerId;
-
-    // 매니저 이름
-    private String managerName;
 
     // 서비스 요청 날짜
     private LocalDate requestDate;
@@ -37,6 +26,9 @@ public class CustomerReviewInfo {
 
     // 서비스 카테고리명
     private String serviceCategoryName;
+
+    // 리뷰ID
+    private Long reviewId;
 
     // 리뷰 별점
     private Integer rating;

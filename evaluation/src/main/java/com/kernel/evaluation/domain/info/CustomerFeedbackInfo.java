@@ -6,23 +6,21 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class CustomerFeedbackInfo {
 
     // 피드백 ID
     private Long feedbackId;
 
     // 피드백 타입
-    private FeedbackType feedbackType;
+    private FeedbackType type;
 
     // 매니저 ID
-    private Long managerId;
+    private Long userId;
 
     // 매니저 이름
-    private String managerName;
+    private String userName;
 
     // 매니저 평균 별점
     private BigDecimal averageRating;

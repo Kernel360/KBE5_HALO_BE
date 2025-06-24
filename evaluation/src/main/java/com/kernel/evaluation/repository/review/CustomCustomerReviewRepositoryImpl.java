@@ -11,7 +11,7 @@ import com.kernel.reservation.domain.entity.QReservationMatch;
 import com.kernel.reservation.domain.entity.QReservationSchedule;
 import com.kernel.reservation.domain.entity.QServiceCategory;
 import com.kernel.reservation.domain.enumerate.ReservationStatus;
-import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -43,8 +43,8 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
     public Page<CustomerReviewInfo> getCustomerReviews(Long userId, Pageable pageable) {
 
         // 리뷰 내역 조회
-        List<Tuple> result = queryFactory
-                .select(
+        List<CustomerReviewInfo> reviews = queryFactory
+                .select(Projections.fields(CustomerReviewInfo.class,
                         review.reviewId,
                         review.rating,
                         review.content,
@@ -53,10 +53,8 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         reservationSchedule.requestDate,
                         reservationSchedule.startTime,
                         reservationSchedule.turnaround,
-                        serviceCategory.serviceName,
-                        reservationMatch.manager.userId,
-                        reservationMatch.manager.userName
-                )
+                        serviceCategory.serviceName
+                ))
                 .from(reservation)
                 .leftJoin(review).on(
                         review.reservation.eq(reservation)
@@ -86,26 +84,9 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                 .fetch();
 
         // 리뷰 존재 여부 검사
-        if(result.isEmpty()) {
+        if(reviews.isEmpty()) {
             return Page.empty(pageable);
         }
-
-        // tuple -> info 변환
-        List<CustomerReviewInfo> content = result.stream()
-                .map(tuple -> CustomerReviewInfo.builder()
-                        .reviewId(tuple.get(review.reviewId))
-                        .rating(tuple.get(review.rating))
-                        .content(tuple.get(review.content))
-                        .createdAt(tuple.get(review.createdAt))
-                        .reservationId(tuple.get(reservation.reservationId))
-                        .requestDate(tuple.get(reservationSchedule.requestDate))
-                        .startTime(tuple.get(reservationSchedule.startTime))
-                        .turnaround(tuple.get(reservationSchedule.turnaround))
-                        .serviceCategoryName(tuple.get(serviceCategory.serviceName))
-                        .managerId(tuple.get(reservationMatch.manager.userId))
-                        .managerName(tuple.get(reservationMatch.manager.userName))
-                        .build()
-                ).toList();
 
         // 전체 카운트 조회
         long total = Optional.ofNullable(
@@ -124,7 +105,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         .fetchOne()
         ).orElse(0L);
 
-        return new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(reviews, pageable, total);
 
     }
 
@@ -137,20 +118,18 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
     @Override
     public CustomerReviewInfo getCustomerReviewsByReservationId(Long userId, Long reservationId) {
 
-        Tuple result = queryFactory
-                .select(
-                        review.reviewId,
-                        review.rating,
-                        review.content,
-                        review.createdAt,
+        CustomerReviewInfo result = queryFactory
+                .select(Projections.fields(CustomerReviewInfo.class,
                         reservation.reservationId,
                         reservationSchedule.requestDate,
                         reservationSchedule.startTime,
                         reservationSchedule.turnaround,
                         serviceCategory.serviceName,
-                        reservationMatch.manager.userId,
-                        reservationMatch.manager.userName
-                )
+                        review.reviewId,
+                        review.rating,
+                        review.content,
+                        review.createdAt
+                ))
                 .from(reservation)
                 .leftJoin(review).on(
                         review.reservation.eq(reservation)
@@ -169,22 +148,10 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                 )
                 .fetchOne();
 
-        if (result == null || result.get(reservation.reservationId) == null) {
+        if (result == null || result.getReservationId() == null) {
             throw new NoSuchElementException("예약 정보를 찾을 수 없습니다.");
         }
 
-        return CustomerReviewInfo.builder()
-                .reviewId(result.get(review.reviewId))
-                .rating(result.get(review.rating))
-                .content(result.get(review.content))
-                .createdAt(result.get(review.createdAt))
-                .reservationId(result.get(reservation.reservationId))
-                .requestDate(result.get(reservationSchedule.requestDate))
-                .startTime(result.get(reservationSchedule.startTime))
-                .turnaround(result.get(reservationSchedule.turnaround))
-                .serviceCategoryName(result.get(serviceCategory.serviceName))
-                .managerId(result.get(reservationMatch.manager.userId))
-                .managerName(result.get(reservationMatch.manager.userName))
-                .build();
+        return result;
     }
 }

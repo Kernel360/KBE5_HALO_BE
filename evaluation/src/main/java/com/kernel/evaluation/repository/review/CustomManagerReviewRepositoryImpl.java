@@ -41,7 +41,7 @@ public class CustomManagerReviewRepositoryImpl implements CustomManagerReviewRep
                 .from(review)
                 .where(
                     targetIdEq(managerId),                      // 매니저 ID 일치
-                    authorTypeEq(ReviewAuthorType.CUSTOMER),          // 작성자 타입 일치
+                    authorTypeEq(ReviewAuthorType.CUSTOMER),    // 작성자 타입 일치
                     createdAtGoe(fromCreatedAt),                // 작성일 ≥ 시작일
                     createdAtLoe(toCreatedAt),                  // 작성일 ≤ 종료일
                     ratingEq(ratingOption),                     // 평점 일치
@@ -52,34 +52,33 @@ public class CustomManagerReviewRepositoryImpl implements CustomManagerReviewRep
         ).orElse(0L);
 
         // 페이지 결과 조회
-        // managerReply에서는 inquiryId만 조회 (= 답변 여부 체크)
         List<ManagerReviewInfo> results = jpaQueryFactory
-            .select(Projections.constructor(
+            .select(Projections.fields(
                     ManagerReviewInfo.class,
-                    review.reviewId.as("reviewId"),
-                    review.reservation.reservationId.as("reservationId"),
-                    review.authorId.as("authorId"),
-                    user.userName.as("authorName"),
-                    review.rating.as("rating"),
-                    review.content.as("content"),
-                    review.reservation.serviceCategory.serviceId.as("serviceId"),
-                    review.reservation.serviceCategory.serviceName.as("serviceName"),
-                    review.createdAt.as("createdAt")
+                    review.reviewId,
+                    review.reservation.reservationId,
+                    review.authorId,
+                    user.userName,
+                    review.rating,
+                    review.content,
+                    review.reservation.serviceCategory.serviceId,
+                    review.reservation.serviceCategory.serviceName,
+                    review.createdAt
             ))
             .from(review)
             .leftJoin(user).on(user.userId.eq(review.authorId))
             .where(
-                targetIdEq(managerId),                      // 매니저 ID 일치
+                targetIdEq(managerId),                            // 매니저 ID 일치
                 authorTypeEq(ReviewAuthorType.CUSTOMER),          // 작성자 타입 일치
-                createdAtGoe(fromCreatedAt),                // 작성일 ≥ 시작일
-                createdAtLoe(toCreatedAt),                  // 작성일 ≤ 종료일
-                ratingEq(ratingOption),                     // 평점 일치
-                customerNameContains(customerNameKeyword),  // 고객명 검색어 포함
-                contentContains(contentKeyword)             // 내용 검색어 포함
+                createdAtGoe(fromCreatedAt),                      // 작성일 ≥ 시작일
+                createdAtLoe(toCreatedAt),                        // 작성일 ≤ 종료일
+                ratingEq(ratingOption),                           // 평점 일치
+                customerNameContains(customerNameKeyword),        // 고객명 검색어 포함
+                contentContains(contentKeyword)                   // 내용 검색어 포함
             )
             .offset(pageable.getOffset())               // 시작 위치
             .limit(pageable.getPageSize())              // 페이지 사이즈
-            .orderBy(review.reviewId.desc())     // 정렬(리뷰ID 기준 내림차순)
+            .orderBy(review.reviewId.desc())            // 정렬(리뷰ID 기준 내림차순)
             .fetch();
 
         return new PageImpl<>(results, pageable, total);

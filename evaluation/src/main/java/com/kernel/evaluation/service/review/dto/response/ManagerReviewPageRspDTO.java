@@ -42,7 +42,7 @@ public class ManagerReviewPageRspDTO {
                 .reviewId(info.getReviewId())
                 .reservationId(info.getReservationId())
                 .authorId(info.getAuthorId())
-                .authorName(info.getAuthorName())
+                .authorName(info.getUserName())
                 .rating(info.getRating())
                 .content(info.getContent())
                 .serviceId(info.getServiceId())
