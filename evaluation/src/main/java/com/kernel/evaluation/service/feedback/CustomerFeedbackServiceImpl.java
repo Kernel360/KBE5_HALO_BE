@@ -79,6 +79,6 @@ public class CustomerFeedbackServiceImpl implements CustomerFeedbackService {
             savedFeedback = customerFeedbackRepository.save(foundFeedback);
         }
 
-        return CustomerFeedbackUpdateRspDTO.toRspDTO(savedFeedback);
+        return CustomerFeedbackUpdateRspDTO.fromInfo(savedFeedback);
     }
 }

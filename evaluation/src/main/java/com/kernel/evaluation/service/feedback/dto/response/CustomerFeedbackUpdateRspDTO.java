@@ -18,7 +18,7 @@ public class CustomerFeedbackUpdateRspDTO {
     // 삭제 여부
     private Boolean deleted;
 
-    public static CustomerFeedbackUpdateRspDTO toRspDTO(Feedback feedback) {
+    public static CustomerFeedbackUpdateRspDTO fromInfo(Feedback feedback) {
         return CustomerFeedbackUpdateRspDTO.builder()
                 .managerId(feedback.getManager().getUserId())
                 .type(feedback.getType())

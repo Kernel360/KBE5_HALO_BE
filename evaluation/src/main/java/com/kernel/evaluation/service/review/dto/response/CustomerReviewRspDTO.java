@@ -20,12 +20,6 @@ public class CustomerReviewRspDTO {
     // 예약ID
     private Long reservationId;
 
-    // 매니저ID
-    private Long managerId;
-
-    // 매니저 이름
-    private String managerName;
-
     // 서비스 요청 날짜
     private LocalDate requestDate;
 
@@ -53,8 +47,6 @@ public class CustomerReviewRspDTO {
         return CustomerReviewRspDTO.builder()
                 .reviewId(info.getReviewId())
                 .reservationId(info.getReservationId())
-                .managerId(info.getManagerId())
-                .managerName(info.getManagerName())
                 .requestDate(info.getRequestDate())
                 .startTime(info.getStartTime())
                 .turnaround(info.getTurnaround())
