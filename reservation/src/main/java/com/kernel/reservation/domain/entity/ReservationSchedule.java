@@ -1,24 +1,32 @@
 package com.kernel.reservation.domain.entity;
 
+import com.kernel.global.domain.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "reservation_schedule")
 @Getter
+@SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
-public class ReservationSchedule {
+public class ReservationSchedule extends BaseEntity {
 
-    // 예약 ID
+    // 예약ID
     @Id
+    private Long reservationId;
+
+    // 예약 FK
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "reservation_id", nullable = false)
+    @MapsId  // PK이자 FK
+    @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
     // 요청 날짜
@@ -26,8 +34,8 @@ public class ReservationSchedule {
     private LocalDate requestDate;
 
     // 시작 시간
-    @Column(nullable = false)
-    private LocalDateTime startTime;
+    @Column(columnDefinition = "time(0)", nullable = false)
+    private LocalTime startTime;
 
     // 소요 시간
     @Column(nullable = false)

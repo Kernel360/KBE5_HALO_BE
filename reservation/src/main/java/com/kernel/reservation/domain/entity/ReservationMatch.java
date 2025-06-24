@@ -1,30 +1,24 @@
 package com.kernel.reservation.domain.entity;
 
 import com.kernel.global.domain.entity.BaseEntity;
-import com.kernel.reservation.domain.enums.MatchStatus;
-
+import com.kernel.reservation.common.enums.MatchStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.beans.factory.config.YamlProcessor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "reservation_match")
+@SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@SuperBuilder
 public class ReservationMatch extends BaseEntity {
 
-    //매칭 ID
+    // 매치 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long matchId;
 
     //예약 ID
@@ -37,19 +31,22 @@ public class ReservationMatch extends BaseEntity {
     private Long managerId;
 
     // 매칭 일시
+    // 매치 날짜 (매니저-예약 연결)
     @Column(nullable = false)
-    private LocalDateTime matchedAt;
+    private LocalDate matchedAt;
 
-    // 확정 일시
+    // 확정 날짜 (매니저 수용/불수용)
     @Column(nullable = false)
-    private LocalDateTime confirmedAt;
+    private LocalDate confirmAt;
 
     // 매칭 상태
-    @Column(nullable = false)
-    private MatchStatus matchStatus;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private MatchStatus status = MatchStatus.PENDING;
 
     @PreRemove
     private void preventRemove() {
         throw new UnsupportedOperationException("예약 관련 정보는 삭제할 수 없습니다.");
     }
+
 }
