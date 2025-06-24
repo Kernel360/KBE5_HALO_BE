@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServiceCategory extends BaseEntity {
 
-    // 서비스ID
+    // 서비스 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long serviceId;
