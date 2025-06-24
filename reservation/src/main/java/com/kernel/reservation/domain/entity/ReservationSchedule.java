@@ -40,4 +40,9 @@ public class ReservationSchedule extends BaseEntity {
     // 소요 시간
     @Column(nullable = false)
     private Integer turnaround;
+
+    @PreRemove
+    private void preventRemove() {
+        throw new UnsupportedOperationException("예약 관련 정보는 삭제할 수 없습니다.");
+    }
 }

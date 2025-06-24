@@ -1,7 +1,6 @@
 package com.kernel.reservation.domain.entity;
 
 import com.kernel.global.domain.entity.BaseEntity;
-import com.kernel.global.domain.entity.User;
 import com.kernel.reservation.common.enums.MatchStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,16 +21,16 @@ public class ReservationMatch extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long matchId;
 
-    // 매니저 ID
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manager_id", nullable = false)
-    private User manager;
-
-    // 예약 ID
+    //예약 ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
+    // 매니저 ID
+    @Column(name = "manager_id", nullable = false)
+    private Long managerId;
+
+    // 매칭 일시
     // 매치 날짜 (매니저-예약 연결)
     @Column(nullable = false)
     private LocalDate matchedAt;
@@ -41,8 +40,13 @@ public class ReservationMatch extends BaseEntity {
     private LocalDate confirmAt;
 
     // 매칭 상태
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private MatchStatus status = MatchStatus.PENDING;
+
+    @PreRemove
+    private void preventRemove() {
+        throw new UnsupportedOperationException("예약 관련 정보는 삭제할 수 없습니다.");
+    }
+
 }

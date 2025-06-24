@@ -1,6 +1,5 @@
 package com.kernel.reservation.domain.entity;
 
-import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,48 +7,42 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
-@Table(name = "reservation_cancel")
+@Table(name = "cleaning_log")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SuperBuilder
-public class ReservationCancel extends BaseEntity {
+public class ServiceCheckLog extends BaseEntity {
 
     // 예약 ID
     @Id
-    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
-    // 예약 취소자
+    // 체크인 일시
     @Column(nullable = false)
-    private Long canceledById;
+    private Timestamp inTime;
 
-    // 예약 취소자 타입
+    // 체크인 파일 ID
     @Column(nullable = false)
-    private UserRole canceledByType;
+    private Long inFileId;
 
-    // 예약 취소 날짜
+    // 체크아웃 시간
     @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime cancelDate;
+    private Timestamp outTime;
 
-    // 예약 취소 사유
-    @Column(nullable = false, length = 50)
-    private String cancelReason;
+    // 체크아웃 파일 ID
+    @Column(nullable = false)
+    private Long outFileId;
 
     @PreRemove
     private void preventRemove() {
         throw new UnsupportedOperationException("예약 관련 정보는 삭제할 수 없습니다.");
     }
-
 }
-
-
