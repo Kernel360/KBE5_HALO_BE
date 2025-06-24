@@ -11,7 +11,6 @@ import com.kernel.evaluation.service.review.dto.response.ManagerReviewPageRspDTO
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewRspDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -47,13 +46,7 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
         );
 
         // info -> DTO 매핑
-        return new PageImpl<>(
-                    searchedReviewsPage.getContent().stream()
-                    .map(ManagerReviewPageRspDTO::fromInfo)
-                    .toList(),
-                    pageable,
-                    searchedReviewsPage.getTotalElements()
-            );
+        return searchedReviewsPage.map(ManagerReviewPageRspDTO::fromInfo);
     }
 
     /**
