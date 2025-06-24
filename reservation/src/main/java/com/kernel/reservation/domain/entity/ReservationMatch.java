@@ -1,45 +1,47 @@
 package com.kernel.reservation.domain.entity;
 
 import com.kernel.global.domain.entity.BaseEntity;
+import com.kernel.reservation.domain.enums.MatchStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.beans.factory.config.YamlProcessor;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "cleaning_log")
+@Table(name = "reservation_match")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SuperBuilder
-public class CleaningLog extends BaseEntity {
+public class ReservationMatch extends BaseEntity {
 
-    // 예약 ID
+    //매칭 ID
     @Id
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private Long matchId;
+
+    //예약 ID
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Long reservationId;
+    private Reservation reservation;
 
-    // 청소 시작 시간
+    // 매칭 일시
     @Column(nullable = false)
-    private Timestamp inTime;
+    private LocalDateTime matchedAt;
 
-    // 청소 시작 파일 ID
-    @Column(name = "in_file_id", nullable = false)
-    private Long inFileId;
-
-    // 청소 종료 시간
+    // 확정 일시
     @Column(nullable = false)
-    private Timestamp outTime;
+    private LocalDateTime confirmedAt;
 
-    // 청소 종료 파일 ID
-    @Column(name = "out_file_id", nullable = false)
-    private Long outFileId;
+    // 매칭 상태
+    @Column(nullable = false)
+    private MatchStatus matchStatus;
 
     @PreRemove
     private void preventRemove() {

@@ -4,31 +4,34 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "extra_service")
+@Table(name = "reservation_location")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class ExtraService {
-
-    // 예약 추가 서비스 ID
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Long extraServiceId;
-
+public class ReservationLocation {
     // 예약 ID
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Id
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Long reservationId;
+    private Reservation reservationId;
 
-    // 서비스 가격
+    // 위도
     @Column(nullable = false)
-    private Integer price;
+    private Double latitude;
 
-    // 서비스 제공 시간
+    // 경도
     @Column(nullable = false)
-    private Integer serviceTime;
+    private Double longitude;
+
+    // 주소
+    @Column(nullable = false, length = 200)
+    private String roadAddress;
+
+    // 상세 주소
+    @Column(length = 100)
+    private String detailAddress;
 
     @PreRemove
     private void preventRemove() {

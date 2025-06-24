@@ -2,7 +2,7 @@ package com.kernel.reservation.domain.entity;
 
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.global.domain.entity.User;
-import com.kernel.reservation.domain.enumerate.ReservationStatus;
+import com.kernel.reservation.domain.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,7 +23,7 @@ public class Reservation extends BaseEntity {
 
     // 수요자ID
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // 예약 상태
@@ -46,7 +46,12 @@ public class Reservation extends BaseEntity {
 
     // 서비스ID
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "service_id", nullable = false)
+    @JoinColumn(name = "service_id", nullable = false)
     private ServiceCategory serviceCategory;
+
+    @PreRemove
+    private void preventRemove() {
+        throw new UnsupportedOperationException("예약 관련 정보는 삭제할 수 없습니다.");
+    }
 
 }

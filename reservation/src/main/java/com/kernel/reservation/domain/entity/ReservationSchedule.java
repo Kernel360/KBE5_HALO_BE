@@ -3,32 +3,34 @@ package com.kernel.reservation.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "extra_service")
+@Table(name = "reservation_schedule")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class ExtraService {
-
-    // 예약 추가 서비스 ID
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Long extraServiceId;
+public class ReservationSchedule {
 
     // 예약 ID
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Id
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Long reservationId;
+    private Reservation reservationId;
 
-    // 서비스 가격
+    // 요청 날짜
     @Column(nullable = false)
-    private Integer price;
+    private LocalDate requestDate;
 
-    // 서비스 제공 시간
+    // 시작 시간
     @Column(nullable = false)
-    private Integer serviceTime;
+    private String startTime;
+
+    // 소요 시간
+    @Column(nullable = false)
+    private Integer turnaround;
 
     @PreRemove
     private void preventRemove() {
