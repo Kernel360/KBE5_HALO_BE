@@ -29,7 +29,7 @@ public class ReservationMatch extends BaseEntity {
     //예약 ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservation;
+    private Reservation reservationId;
 
     // 매칭 일시
     @Column(nullable = false)
