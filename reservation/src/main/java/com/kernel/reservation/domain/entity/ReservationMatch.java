@@ -24,12 +24,12 @@ public class ReservationMatch extends BaseEntity {
 
     // 매니저 ID
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "manager_id", nullable = false)
+    @JoinColumn(name = "manager_id", nullable = false)
     private User manager;
 
     // 예약 ID
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "reservation_id", nullable = false)
+    @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
     // 매치 날짜 (매니저-예약 연결)
