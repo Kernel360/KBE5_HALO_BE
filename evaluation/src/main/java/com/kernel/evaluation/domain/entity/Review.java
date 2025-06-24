@@ -1,6 +1,6 @@
 package com.kernel.evaluation.domain.entity;
 
-import com.kernel.evaluation.common.enums.AuthorType;
+import com.kernel.evaluation.common.enums.ReviewAuthorType;
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.reservation.domain.entity.Reservation;
 import jakarta.persistence.*;
@@ -45,7 +45,7 @@ public class Review extends BaseEntity {
     // 작성자 타입
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private AuthorType authorType;
+    private ReviewAuthorType reviewAuthorType;
 
    // 타켓ID
     @Column(nullable = false)

@@ -1,7 +1,7 @@
 package com.kernel.evaluation.repository.review;
 
 
-import com.kernel.evaluation.common.enums.AuthorType;
+import com.kernel.evaluation.common.enums.ReviewAuthorType;
 import com.kernel.evaluation.domain.entity.QReview;
 import com.kernel.evaluation.domain.info.ManagerReviewInfo;
 import com.kernel.global.domain.entity.QUser;
@@ -41,7 +41,7 @@ public class CustomManagerReviewRepositoryImpl implements CustomManagerReviewRep
                 .from(review)
                 .where(
                     targetIdEq(managerId),                      // 매니저 ID 일치
-                    authorTypeEq(AuthorType.CUSTOMER),          // 작성자 타입 일치
+                    authorTypeEq(ReviewAuthorType.CUSTOMER),          // 작성자 타입 일치
                     createdAtGoe(fromCreatedAt),                // 작성일 ≥ 시작일
                     createdAtLoe(toCreatedAt),                  // 작성일 ≤ 종료일
                     ratingEq(ratingOption),                     // 평점 일치
@@ -70,7 +70,7 @@ public class CustomManagerReviewRepositoryImpl implements CustomManagerReviewRep
             .leftJoin(user).on(user.userId.eq(review.authorId))
             .where(
                 targetIdEq(managerId),                      // 매니저 ID 일치
-                authorTypeEq(AuthorType.CUSTOMER),          // 작성자 타입 일치
+                authorTypeEq(ReviewAuthorType.CUSTOMER),          // 작성자 타입 일치
                 createdAtGoe(fromCreatedAt),                // 작성일 ≥ 시작일
                 createdAtLoe(toCreatedAt),                  // 작성일 ≤ 종료일
                 ratingEq(ratingOption),                     // 평점 일치
@@ -91,8 +91,8 @@ public class CustomManagerReviewRepositoryImpl implements CustomManagerReviewRep
     }
     
     // 작성자 타입 일치
-    private BooleanExpression authorTypeEq(AuthorType authorType) {
-        return QReview.review.authorType.eq(authorType);
+    private BooleanExpression authorTypeEq(ReviewAuthorType reviewAuthorType) {
+        return QReview.review.reviewAuthorType.eq(reviewAuthorType);
     }
 
     // 작성일 >= 시작일

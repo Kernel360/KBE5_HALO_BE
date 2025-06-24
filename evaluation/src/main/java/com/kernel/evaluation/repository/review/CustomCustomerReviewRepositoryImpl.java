@@ -1,7 +1,7 @@
 package com.kernel.evaluation.repository.review;
 
 
-import com.kernel.evaluation.common.enums.AuthorType;
+import com.kernel.evaluation.common.enums.ReviewAuthorType;
 import com.kernel.evaluation.domain.entity.QReview;
 import com.kernel.evaluation.domain.info.CustomerReviewInfo;
 import com.kernel.global.domain.entity.QUser;
@@ -61,7 +61,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                 .leftJoin(review).on(
                         review.reservation.eq(reservation)
                                 .and(review.authorId.eq(userId))
-                                .and(review.authorType.eq(AuthorType.CUSTOMER))
+                                .and(review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER))
                 )
                 .leftJoin(reservationSchedule).on(
                         reservationSchedule.reservationId.eq(reservation.reservationId)
@@ -115,7 +115,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         .leftJoin(review).on(
                                 review.reservation.eq(reservation)
                                         .and(review.authorId.eq(userId))
-                                        .and(review.authorType.eq(AuthorType.CUSTOMER))
+                                        .and(review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER))
                         )
                         .where(
                                 reservation.user.userId.eq(userId),
@@ -155,7 +155,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                 .leftJoin(review).on(
                         review.reservation.eq(reservation)
                                 .and(review.authorId.eq(userId))
-                                .and(review.authorType.eq(AuthorType.CUSTOMER))
+                                .and(review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER))
                 )
                 .leftJoin(reservationSchedule).on(
                         reservationSchedule.reservationId.eq(reservationId)

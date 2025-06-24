@@ -1,7 +1,7 @@
 package com.kernel.evaluation.service.review;
 
 
-import com.kernel.evaluation.common.enums.AuthorType;
+import com.kernel.evaluation.common.enums.ReviewAuthorType;
 import com.kernel.evaluation.domain.entity.Review;
 import com.kernel.evaluation.domain.info.ManagerReviewInfo;
 import com.kernel.evaluation.repository.review.ManagerReviewRepository;
@@ -73,7 +73,7 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
         }
 */
         // 2. 등록된 리뷰가 존재하는지 확인
-        if (managerReviewRepository.existsByAuthorTypeAndAuthorIdAndReservation_ReservationId(AuthorType.MANAGER, userId, reservationId)) {
+        if (managerReviewRepository.existsByAuthorTypeAndAuthorIdAndReservation_ReservationId(ReviewAuthorType.MANAGER, userId, reservationId)) {
             throw new IllegalStateException("이미 등록된 리뷰가 존재합니다.");
         }
 
@@ -91,7 +91,7 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
                             Review.builder()
                       //      .reservation(foundReservation)
                             .authorId(userId)
-                            .authorType(AuthorType.MANAGER)
+                            .reviewAuthorType(ReviewAuthorType.MANAGER)
                       //      .targetId(foundReservation.getUser().getUserId())
                             .rating(createReqDTO.getRating())
                             .content(createReqDTO.getContent())
