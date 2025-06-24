@@ -24,7 +24,7 @@ public class Reservation extends BaseEntity {
     // 수요자ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
 
     // 예약 상태
     @Column(nullable = false)
@@ -47,7 +47,7 @@ public class Reservation extends BaseEntity {
     // 서비스 ID
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
-    private ServiceCategory serviceId;
+    private ServiceCategory serviceCategory;
 
     @PreRemove
     private void preventRemove() {

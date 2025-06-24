@@ -19,7 +19,7 @@ public class ReservationSchedule {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservationId;
+    private Reservation reservation;
 
     // 요청 날짜
     @Column(nullable = false)

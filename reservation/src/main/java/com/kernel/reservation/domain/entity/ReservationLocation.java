@@ -17,7 +17,7 @@ public class ReservationLocation {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservationId;
+    private Reservation reservation;
 
     // 위도
     @Column(nullable = false, precision = 10, scale = 7)

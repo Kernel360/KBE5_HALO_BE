@@ -23,7 +23,7 @@ public class ServiceCheckLog extends BaseEntity {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservationId;
+    private Reservation reservation;
 
     // 체크인 일시
     @Column(nullable = false)

@@ -21,7 +21,7 @@ public class ServiceCategory extends BaseEntity {
     // 부모 카테고리와의 관계 설정 -> 1:N
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private ServiceCategory parentId;
+    private ServiceCategory parent;
 
     // 서비스 명
     @Column(nullable = false, length = 100)
@@ -61,10 +61,10 @@ public class ServiceCategory extends BaseEntity {
         }
 
         // depth 설정
-        if (parentId == null) {
+        if (parent == null) {
             this.depth = 0; // 최상위 카테고리
         } else {
-            this.depth = parentId.getDepth() + 1; // 부모 카테고리 depth + 1
+            this.depth = parent.getDepth() + 1; // 부모 카테고리 depth + 1
         }
     }
 
