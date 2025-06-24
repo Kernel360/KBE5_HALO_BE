@@ -16,29 +16,29 @@ import java.sql.Timestamp;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SuperBuilder
-public class CleaningLog extends BaseEntity {
+public class ServiceCheckLog extends BaseEntity {
 
     // 예약 ID
     @Id
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Long reservationId;
+    private Reservation reservationId;
 
-    // 청소 시작 시간
+    // 체크인 일시
     @Column(nullable = false)
     private Timestamp inTime;
 
-    // 청소 시작 파일 ID
-    @Column(name = "in_file_id", nullable = false)
+    // 체크인 파일 ID
+    @Column(nullable = false)
     private Long inFileId;
 
-    // 청소 종료 시간
+    // 체크아웃 시간
     @Column(nullable = false)
     private Timestamp outTime;
 
-    // 청소 종료 파일 ID
-    @Column(name = "out_file_id", nullable = false)
+    // 체크아웃 파일 ID
+    @Column(nullable = false)
     private Long outFileId;
 
     @PreRemove

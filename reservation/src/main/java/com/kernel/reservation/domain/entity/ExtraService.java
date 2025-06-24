@@ -20,7 +20,7 @@ public class ExtraService {
     // 예약 ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Long reservationId;
+    private Reservation reservationId;
 
     // 서비스 가격
     @Column(nullable = false)
