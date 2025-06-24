@@ -36,9 +36,9 @@ public class CustomerFeedbackRspDTO {
     public static CustomerFeedbackRspDTO fromInfo(CustomerFeedbackInfo info){
         return CustomerFeedbackRspDTO.builder()
                 .feedbackId(info.getFeedbackId())
-                .feedbackType(info.getFeedbackType())
-                .managerId(info.getManagerId())
-                .managerName(info.getManagerName())
+                .feedbackType(info.getType())
+                .managerId(info.getUserId())
+                .managerName(info.getUserName())
                 .build();
     }
 
