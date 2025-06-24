@@ -67,7 +67,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                 .leftJoin(reservation.serviceCategory, serviceCategory)
                 .leftJoin(reservationMatch).on(
                         reservationMatch.reservation.reservationId.eq(reservation.reservationId)
-                                .and(reservationMatch.manager.userId.eq(review.targetId))
+                                //.and(reservationMatch.manager.userId.eq(review.targetId))
                                 .and(reservationMatch.status.eq(MatchStatus.MATCHED))
                 )
                 .innerJoin(reservation.user, user)
