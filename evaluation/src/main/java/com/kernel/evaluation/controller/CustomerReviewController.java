@@ -31,7 +31,7 @@ public class CustomerReviewController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<CustomerReviewRspDTO>>> getCustomerReviews(
             @AuthenticationPrincipal CustomUserDetails user,
-            @PageableDefault(size=5) Pageable pageable
+            @PageableDefault(size = 10, page = 0) Pageable pageable
     ){
         Page<CustomerReviewRspDTO> rspDTOPage = reviewService.getCustomerReviews(user.getUserId(), pageable);
 
