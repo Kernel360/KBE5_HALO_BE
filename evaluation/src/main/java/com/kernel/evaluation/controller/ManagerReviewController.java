@@ -6,15 +6,14 @@ import com.kernel.evaluation.service.review.dto.request.ManagerReviewSearchCondD
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewPageRspDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewRspDTO;
-import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,12 +35,9 @@ public class ManagerReviewController {
     public ResponseEntity<ApiResponse<Page<ManagerReviewPageRspDTO>>> searchManagerReviews(
         @AuthenticationPrincipal CustomUserDetails user,
         @ModelAttribute ManagerReviewSearchCondDTO searchCondDTO,
-        Pageable pageable
+        @PageableDefault(size = 10, page = 0) Pageable pageable
     ) {
-        if (!UserStatus.ACTIVE.equals(user.getStatus())) { // 활성
-            throw new AccessDeniedException(
-                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + user.getStatus() + ")" );
-        }
+
         Page<ManagerReviewPageRspDTO> summaryRspDTOPage
             = managerReviewService.searchManagerReviewsWithPaging(user.getUserId(), searchCondDTO, pageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 리뷰 목록 조회 성공", summaryRspDTOPage));
@@ -60,10 +56,7 @@ public class ManagerReviewController {
         @PathVariable("reservation-id") Long reservationId,
         @Valid @RequestBody ReviewCreateReqDTO requestDTO
     ) {
-        if (!UserStatus.ACTIVE.equals(user.getStatus())) { // 활성
-            throw new AccessDeniedException(
-                "죄송합니다. 현재 계정 상태에서는 해당 요청을 처리할 수 없습니다. (상태: " + user.getStatus() + ")" );
-        }
+
         ManagerReviewRspDTO responseDTO = managerReviewService.createManagerReview(user.getUserId(), reservationId, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 리뷰 등록 성공", responseDTO));
     }
