@@ -1,6 +1,7 @@
 package com.kernel.reservation.domain.entity;
 
 import com.kernel.global.domain.entity.BaseEntity;
+import com.kernel.member.domain.entity.Manager;
 import com.kernel.reservation.domain.enums.MatchStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,7 +30,12 @@ public class ReservationMatch extends BaseEntity {
     //예약 ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservationId;
+    private Reservation reservation;
+
+    // 매니저 ID
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id", nullable = false)
+    private Manager manager;
 
     // 매칭 일시
     @Column(nullable = false)
