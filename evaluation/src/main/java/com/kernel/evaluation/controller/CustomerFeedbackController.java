@@ -30,7 +30,7 @@ public class CustomerFeedbackController {
      * @param pageable 페이징 정보
      * @return 검색된 피드백 목록
      */
-    @GetMapping("{customer-Id}")
+    @GetMapping
     public ResponseEntity<ApiResponse<Page<CustomerFeedbackRspDTO>>> searchCustomerFeedbackByFeedbackType(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam(required = false) FeedbackType feedbackType,
@@ -49,7 +49,7 @@ public class CustomerFeedbackController {
      * @param reqDTO 피드백 요청 DTO
      * @return 검색된 피드백 목록
      */
-    @PostMapping("{customer-Id}")
+    @PostMapping
     public ResponseEntity<ApiResponse<CustomerFeedbackUpdateRspDTO>> proceedCustomerFeedback (
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody CustomerFeedbackReqDTO reqDTO
