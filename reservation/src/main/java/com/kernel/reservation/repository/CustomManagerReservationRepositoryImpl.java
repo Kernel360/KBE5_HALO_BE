@@ -47,7 +47,6 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
         QReservationSchedule reservationSchedule = QReservationSchedule.reservationSchedule;
         QServiceCheckLog serviceCheckLog = QServiceCheckLog.serviceCheckLog;
         QReservationMatch reservationMatch = QReservationMatch.reservationMatch;
-        // QReview review = QReview.review; // 클라이언트에서 review 조회 api를 사용해서 따로 조회
 
         // 전체 개수 조회
         long total = Optional.ofNullable(
@@ -119,10 +118,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
         QReservation reservation = QReservation.reservation;
         QReservationSchedule reservationSchedule = QReservationSchedule.reservationSchedule;
         QReservationMatch reservationMatch = QReservationMatch.reservationMatch;
-        // QCustomer customer = QCustomer.customer; // 클라이언트에서 UserInfo 조회 API를 사용해서 따로 조회
         QServiceCheckLog serviceCheckLog = QServiceCheckLog.serviceCheckLog;
-        // QReview customerReview = new QReview("customerReview"); // 클라이언트에서 review 조회 api를 사용해서 따로 조회
-        // QReview managerReview = new QReview("managerReview"); // 클라이언트에서 review 조회 api를 사용해서 따로 조회
         QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
         QExtraService extraService = QExtraService.extraService;
 
