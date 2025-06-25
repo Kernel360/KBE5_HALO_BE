@@ -55,21 +55,19 @@ public class ManagerReservationSummaryRspDTO {
     private LocalDateTime outTime;
 
     // ManagerReservationSummaryInfo에서 필요한 필드만 포함
-    public static List<ManagerReservationSummaryRspDTO> fromInfo(Page<ManagerReservationSummaryInfo> info) {
-        return info.getContent().stream()
-                .map(reservation -> ManagerReservationSummaryRspDTO.builder()
-                        .reservationId(reservation.getReservationId())
-                        .requestDate(reservation.getRequestDate())
-                        .startTime(reservation.getStartTime())
-                        .turnaround(reservation.getTurnaround())
-                        .customerId(reservation.getCustomerId())
-                        .status(reservation.getStatus())
-                        .reservationCheckId(reservation.getServiceCheckId())
-                        .isCheckedIn(reservation.getIsCheckedIn())
-                        .inTime(reservation.getInTime() != null ? reservation.getInTime().toLocalDateTime() : null)
-                        .isCheckedOut(reservation.getIsCheckedOut())
-                        .outTime(reservation.getOutTime() != null ? reservation.getOutTime().toLocalDateTime() : null)
-                        .build())
-                .collect(Collectors.toList());
+    public static Page<ManagerReservationSummaryRspDTO> fromInfo(Page<ManagerReservationSummaryInfo> info) {
+        return info.map(reservation -> ManagerReservationSummaryRspDTO.builder()
+                .reservationId(reservation.getReservationId())
+                .requestDate(reservation.getRequestDate())
+                .startTime(reservation.getStartTime())
+                .turnaround(reservation.getTurnaround())
+                .customerId(reservation.getCustomerId())
+                .status(reservation.getStatus())
+                .reservationCheckId(reservation.getServiceCheckId())
+                .isCheckedIn(reservation.getIsCheckedIn())
+                .inTime(reservation.getInTime() != null ? reservation.getInTime().toLocalDateTime() : null)
+                .isCheckedOut(reservation.getIsCheckedOut())
+                .outTime(reservation.getOutTime() != null ? reservation.getOutTime().toLocalDateTime() : null)
+                .build());
     }
 }

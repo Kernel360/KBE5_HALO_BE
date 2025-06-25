@@ -38,9 +38,9 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         Page<ManagerReservationSummaryInfo> searchedReservationPage = managerReservationRepository.searchManagerReservationsWithPaging(managerId, searchCondDTO, pageable);
 
         // ManagerReservationSummaryInfo -> ManagerReservationSummaryRspDTO 변환
-        List<ManagerReservationSummaryRspDTO> dtoList = ManagerReservationSummaryRspDTO.fromInfo(searchedReservationPage);
+        Page<ManagerReservationSummaryRspDTO> dtoPage = ManagerReservationSummaryRspDTO.fromInfo(searchedReservationPage);
 
-        return new PageImpl<>(dtoList, pageable, searchedReservationPage.getTotalElements());
+        return dtoPage;
     }
 
     /**
