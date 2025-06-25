@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface CustomerFeedbackRepository extends JpaRepository<Feedback, Long>, CustomCustomerFeedbackRepository {
 
     // 피드백 조회(where feedbackId, customerId, managerId)
-    Optional<Feedback> findByCustomer_CustomerIdAndManager_ManagerId(Long customerId, Long managerId);
+    Optional<Feedback> findByCustomer_UserIdAndManager_UserId(Long customerId, Long managerId);
 }
