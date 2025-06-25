@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @SuperBuilder
 public class ServiceCheckLog extends BaseEntity {
 
-    // 체크로그 ID
+    // 예약 Id
     @Id
     private Long reservationId;
 
