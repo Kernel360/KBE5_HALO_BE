@@ -57,7 +57,7 @@ public class CustomerFeedbackServiceImpl implements CustomerFeedbackService {
 */
         // 피드백 존재 여부
         Optional<Feedback> foundFeedbackOpt
-                = customerFeedbackRepository.findByCustomer_CustomerIdAndManager_ManagerId(userId, reqDTO.getManagerId());
+                = customerFeedbackRepository.findByCustomer_UserIdAndManager_UserId(userId, reqDTO.getManagerId());
 
         Feedback savedFeedback;
 

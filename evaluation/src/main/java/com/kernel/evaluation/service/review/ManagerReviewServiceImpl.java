@@ -66,7 +66,7 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
         }
 */
         // 2. 등록된 리뷰가 존재하는지 확인
-        if (managerReviewRepository.existsByAuthorTypeAndAuthorIdAndReservation_ReservationId(ReviewAuthorType.MANAGER, userId, reservationId)) {
+        if (managerReviewRepository.existsByReviewAuthorTypeAndAuthorIdAndReservation_ReservationId(ReviewAuthorType.MANAGER, userId, reservationId)) {
             throw new IllegalStateException("이미 등록된 리뷰가 존재합니다.");
         }
 

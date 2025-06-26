@@ -1,8 +1,10 @@
-package com.kernel.common.reservation.dto.request;
+package com.kernel.reservation.service.request;
 
-import com.kernel.common.reservation.enums.ReservationStatus;
+import com.kernel.reservation.domain.enums.ReservationStatus;
+
 import java.time.LocalDate;
 import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 

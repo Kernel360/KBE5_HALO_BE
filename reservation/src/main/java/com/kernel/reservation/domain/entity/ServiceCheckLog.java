@@ -18,8 +18,11 @@ import java.sql.Timestamp;
 @SuperBuilder
 public class ServiceCheckLog extends BaseEntity {
 
-    // 예약 ID
+    // 예약 Id
     @Id
+    private Long reservationId;
+
+    // 예약 ID
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
