@@ -53,8 +53,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             jpaQueryFactory
                 .select(reservation.count())
                 .from(reservation)
-                .leftJoin(reservationSchedule).on(reservationSchedule.reservation.reservationId.eq(reservation.reservationId))
-                .leftJoin(serviceCheckLog).on(serviceCheckLog.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(reservationSchedule.reservation, reservation)
+                .leftJoin(serviceCheckLog.reservation, reservation)
                 .leftJoin(reservationMatch).on(reservationMatch.reservation.reservationId.eq(reservation.reservationId))
                 .where(
                     managerEq(managerId, reservation.reservationId.longValue(), reservationMatch), // 매니저 ID 일치
@@ -85,8 +85,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                         serviceCheckLog.outTime
                 ))
                 .from(reservation)
-                .leftJoin(reservationSchedule).on(reservationSchedule.reservation.reservationId.eq(reservation.reservationId))
-                .leftJoin(serviceCheckLog).on(serviceCheckLog.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(reservationSchedule.reservation, reservation)
+                .leftJoin(serviceCheckLog.reservation, reservation)
                 .leftJoin(reservationMatch).on(reservationMatch.reservation.reservationId.eq(reservation.reservationId))
                 .where(
                         managerEq(managerId, reservation.reservationId.longValue(), reservationMatch),
@@ -133,7 +133,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                     )
                 )
                 .from(extraService)
-                //.leftJoin(serviceCategory).on(serviceCategory.serviceId.eq(extraService.serviceCategory.serviceId)) -> serviceCategory가 extraService에 포함되는 여부 판단 필요
+                // TODO: extraService와 serviceCategory의 관계를 명확히 정의해야 함
+                //.leftJoin(serviceCategory).on(serviceCategory.serviceId.eq(extraService.serviceCategory.serviceId))
                 .where(extraService.reservation.reservationId.eq(reservation.reservationId)),
             "extraServiceName"
         );
@@ -157,8 +158,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             ))
             .from(reservation)
             .leftJoin(reservation.user).on(reservation.user.role.eq(UserRole.CUSTOMER))
-            .leftJoin(reservationSchedule).on(reservationSchedule.reservation.reservationId.eq(reservation.reservationId))
-            .leftJoin(serviceCheckLog).on(serviceCheckLog.reservation.reservationId.eq(reservation.reservationId))
+            .leftJoin(reservationSchedule.reservation, reservation)
+            .leftJoin(serviceCheckLog.reservation, reservation)
             .leftJoin(reservationMatch).on(reservationMatch.reservation.reservationId.eq(reservation.reservationId))
             .where(
                 reservation.reservationId.eq(reservationId),
