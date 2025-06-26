@@ -41,6 +41,7 @@ public class User extends BaseEntity {
     private UserRole role;
 
     // 사용자 상태값
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
