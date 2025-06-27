@@ -20,7 +20,7 @@ repositories {
 dependencies {
 
     implementation project(':global')
-    implementation project(':reservation')
+    implementation project(':shared-domain')
 
 
     // Spring Boot dependencies
