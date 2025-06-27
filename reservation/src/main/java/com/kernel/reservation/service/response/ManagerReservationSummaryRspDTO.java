@@ -1,7 +1,10 @@
 package com.kernel.reservation.service.response;
 
-import com.kernel.reservation.domain.enums.ReservationStatus;
+
+import java.time.LocalTime;
+
 import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;

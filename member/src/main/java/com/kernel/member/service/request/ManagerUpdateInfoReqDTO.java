@@ -1,7 +1,6 @@
 package com.kernel.member.service.request;
 
-import com.kernel.reservation.domain.entity.ServiceCategory;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;

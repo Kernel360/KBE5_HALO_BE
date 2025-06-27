@@ -4,11 +4,13 @@ import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.reservation.common.enums.MatchStatus;
 import com.kernel.reservation.domain.entity.*;
-import com.kernel.reservation.domain.enums.ReservationStatus;
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
 import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
 
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
+import com.kernel.sharedDomain.domain.entity.QReservation;
+import com.kernel.sharedDomain.domain.entity.QServiceCategory;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
