@@ -3,7 +3,7 @@ package com.kernel.admin.service.dto.response;
 
 
 import com.kernel.admin.domain.entity.Banner;
-import com.kernel.admin.domain.enums.BannerStatus;
+import com.kernel.admin.common.enums.BannerStatus;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
