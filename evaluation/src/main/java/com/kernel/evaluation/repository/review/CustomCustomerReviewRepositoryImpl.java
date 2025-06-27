@@ -5,12 +5,9 @@ import com.kernel.evaluation.common.enums.ReviewAuthorType;
 import com.kernel.evaluation.domain.entity.QReview;
 import com.kernel.evaluation.domain.info.CustomerReviewInfo;
 import com.kernel.global.domain.entity.QUser;
-import com.kernel.reservation.common.enums.MatchStatus;
-import com.kernel.reservation.domain.entity.QReservation;
-import com.kernel.reservation.domain.entity.QReservationMatch;
-import com.kernel.reservation.domain.entity.QReservationSchedule;
-import com.kernel.reservation.domain.entity.QServiceCategory;
-import com.kernel.reservation.domain.enums.ReservationStatus;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
+import com.kernel.sharedDomain.domain.entity.QReservation;
+import com.kernel.sharedDomain.domain.entity.QServiceCategory;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +26,6 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
     private final QUser user = QUser.user;
     private final QReview review = QReview.review;
     private final QReservation reservation = QReservation.reservation;
-    private final QReservationMatch reservationMatch = QReservationMatch.reservationMatch;
-    private final QReservationSchedule reservationSchedule = QReservationSchedule.reservationSchedule;
     private final QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
 
     /**
@@ -50,9 +45,9 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         review.content,
                         review.createdAt,
                         reservation.reservationId,
-                        reservationSchedule.requestDate,
-                        reservationSchedule.startTime,
-                        reservationSchedule.turnaround,
+                    //    reservationSchedule.requestDate,
+                    //    reservationSchedule.startTime,
+                    //    reservationSchedule.turnaround,
                         serviceCategory.serviceName
                 ))
                 .from(reservation)
@@ -61,7 +56,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                                 .and(review.authorId.eq(userId))
                                 .and(review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER))
                 )
-                .leftJoin(reservationSchedule).on(
+           /*     .leftJoin(reservationSchedule).on(
                         reservationSchedule.reservationId.eq(reservation.reservationId)
                 )
                 .leftJoin(reservation.serviceCategory, serviceCategory)
@@ -69,16 +64,16 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         reservationMatch.reservation.reservationId.eq(reservation.reservationId)
                                 //.and(reservationMatch.manager.userId.eq(review.targetId))
                                 .and(reservationMatch.status.eq(MatchStatus.MATCHED))
-                )
+                )*/
                 .innerJoin(reservation.user, user)
                 .where(
                         reservation.user.userId.eq(userId),
                         reservation.status.eq(ReservationStatus.COMPLETED)
                 )
-                .orderBy(
+        /*        .orderBy(
                         reservationSchedule.requestDate.desc(),
                         reservationSchedule.startTime.desc()
-                )
+                )*/
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -121,9 +116,9 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
         CustomerReviewInfo result = queryFactory
                 .select(Projections.fields(CustomerReviewInfo.class,
                         reservation.reservationId,
-                        reservationSchedule.requestDate,
-                        reservationSchedule.startTime,
-                        reservationSchedule.turnaround,
+              //          reservationSchedule.requestDate,
+             //           reservationSchedule.startTime,
+              //          reservationSchedule.turnaround,
                         serviceCategory.serviceName,
                         review.reviewId,
                         review.rating,
@@ -136,12 +131,12 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                                 .and(review.authorId.eq(userId))
                                 .and(review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER))
                 )
-                .leftJoin(reservationSchedule).on(
+         /*       .leftJoin(reservationSchedule).on(
                         reservationSchedule.reservationId.eq(reservationId)
                 )
                 .leftJoin(reservation.serviceCategory, serviceCategory)
                 .innerJoin(reservationMatch)
-                .where(
+           */     .where(
                         reservation.reservationId.eq(reservationId),
                         reservation.user.userId.eq(userId),
                         reservation.status.eq(ReservationStatus.COMPLETED)

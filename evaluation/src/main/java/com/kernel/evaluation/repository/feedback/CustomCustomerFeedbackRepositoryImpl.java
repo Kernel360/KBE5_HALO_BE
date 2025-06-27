@@ -6,7 +6,7 @@ import com.kernel.evaluation.domain.entity.QFeedback;
 import com.kernel.evaluation.domain.info.CustomerFeedbackInfo;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.QUser;
-import com.kernel.reservation.domain.entity.QReservation;
+import com.kernel.sharedDomain.domain.entity.QReservation;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
