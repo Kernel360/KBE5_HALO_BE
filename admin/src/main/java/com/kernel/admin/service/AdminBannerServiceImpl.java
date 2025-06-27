@@ -32,6 +32,8 @@ public class AdminBannerServiceImpl implements AdminBannerService {
     @Override
     @Transactional(readOnly = true)
     public Page<AdminBannerRspDTO> getBanners(Pageable pageable) {
+
+        // 1. 배너 목록 조회 (삭제되지 않은 배너만)
         Page<Banner> banners = bannerRepository.findAllByIsDeletedFalse(pageable);
 
         return AdminBannerRspDTO.fromEntityPage(banners);
@@ -46,8 +48,12 @@ public class AdminBannerServiceImpl implements AdminBannerService {
     @Override
     @Transactional
     public AdminBannerRspDTO getBanner(Long bannerId) {
+
+        // 1. 배너 조회
         Banner banner = bannerRepository.findById(bannerId)
-                .orElseThrow(() -> new NoSuchElementException("Banner not found with id: " + bannerId));
+                .orElseThrow(() -> new NoSuchElementException("배너가 존재하지 않습니다."));
+
+        // 2. 배너 조회수 증가
         banner.incrementViews();
 
         return AdminBannerRspDTO.fromEntity(banner);
@@ -61,13 +67,16 @@ public class AdminBannerServiceImpl implements AdminBannerService {
     @Override
     @Transactional
     public void createBanner(AdminBannerReqDTO bannerDto) {
-        // 파일 정보 정보 조회
+
+        // 1. 파일 정보 정보 조회
         File file = fileRepository.findById(bannerDto.getFileId())
                 .orElseThrow(() -> new NoSuchElementException("파일을 찾을 수 없습니다."));
 
+        // 2. DTO -> Entity 변환 및 배너 저장
         Banner banner = AdminBannerReqDTO.toEntity(bannerDto, file);
         bannerRepository.save(banner);
 
+        // 3. 파일 상태 업데이트
         file.updatePostStatus(PostStatus.REGISTERED);
     }
 
@@ -80,12 +89,16 @@ public class AdminBannerServiceImpl implements AdminBannerService {
     @Override
     @Transactional
     public void updateBanner(Long bannerId, AdminBannerReqDTO bannerDto) {
+
+        // 1. 배너 정보 조회
         Banner banner = bannerRepository.findById(bannerId)
                 .orElseThrow(() -> new NoSuchElementException("배너를 찾을 수 없습니다."));
 
+        // 2. 파일 정보 조회
         File file = fileRepository.findById(bannerDto.getFileId())
                 .orElseThrow(() -> new NoSuchElementException("파일을 찾을 수 없습니다."));
 
+        // 3. 배너 정보 업데이트
         banner.update(bannerDto, file);
     }
 
@@ -97,13 +110,19 @@ public class AdminBannerServiceImpl implements AdminBannerService {
     @Override
     @Transactional
     public void deleteBanner(Long bannerId) {
+
+        // 1. 배너 정보 조회
         Banner banner = bannerRepository.findById(bannerId)
                 .orElseThrow(() -> new NoSuchElementException("배너를 찾을 수 없습니다."));
 
+        // 2. 파일 정보 조회
         File file = fileRepository.findById(banner.getFile().getFileId())
                 .orElseThrow(() -> new NoSuchElementException("파일을 찾을 수 없습니다."));
 
-        // 배너 삭제 전 업로드 파일 삭제
+        // 3. 배너 삭제
         banner.delete();
+
+        //4. 파일의 게시물 상태 업데이트
+        file.updatePostStatus(PostStatus.DELETED);
     }
 }
