@@ -77,4 +77,5 @@ public class ManagerReservationRspDTO {
                 .outFileId(info.getOutFileId())
                 .build();
     }
+
 }

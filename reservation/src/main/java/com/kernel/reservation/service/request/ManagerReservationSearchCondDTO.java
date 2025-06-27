@@ -1,10 +1,7 @@
 package com.kernel.reservation.service.request;
 
-
-import java.time.LocalDate;
-import java.util.List;
-
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
