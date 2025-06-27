@@ -1,8 +1,8 @@
-package com.kernel.reservation.domain.entity;
+package com.kernel.sharedDomain.domain.entity;
 
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.global.domain.entity.User;
-import com.kernel.reservation.domain.enums.ReservationStatus;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -37,7 +37,7 @@ public class Reservation extends BaseEntity {
     private Integer price;
 
     // 고객 요청 사항
-    @Column(nullable = false, length = 5000)
+    @Column(nullable = true, length = 5000)
     private String memo;
 
     // 핸드폰 번호
@@ -54,4 +54,8 @@ public class Reservation extends BaseEntity {
         throw new UnsupportedOperationException("예약 관련 정보는 삭제할 수 없습니다.");
     }
 
+    // 예약 상태 변경
+    public void changeStatus(String cancelReason, ReservationStatus reservationStatus) {
+        this.status = reservationStatus;
+    }
 }
