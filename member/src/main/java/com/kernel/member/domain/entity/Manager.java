@@ -5,7 +5,7 @@ import com.kernel.global.domain.entity.User;
 import com.kernel.member.common.enums.ContractStatus;
 
 import com.kernel.member.service.request.ManagerUpdateInfoReqDTO;
-import com.kernel.reservation.domain.entity.ServiceCategory;
+import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
