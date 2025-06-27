@@ -3,7 +3,7 @@ package com.kernel.payment.domain;
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.payment.common.enums.PaymentMethod;
 import com.kernel.payment.common.enums.PaymentStatus;
-import com.kernel.reservation.domain.entity.Reservation;
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
