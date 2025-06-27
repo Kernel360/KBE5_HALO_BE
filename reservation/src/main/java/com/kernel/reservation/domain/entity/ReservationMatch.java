@@ -49,4 +49,7 @@ public class ReservationMatch extends BaseEntity {
         throw new UnsupportedOperationException("예약 관련 정보는 삭제할 수 없습니다.");
     }
 
+    public void changeStatus(MatchStatus newStatus) {
+        this.status = newStatus;
+    }
 }

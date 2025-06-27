@@ -8,10 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reservation_cancel")
@@ -35,11 +31,6 @@ public class ReservationCancel extends BaseEntity {
     // 예약 취소자 타입
     @Column(nullable = false)
     private UserRole canceledByType;
-
-    // 예약 취소 날짜
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime cancelDate;
 
     // 예약 취소 사유
     @Column(nullable = false, length = 50)

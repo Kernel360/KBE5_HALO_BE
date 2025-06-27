@@ -1,11 +1,9 @@
 package com.kernel.reservation.repository;
 
-import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
-import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
+import com.kernel.reservation.domain.info.ManagerReservationDetailInfo;
+import com.kernel.reservation.domain.info.ManagerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
-import com.kernel.reservation.service.response.ManagerReservationRspDTO;
 
-import com.querydsl.core.Tuple;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

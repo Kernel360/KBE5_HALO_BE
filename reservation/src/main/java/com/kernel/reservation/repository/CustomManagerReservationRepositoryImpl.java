@@ -3,10 +3,9 @@ package com.kernel.reservation.repository;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.reservation.common.enums.MatchStatus;
-import com.kernel.reservation.domain.entity.*;
-import com.kernel.reservation.domain.enums.ReservationStatus;
-import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
-import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
+import com.kernel.reservation.domain.info.ManagerReservationDetailInfo;
+import com.kernel.reservation.domain.info.ManagerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
 
 import com.querydsl.core.types.Expression;

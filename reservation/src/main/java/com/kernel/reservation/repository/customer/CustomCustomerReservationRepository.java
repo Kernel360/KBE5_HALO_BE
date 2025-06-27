@@ -1,4 +1,4 @@
-package com.kernel.common.reservation.repository;
+package com.kernel.reservation.repository.customer;
 
 import com.kernel.common.reservation.dto.response.CustomerReservationDetailRspDTO;
 import com.kernel.common.reservation.dto.response.CustomerReservationRspDTO;
