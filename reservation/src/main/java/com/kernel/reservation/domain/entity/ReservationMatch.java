@@ -2,6 +2,7 @@ package com.kernel.reservation.domain.entity;
 
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.reservation.common.enums.MatchStatus;
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

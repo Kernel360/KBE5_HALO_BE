@@ -1,6 +1,6 @@
 package com.kernel.reservation.service.info;
 
-import com.kernel.reservation.domain.enums.ReservationStatus;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

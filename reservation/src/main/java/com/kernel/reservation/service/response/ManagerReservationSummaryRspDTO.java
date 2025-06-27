@@ -1,10 +1,10 @@
 package com.kernel.reservation.service.response;
 
-import com.kernel.reservation.domain.enums.ReservationStatus;
 
 import java.time.LocalTime;
 
 import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +13,6 @@ import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @SuperBuilder

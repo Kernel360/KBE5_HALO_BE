@@ -1,8 +1,8 @@
 package com.kernel.reservation.service.response;
 
-import com.kernel.reservation.domain.enums.ReservationStatus;
 
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
