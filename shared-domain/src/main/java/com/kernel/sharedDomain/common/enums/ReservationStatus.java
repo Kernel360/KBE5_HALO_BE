@@ -1,4 +1,4 @@
-package com.kernel.reservation.domain.enums;
+package com.kernel.sharedDomain.common.enums;
 
 public enum ReservationStatus {
     PRE_CANCELED("예약 확정 전 취소"),

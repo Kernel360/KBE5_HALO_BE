@@ -1,4 +1,4 @@
-package com.kernel.reservation.domain.entity;
+package com.kernel.sharedDomain.domain.entity;
 
 import com.kernel.global.domain.entity.BaseEntity;
 import jakarta.persistence.*;
