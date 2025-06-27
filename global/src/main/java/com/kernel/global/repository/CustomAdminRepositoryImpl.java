@@ -3,7 +3,6 @@ package com.kernel.global.repository;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.QUser;
-import com.kernel.global.domain.entity.User;
 import com.kernel.global.domain.info.AdminUserSearchInfo;
 import com.kernel.global.service.dto.condition.AdminUserSearchCondition;
 import com.querydsl.core.types.Projections;
