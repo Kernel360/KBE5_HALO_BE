@@ -1,4 +1,4 @@
-package com.kernel.global.repository;
+package com.kernel.admin.repository;
 
 import com.kernel.global.domain.info.AdminUserSearchInfo;
 import com.kernel.global.service.dto.condition.AdminUserSearchCondition;

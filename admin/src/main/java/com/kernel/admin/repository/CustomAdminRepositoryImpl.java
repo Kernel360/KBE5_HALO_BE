@@ -1,4 +1,4 @@
-package com.kernel.global.repository;
+package com.kernel.admin.repository;
 
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
