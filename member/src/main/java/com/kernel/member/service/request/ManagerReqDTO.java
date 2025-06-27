@@ -34,6 +34,7 @@ public class ManagerReqDTO {
     @NotNull(message = "프로필 사진 ID는 필수 입력입니다.")
     private Long profileImageFileId;
 
+    // ManagerReqDTO -> Manager
     public static Manager toEntity(ManagerReqDTO reqDTO, User user, File file, File profileImageFile) {
         return Manager.builder()
                 .user(user)
