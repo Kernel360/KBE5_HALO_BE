@@ -1,4 +1,4 @@
-package com.kernel.admin.domain.enums;
+package com.kernel.admin.common.enums;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
