@@ -8,6 +8,7 @@ import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
 import com.kernel.reservation.service.response.ManagerReservationRspDTO;
 import com.kernel.reservation.service.response.ManagerReservationSummaryRspDTO;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Manager Reservation API", description = "매니저 예약 관리 API")
 @RestController
 @RequestMapping("/api/managers/reservations")
 @RequiredArgsConstructor

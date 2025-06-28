@@ -1,7 +1,5 @@
 package com.kernel.admin.controller;
 
-
-
 import com.kernel.admin.service.AdminService;
 import com.kernel.admin.service.dto.request.AdminSearchReqDTO;
 import com.kernel.admin.service.dto.response.AdminDetailRspDTO;
@@ -10,6 +8,8 @@ import com.kernel.global.domain.entity.User;
 import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.member.service.common.request.UserSignupReqDTO;
 import com.kernel.member.service.common.request.UserUpdateReqDTO;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Admin API", description = "관리자 관련 API")
 @RestController
 @RequestMapping("/api/admin/auth")
 @RequiredArgsConstructor

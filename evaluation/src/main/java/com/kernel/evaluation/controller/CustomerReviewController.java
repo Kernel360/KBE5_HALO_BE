@@ -6,6 +6,8 @@ import com.kernel.evaluation.service.review.dto.request.ReviewUpdateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.CustomerReviewRspDTO;
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Customer Review API", description = "수요자 리뷰 관리 API")
 @RestController
 @RequestMapping("/api/customers/reviews")
 @RequiredArgsConstructor

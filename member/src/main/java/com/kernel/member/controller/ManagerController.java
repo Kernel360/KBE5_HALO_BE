@@ -8,12 +8,15 @@ import com.kernel.member.service.request.ManagerSignupReqDTO;
 import com.kernel.member.service.request.ManagerTerminationReqDTO;
 import com.kernel.member.service.request.ManagerUpdateReqDTO;
 import com.kernel.member.service.response.ManagerDetailRspDTO;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Manager API", description = "매니저 계정 관리 API")
 @RestController
 @RequestMapping("/api/managers/auth")
 @RequiredArgsConstructor

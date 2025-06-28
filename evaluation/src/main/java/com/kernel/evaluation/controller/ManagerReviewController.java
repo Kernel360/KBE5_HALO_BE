@@ -1,6 +1,5 @@
 package com.kernel.evaluation.controller;
 
-
 import com.kernel.evaluation.service.review.ManagerReviewService;
 import com.kernel.evaluation.service.review.dto.request.ManagerReviewSearchCondDTO;
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
@@ -8,6 +7,8 @@ import com.kernel.evaluation.service.review.dto.response.ManagerReviewPageRspDTO
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewRspDTO;
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Manager Review API", description = "매니저 리뷰 관리 API")
 @RestController
 @RequestMapping("/api/managers/reviews")
 @RequiredArgsConstructor

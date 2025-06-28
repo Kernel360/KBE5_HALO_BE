@@ -6,6 +6,7 @@ import com.kernel.inquiry.service.dto.response.InquiryDetailRspDTO;
 import com.kernel.inquiry.service.dto.response.InquirySummaryRspDTO;
 import com.kernel.inquiry.service.inquiry.InquiryQueryService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "문의사항 조회 API", description = "관리자 문의사항 조회 API")
 @RestController
 @RequestMapping("/api/manager/inquiry/query")
 @RequiredArgsConstructor

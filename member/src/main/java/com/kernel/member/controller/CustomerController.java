@@ -6,12 +6,15 @@ import com.kernel.member.service.CustomerService;
 import com.kernel.member.service.request.CustomerSignupReqDTO;
 import com.kernel.member.service.request.CustomerUpdateReqDTO;
 import com.kernel.member.service.response.CustomerDetailRspDTO;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Customer API", description = "수요자 계정 관리 API")
 @RestController
 @RequestMapping("/api/customer/auth")
 @RequiredArgsConstructor

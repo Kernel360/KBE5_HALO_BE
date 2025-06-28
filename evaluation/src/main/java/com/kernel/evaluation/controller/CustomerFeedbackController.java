@@ -1,6 +1,5 @@
 package com.kernel.evaluation.controller;
 
-
 import com.kernel.evaluation.common.enums.FeedbackType;
 import com.kernel.evaluation.service.feedback.CustomerFeedbackService;
 import com.kernel.evaluation.service.feedback.dto.request.CustomerFeedbackReqDTO;
@@ -8,6 +7,8 @@ import com.kernel.evaluation.service.feedback.dto.response.CustomerFeedbackRspDT
 import com.kernel.evaluation.service.feedback.dto.response.CustomerFeedbackUpdateRspDTO;
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Customer Feedback API", description = "수요자 피드백 API")
 @RestController
 @RequestMapping("/api/customers/feedbacks")
 @RequiredArgsConstructor

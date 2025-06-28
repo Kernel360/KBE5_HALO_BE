@@ -5,6 +5,7 @@ import com.kernel.global.service.dto.request.FileUpdateReqDTO;
 import com.kernel.global.service.dto.request.FileUploadReqDTO;
 import com.kernel.global.service.dto.request.PresignedUrlReqDTO;
 import com.kernel.global.service.dto.response.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@Tag(name = "File Upload API", description = "Presigned URL 발급 및 파일 테이블 관리 API")
 @RestController
 @RequestMapping("/api/files")
 @RequiredArgsConstructor
