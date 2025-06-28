@@ -30,6 +30,9 @@ dependencies {
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    // Springdoc OpenAPI for Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+
     // json 직렬화
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
