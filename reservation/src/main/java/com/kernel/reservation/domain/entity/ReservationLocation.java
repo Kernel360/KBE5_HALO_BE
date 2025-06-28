@@ -1,5 +1,6 @@
 package com.kernel.reservation.domain.entity;
 
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.*;
 

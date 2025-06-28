@@ -2,13 +2,13 @@ package com.kernel.reservation.domain.entity;
 
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.BaseEntity;
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
