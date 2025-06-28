@@ -1,4 +1,4 @@
-package com.kernel.reservation.domain.enums;
+package com.kernel.reservation.common.enums;
 
 public enum RefundType {
     REFUND_PROCESSING("환불 진행중"),
