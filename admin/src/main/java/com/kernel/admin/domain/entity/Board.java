@@ -1,6 +1,6 @@
 package com.kernel.admin.domain.entity;
 
-import com.kernel.admin.domain.enumerate.BoardType;
+import com.kernel.admin.common.enums.BoardType;
 
 public class Board {
     private Long noticeId;
