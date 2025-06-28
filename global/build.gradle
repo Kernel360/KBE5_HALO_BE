@@ -23,6 +23,9 @@ dependencies {
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    // Springdoc OpenAPI for Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
@@ -31,12 +34,6 @@ dependencies {
     // Lombok (개발 편의)
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
-    // MapStruct
-    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
-
-    // Mapping 구현체
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 
     // 공통 예외 처리를 위한 Web 패키지
     implementation 'org.springframework.boot:spring-boot-starter-web'

@@ -1,7 +1,5 @@
 package com.kernel.global.controller;
 
-
-
 import com.kernel.global.service.FileUploadService;
 import com.kernel.global.service.dto.request.FileUpdateReqDTO;
 import com.kernel.global.service.dto.request.FileUploadReqDTO;
@@ -13,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/files")
