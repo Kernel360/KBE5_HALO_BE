@@ -5,11 +5,14 @@ import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.service.dto.request.InquiryCreateReqDTO;
 import com.kernel.inquiry.service.dto.request.InquiryUpdateReqDTO;
 import com.kernel.inquiry.service.inquiry.InquiryCommandService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "문의사항 관리 API", description = "관리자 문의사항 생성, 수정, 삭제 API")
 @RestController
 @RequestMapping("/api/manager/inquiry/command")
 @RequiredArgsConstructor

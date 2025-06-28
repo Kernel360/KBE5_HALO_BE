@@ -5,6 +5,8 @@ import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.member.service.common.UserService;
 import com.kernel.member.service.common.request.UserFindAccountReqDTO;
 import com.kernel.member.service.common.request.UserResetPwdReqDTO;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Tag(name = "User API", description = "사용자 계정 관리 API")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
