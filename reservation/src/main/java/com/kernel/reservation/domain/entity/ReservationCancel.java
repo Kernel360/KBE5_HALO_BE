@@ -23,8 +23,10 @@ public class ReservationCancel extends BaseEntity {
 
     // 예약 ID
     @Id
-    @OneToOne(fetch = FetchType.LAZY)
+    private Long reservationId;
+
     @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
