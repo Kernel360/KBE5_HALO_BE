@@ -38,5 +38,5 @@ public class ManagerStatistic extends BaseEntity {
     // 매니저가 받은 별점 평균
     @Column(precision = 2, scale = 1)
     @Builder.Default
-    private BigDecimal rating = BigDecimal.ZERO;
+    private BigDecimal averageRating = BigDecimal.ZERO;
 }
