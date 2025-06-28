@@ -1,5 +1,6 @@
 package com.kernel.global.security;
 
+import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
 import lombok.Getter;
@@ -45,6 +46,11 @@ public class CustomUserDetails implements UserDetails {
     // 계정 상태
     public UserStatus getStatus() {
         return this.user.getStatus();
+    }
+
+    // 계정 권한
+    public UserRole getRole(){
+        return this.user.getRole();
     }
 
     @Override
