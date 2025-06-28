@@ -26,14 +26,17 @@ public class CustomerStatistic  extends BaseEntity {
 
     // 평점
     @Column(nullable = false)
-    private BigDecimal rating;
+    @Builder.Default
+    private BigDecimal averageRating = BigDecimal.ZERO;
 
     // 리뷰 수
     @Column(nullable = false)
-    private Integer review_count;
+    @Builder.Default
+    private Integer reviewCount = 0;
 
     // 예약 수
     @Column(nullable = false)
-    private Integer reservation_count;
+    @Builder.Default
+    private Integer reservationCount = 0;
 
 }
