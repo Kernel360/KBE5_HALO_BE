@@ -3,8 +3,11 @@ package com.kernel.reservation.repository;
 import com.kernel.reservation.service.info.CustomerReservationDetailInfo;
 import com.kernel.reservation.service.info.CustomerReservationSummaryInfo;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Optional;
 
 
 public interface CustomCustomerReservationRepository {
