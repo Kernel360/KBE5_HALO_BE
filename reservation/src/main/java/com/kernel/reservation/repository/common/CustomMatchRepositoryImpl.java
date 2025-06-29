@@ -22,6 +22,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -78,6 +79,14 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                 .having(availableTime.manager.userId.count().goe((long) turnaround))
                 .fetch();
 
+        // 거리 허용 범위 (약 5km에 해당하는 위도/경도 범위)
+        BigDecimal latDelta = new BigDecimal("0.045");
+        BigDecimal lngDelta = new BigDecimal("0.055");
+
+        // 기준 좌표
+        BigDecimal targetLat = reservationReqDTO.getLatitude();
+        BigDecimal targetLng = reservationReqDTO.getLongitude();
+
         // 4. 최종 매칭 매니저 조회
         List<Long> matchedManagers = queryFactory
                 .select(
@@ -89,13 +98,17 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                 .where(
                         manager.contractStatus.eq(ContractStatus.APPROVED),     // 매니저 계약 상태
                         user.status.eq(UserStatus.ACTIVE),                      // 계정 상태
+                        manager.userId.in(availableManagerIds),                 // 업무 가능 매니저
 
+                        // [1단계 필터] 대략적인 사각 범위 필터링
+                        userInfo.latitude.between(targetLat.subtract(latDelta), targetLat.add(latDelta)),
+                        userInfo.longitude.between(targetLng.subtract(lngDelta), targetLng.add(lngDelta)),
+
+                        // [2단계 필터] 정확한 거리 계산 (Haversine)
                         Expressions.numberTemplate(Double.class,
                                 "6371 * acos(cos(radians({0})) * cos(radians({1}.latitude)) * cos(radians({1}.longitude) - radians({2})) + sin(radians({0})) * sin(radians({1}.latitude)))",
-                                reservationReqDTO.getLatitude(), userInfo, reservationReqDTO.getLongitude()
-                        ).loe(5),                                         // 거리 5km 이하
-
-                        manager.userId.in(availableManagerIds),                 // 업무 가능 매니저
+                                targetLat, userInfo, targetLng
+                        ).loe(5),
 
                         // 중복 예약 확인
                         JPAExpressions
