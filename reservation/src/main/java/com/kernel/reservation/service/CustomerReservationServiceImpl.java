@@ -117,7 +117,7 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
     public void cancelReservationByCustomer(Long userId, UserRole userRole, ReservationCancelReqDTO cancelReqDTO) {
 
         // 1. 예약 조회
-        Reservation foundReservation = customerReservationRepository.findByReservationIdAndUser_UserId(cancelReqDTO.getReservationId(), userId)
+        Reservation foundReservation = customerReservationRepository.getCancelableReservation(cancelReqDTO.getReservationId(), userId)
                 .orElseThrow(() -> new NoSuchElementException("취소 가능한 예약이 존재하지 않습니다."));
 
         // 2. 예약 상태 변경
@@ -145,7 +145,7 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
         String cancelReason = "매니저 선택 전 취소";
 
         // 1. 예약 조회
-        Reservation foundReservation = customerReservationRepository.findByReservationIdAndUser_UserId(reservationId, userId)
+        Reservation foundReservation = customerReservationRepository.getCancelableReservation(reservationId, userId)
                 .orElseThrow(() -> new NoSuchElementException("취소 가능한 예약이 존재하지 않습니다."));
 
         // 2. 예약 상태 변경
