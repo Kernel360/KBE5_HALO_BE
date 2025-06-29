@@ -17,4 +17,6 @@ public interface CustomerReservationRepository extends JpaRepository<Reservation
             "AND (r.status = 'REQUESTED' OR r.status = 'CONFIRMED')")
     Optional<Reservation> getCancelableReservation(@Param ("reservationId")Long reservationId, @Param("userId") Long userId);
 
+    // 예약 조회
+    Optional<Reservation> findByReservationIdAndUser_UserId(Long reservationId, Long userId);
 }
