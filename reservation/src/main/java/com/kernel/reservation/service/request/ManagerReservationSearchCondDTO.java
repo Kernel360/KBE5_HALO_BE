@@ -21,15 +21,12 @@ public class ManagerReservationSearchCondDTO {
     // 예약 상태
     private List<ReservationStatus> reservationStatus;
 
-    // 체크인 여부
-    private Boolean isCheckedIn;
-
-    // 체크아웃 여부
-    private Boolean isCheckedOut;
-
     // 리뷰 작성 여부
     private Boolean isReviewed;
 
     // 고객명
     public String customerNameKeyword;
+
+    // 매니저
+    public String managerNameKeyword;
 }

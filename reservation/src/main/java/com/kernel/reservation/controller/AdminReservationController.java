@@ -1,9 +1,11 @@
-package com.kernel.common.reservation.controller;
+package com.kernel.reservation.controller;
 
-import com.kernel.common.global.entity.ApiResponse;
-import com.kernel.common.reservation.dto.response.*;
-import com.kernel.common.reservation.enums.ReservationStatus;
-import com.kernel.common.reservation.service.AdminReservationService;
+import com.kernel.global.service.dto.response.ApiResponse;
+import com.kernel.reservation.service.AdminReservationService;
+import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
+import com.kernel.reservation.service.response.AdminReservationDetailRspDTO;
+import com.kernel.reservation.service.response.AdminReservationSummaryRspDTO;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,13 +20,18 @@ public class AdminReservationController {
 
     private final AdminReservationService adminReservationService;
 
-    // 전체 예약 목록 조회 (상태 필터링 가능)
+    /**
+     * 전체 예약 조회(검색 조건 및 페이징 처리)
+     * @param searchCondDTO 검색조건DTO
+     * @param pageable 페이징
+     * @return 검색 조건에 따른 매니저에게 할당된 예약 목록을 응답 (페이징 포함)
+     */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<AdminReservationListRspDTO>>> getReservationList(
-            @RequestParam(required = false) ReservationStatus status,
+    public ResponseEntity<ApiResponse<Page<AdminReservationSummaryRspDTO>>> getReservationList(
+            @RequestParam(required = false) ManagerReservationSearchCondDTO searchCondDTO,
             @PageableDefault(size = 20) Pageable pageable
     ) {
-        Page<AdminReservationListRspDTO> list = adminReservationService.getReservationList(status, pageable);
+        Page<AdminReservationSummaryRspDTO> list = adminReservationService.getReservationList(searchCondDTO, pageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "관리자 예약 목록 조회 성공", list));
     }
 
