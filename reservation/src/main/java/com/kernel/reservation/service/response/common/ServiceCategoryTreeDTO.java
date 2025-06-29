@@ -1,9 +1,10 @@
 package com.kernel.reservation.service.response.common;
 
-import com.kernel.reservation.service.info.ServiceCategoryTreeInfo;
+import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,27 +20,15 @@ public class ServiceCategoryTreeDTO {
 
     private List<ServiceCategoryTreeDTO> children;  // 자식 카테고리
 
-    // ServiceCategoryTreeInfo -> ServiceCategoryTreeDTO
-    public static ServiceCategoryTreeDTO fromInfo(ServiceCategoryTreeInfo info) {
-        if( info == null ) return null;
-
-        List<ServiceCategoryTreeDTO> childDTOs = null;
-
-        if(info.getChildren() != null ) {
-            childDTOs = info.getChildren().stream()
-                    .map(ServiceCategoryTreeDTO::fromInfo)
-                    .toList();
-        }
-
+    public static ServiceCategoryTreeDTO fromEntity(ServiceCategory entity){
         return ServiceCategoryTreeDTO.builder()
-                .serviceId(info.getServiceId())
-                .serviceName(info.getServiceName())
-                .serviceTime(info.getServiceTime())
-                .depth(info.getDepth())
-                .price(info.getPrice())
-                .description(info.getDescription())
-                .children(childDTOs)
+                .serviceId(entity.getServiceId())
+                .serviceName(entity.getServiceName())
+                .serviceTime(entity.getServiceTime())
+                .depth(entity.getDepth())
+                .price(entity.getPrice())
+                .description(entity.getDescription())
+                .children(new ArrayList<>())
                 .build();
     }
-
 }

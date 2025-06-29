@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ServiceCategoryRepository extends JpaRepository<ServiceCategory, Long>, CustomServiceCategoryRepository {
 
-    // 카테고리 조회
-    List<ServiceCategory> findByServiceIdIn(List<Long> additionalServiceIds);
+    // 서비스 카테고리 전체 조회
+    List<ServiceCategory> findAllByOrderByCreatedAtAsc();
 }
