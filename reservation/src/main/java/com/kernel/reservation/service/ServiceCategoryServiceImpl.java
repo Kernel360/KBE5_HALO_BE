@@ -2,15 +2,14 @@ package com.kernel.reservation.service;
 
 
 import com.kernel.reservation.repository.common.ServiceCategoryRepository;
-import com.kernel.reservation.service.info.ServiceCategoryTreeInfo;
 import com.kernel.reservation.service.response.common.ServiceCategoryTreeDTO;
 import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,11 +44,21 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
     @Transactional(readOnly = true)
     public List<ServiceCategoryTreeDTO> getServiceCategoryTree() {
 
-        List<ServiceCategoryTreeInfo> result = serviceCategoryRepository.getServiceCategoryTree();
+        // 1. 모든 카테고리 조회
+        List<ServiceCategory> allCategories = serviceCategoryRepository.findAllByOrderByCreatedAtAsc();
 
-        return result.stream()
-                .map(ServiceCategoryTreeDTO::fromInfo)
+        // 2. 활성 카테고리만 필터링
+        List<ServiceCategory> validCategories = allCategories.stream()
+                .filter(this::isFullyActive)
                 .toList();
+
+        // 3. 트리 구성 후 루트만 반환
+        Map<Long, ServiceCategoryTreeDTO> treeMap = buildServiceCategoryTree(validCategories);
+
+        return validCategories.stream()
+                .filter(c -> c.getParent() == null)
+                .map(c -> treeMap.get(c.getServiceId()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -62,9 +71,58 @@ public class ServiceCategoryServiceImpl implements ServiceCategoryService {
     @Transactional(readOnly = true)
     public ServiceCategoryTreeDTO getRequestServiceCategory(Long mainServiceId, List<Long> extraServiceId) {
 
-        ServiceCategoryTreeInfo result = serviceCategoryRepository.getRequestServiceCategory(mainServiceId, extraServiceId);
+        // 1. 요청 카테고리 조회
+        List<ServiceCategory> filteredCategories = serviceCategoryRepository.getRequestServiceCategory(mainServiceId, extraServiceId);
 
-        return ServiceCategoryTreeDTO.fromInfo(result);
+        // 2. 트리 구성 후 루트 반환
+        Map<Long, ServiceCategoryTreeDTO> treeMap = buildServiceCategoryTree(filteredCategories);
+
+
+        return filteredCategories.stream()
+                .filter(c -> c.getParent() == null || !treeMap.containsKey(c.getParent().getServiceId()))
+                .map(c -> treeMap.get(c.getServiceId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * 공통 트리 구성 로직
+     */
+    private Map<Long, ServiceCategoryTreeDTO> buildServiceCategoryTree(List<ServiceCategory> categories) {
+
+        // 1. Entity → DTO 변환
+        Map<Long, ServiceCategoryTreeDTO> dtoMap = categories.stream()
+                .collect(Collectors.toMap(
+                        ServiceCategory::getServiceId,
+                        ServiceCategoryTreeDTO::fromEntity,
+                        (a, b) -> a,
+                        LinkedHashMap::new
+                ));
+
+        // 2. 부모-자식 관계 설정
+        categories.forEach(category -> {
+            if (category.getParent() != null && dtoMap.containsKey(category.getParent().getServiceId())) {
+                ServiceCategoryTreeDTO parent = dtoMap.get(category.getParent().getServiceId());
+                ServiceCategoryTreeDTO child = dtoMap.get(category.getServiceId());
+                parent.getChildren().add(child);
+            }
+        });
+
+        return dtoMap;
+    }
+
+    /**
+     * 부모 카테고리 isActive = False 확인
+     * @return 활성 여부
+     */
+    private boolean isFullyActive(ServiceCategory category) {
+        while (category != null) {
+            if (category.getIsActive() == null || !category.getIsActive()) {
+                return false;
+            }
+            category = category.getParent();
+        }
+        return true;
     }
 
 
