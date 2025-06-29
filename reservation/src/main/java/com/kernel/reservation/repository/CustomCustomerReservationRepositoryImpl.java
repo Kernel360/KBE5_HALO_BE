@@ -10,6 +10,7 @@ import com.kernel.reservation.service.info.*;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.QReservation;
 import com.kernel.sharedDomain.domain.entity.QServiceCategory;
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -107,8 +108,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
     public CustomerReservationDetailInfo getCustomerReservationDetail(Long userId, Long reservationId) {
 
         // 1. 예약 내역 상세 조회
-        Tuple tuple = queryFactory
-                .select(
+        CustomerReservationDetailInfo detailInfo = queryFactory
+                .select(Projections.fields(CustomerReservationDetailInfo.class,
                         reservation.reservationId,            // 예약 ID
                         reservation.phone,                    // 핸드폰 번호
                         reservation.status,                   // 예약상태
@@ -127,7 +128,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                         managerStatistic.averageRating,        // 매니저 평점 평균
                         managerStatistic.reviewCount,           // 리뷰 수
                         managerStatistic.reservationCount       // 예약 건수
-                )
+                ))
                 .from(reservation)
                 .leftJoin(reservation, location.reservation)
                 .leftJoin(reservation, location.reservation)
@@ -143,11 +144,11 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 .fetchOne();
 
         // 2. null 체크
-        if(tuple == null) {
+        if(detailInfo == null) {
             throw new NoSuchElementException("해당 예약을 찾을 수 없습니다.");
         }
 
-        // 3. 추가 서비스 조회
+        // 3. 추가 서비스 조회 및 설정
         List<ExtraServiceInfo> extraServiceList = queryFactory
                 .select(Projections.fields(ExtraServiceInfo.class,
                         extraService.serviceCategory.serviceId,
@@ -160,11 +161,14 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 .where(extraService.reservation.reservationId.eq(reservationId))
                 .fetch();
 
-        // 4. 예약 취소인 경우 예약 취소 정보 조회
-        ReservationCancelInfo cancelInfo = null;
-        if(ReservationStatus.CANCELED.equals(tuple.get(reservation.status)))
+        if(extraServiceList != null) {
+            detailInfo.initExtraServiceList(extraServiceList);
+        }
+
+        // 4. 예약 취소인 경우 예약 취소 정보 조회 및 설정
+        if(ReservationStatus.CANCELED.equals(detailInfo.getReservationStatus()))
         {
-            cancelInfo = queryFactory
+            ReservationCancelInfo cancelInfo = queryFactory
                     .select(Projections.fields(ReservationCancelInfo.class,
                             reservationCancel.cancelReason,
                             reservationCancel.createdAt
@@ -173,9 +177,11 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                     .leftJoin(user).on(user.userId.eq(reservationCancel.canceledById))
                     .where(reservationCancel.reservation.reservationId.eq(reservationId))
                     .fetchOne();
+
+            detailInfo.initCancelInfo(cancelInfo);
         }
 
-        // 5. 수요자 리뷰 조회
+        // 5. 수요자 리뷰 조회 및 설정
         ReviewInfo foundReview = queryFactory
                 .select(Projections.fields(ReviewInfo.class,
                         review.reviewId,
@@ -191,28 +197,11 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 )
                 .fetchOne();
 
-        // info 객체 생성
-        return CustomerReservationDetailInfo.builder()
-                .reservationId(reservationId)
-                .serviceCategoryId(tuple.get(reservation.serviceCategory.serviceId))
-                .price(tuple.get(reservation.price))
-                .reservationStatus(tuple.get(reservation.status))
-                .memo(tuple.get(reservation.memo))
-                .phone(tuple.get(reservation.phone))
-                .serviceName(tuple.get(serviceCategory.serviceName))
-                .roadAddress(tuple.get(location.roadAddress))
-                .detailAddress(tuple.get(location.detailAddress))
-                .requestDate(tuple.get(schedule.requestDate))
-                .startTime(tuple.get(schedule.startTime))
-                .turnaround(tuple.get(schedule.turnaround))
-                .extraServices(extraServiceList)
-                .managerName(tuple.get(match.manager.userName))
-                .bio(tuple.get(manager.bio))
-                .reviewCount(tuple.get(managerStatistic.reviewCount))
-                .averageRating(tuple.get(managerStatistic.averageRating))
-                .reservationCancel(cancelInfo)
-                .review(foundReview)
-                .build();
+        if(foundReview != null) {
+            detailInfo.initReview(foundReview);
+        }
+
+        return detailInfo;
     }
 
     /**

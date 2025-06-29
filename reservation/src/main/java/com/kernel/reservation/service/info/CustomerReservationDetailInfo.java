@@ -91,4 +91,20 @@ public class CustomerReservationDetailInfo {
     /* Review */
     private ReviewInfo review;
 
+    // 추가서비스 설정
+    public void initExtraServiceList(List<ExtraServiceInfo> extraInfo){
+        extraServices = extraInfo;
+    }
+
+    // 예약 취소 정보 설정
+    public void initCancelInfo(ReservationCancelInfo cancelInfo){
+        this.reservationCancel = cancelInfo;
+    }
+
+    // 리뷰 설정
+    public void initReview(ReviewInfo reviewInfo){
+        this.review = reviewInfo;
+    }
+
+
 }
