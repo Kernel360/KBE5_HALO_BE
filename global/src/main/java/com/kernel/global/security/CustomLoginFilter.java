@@ -24,6 +24,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +52,34 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(credentials.phone, credentials.password);
 
-            return authenticationManager.authenticate(authToken);
+            //return authenticationManager.authenticate(authToken);
+
+            Authentication authentication = authenticationManager.authenticate(authToken);
+
+            // 역할 검증 로직 추가
+            // 역할 검증 로직 수정
+            String role = authentication.getAuthorities().stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .map(r -> r.replace("ROLE_", "").toLowerCase()) // "ROLE_" 제거 후 소문자로 변환
+                    .orElseThrow(() -> new IllegalStateException("No authority found for authenticated user."));
+
+            // 요청된 페이지 URI
+            String requestedPage = request.getRequestURI();
+
+            // 경로에서 "admin", "customer", "manager" 중 포함된 값을 추출
+            String[] userTypes = {"admin", "customer", "manager"};
+            String requestedType = Arrays.stream(userTypes)
+                    .filter(requestedPage::contains)
+                    .findFirst()
+                    .orElse(null);
+
+            // ROLE_ 접두사 제거한 권한과 비교
+            if (requestedType != null && !role.equals(requestedType)) {
+                throw new AuthenticationServiceException("해당 페이지에 접근할 권한이 없습니다.");
+            }
+
+            return authentication;
         }catch (Exception e) {
             throw new AuthenticationServiceException("로그인 처리 중 오류가 발생했습니다.", e);
         }
