@@ -7,17 +7,19 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Schema(description = "고객 피드백 요청 DTO")
 public class CustomerFeedbackReqDTO {
 
-    // 매니저ID
     @NotNull(message = "매니저를 선택해주세요.")
+    @Schema(description = "매니저 ID", example = "123")
     private Long managerId;
 
-    // 피드백 타입
     @NotNull(message = "타입을 선택해주세요.")
+    @Schema(description = "피드백 타입", example = "POSITIVE")
     private FeedbackType type;
 
     public Feedback toEntity(Long userId, CustomerFeedbackReqDTO reqDTO) {

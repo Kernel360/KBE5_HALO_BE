@@ -1,13 +1,16 @@
 package com.kernel.global.service.dto.response;
 
 import com.kernel.global.domain.entity.File;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
+@Schema(description = "파일 조회 응답 DTO")
 public class FileGetRspDTO {
-    // 파일 URL
+
+    @Schema(description = "파일 URL", example = "https://example.com/file1", required = true)
     private String fileUrls;
 
     // File Entity to FileGetRspDTO 변환 메소드

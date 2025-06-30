@@ -4,20 +4,23 @@ import com.kernel.global.common.enums.UserStatus;
 import com.kernel.member.service.common.info.UserAccountInfo;
 import lombok.Builder;
 import lombok.Getter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Getter
 @Builder
+@Schema(description = "관리자 상세 응답 DTO")
 public class AdminDetailRspDTO {
-    // 핸드폰 번호
+
+    @Schema(description = "핸드폰 번호", example = "01012345678")
     private String phone;
 
-    // 이메일
+    @Schema(description = "이메일 주소", example = "example@domain.com")
     private String email;
 
-    // 이름
+    @Schema(description = "사용자 이름", example = "홍길동")
     private String userName;
 
-    // 계정 상태
+    @Schema(description = "계정 상태", example = "ACTIVE")
     private UserStatus status;
 
     // info -> DTO 변환
