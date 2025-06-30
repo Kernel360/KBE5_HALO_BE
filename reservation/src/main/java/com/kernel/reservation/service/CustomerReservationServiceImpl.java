@@ -3,8 +3,9 @@ package com.kernel.reservation.service;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
-import com.kernel.global.repository.UserRepository;
-import com.kernel.reservation.domain.entity.*;
+import com.kernel.reservation.domain.entity.ReservationCancel;
+import com.kernel.reservation.domain.entity.ReservationLocation;
+import com.kernel.reservation.domain.entity.ReservationSchedule;
 import com.kernel.reservation.repository.CustomerReservationRepository;
 import com.kernel.reservation.repository.common.ReservationCancelRepository;
 import com.kernel.reservation.repository.common.ReservationLocationRepository;
@@ -140,6 +141,7 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
      * @param reservationId 예약ID
      */
     @Override
+    @Transactional
     public void cancelBeforeConfirmReservation(Long userId, UserRole userRole, Long reservationId) {
 
         String cancelReason = "매니저 선택 전 취소";
