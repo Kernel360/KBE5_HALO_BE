@@ -1,11 +1,14 @@
 package com.kernel.inquiry.repository;
 
+import com.kernel.global.common.enums.UserRole;
+import com.kernel.inquiry.common.exception.CustomNoDataFoundException;
 import com.kernel.inquiry.domain.entity.QInquiry;
 import com.kernel.inquiry.domain.info.InquirySummaryInfo;
 import com.kernel.inquiry.service.dto.request.InquirySearchReqDTO;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,7 +35,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
      * @return 페이징된 Inquiry 결과
      */
     @Override
-    public Page<InquirySummaryInfo> searchInquiriesWithPagination(InquirySearchReqDTO request, Long authorId, Pageable pageable) {
+    public Page<InquirySummaryInfo> searchInquiriesWithPagination(InquirySearchReqDTO request, Long authorId, Boolean isAdmin, Pageable pageable) {
         QInquiry inquiry = QInquiry.inquiry;
 
         // 전체 개수 조회
@@ -41,7 +44,8 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
                         .select(inquiry.count())
                         .from(inquiry)
                         .where(
-                                authorEq(authorId),
+                                authorEq(authorId, isAdmin),
+                                authorRoleEq(request.getAuthorRole(), isAdmin),
                                 notDeleted(),
                                 createdAtGoe(request.getFromCreatedAt()),
                                 createdAtLoe(request.getToCreatedAt()),
@@ -52,9 +56,14 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
                         .fetchOne()
         ).orElse(0L);
 
+        // 조회 개수가 0인 경우 예외 처리
+        if (total == 0) {
+            throw new CustomNoDataFoundException("조건에 맞는 문의사항이 없습니다.");
+        }
+
         // 페이지 결과 조회
         List<InquirySummaryInfo> results = jpaQueryFactory
-                .select(Projections.constructor(InquirySummaryInfo.class,
+                .select(Projections.fields(InquirySummaryInfo.class,
                         inquiry.inquiryId,
                         inquiry.title,
                         inquiry.content,
@@ -62,7 +71,8 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
                         inquiry.isReplied
                 ))
                 .where(
-                        authorEq(authorId),
+                        authorEq(authorId, isAdmin),
+                        authorRoleEq(request.getAuthorRole(), isAdmin),
                         notDeleted(),
                         createdAtGoe(request.getFromCreatedAt()),
                         createdAtLoe(request.getToCreatedAt()),
@@ -79,16 +89,43 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
     }
 
     /**
-     * 작성자 ID로 Inquiry를 조회하는 조건식
+     * 작성자 ID에 따라 Inquiry를 조회하는 조건식
      *
      * @param authorId 작성자 ID
-     * @return 작성자 ID와 일치하는 조건식
+     * @param isAdmin  관리자 여부
+     * @return 작성자 ID에 따른 Inquiry 조건식
      */
-    private BooleanExpression authorEq(Long authorId) {
+    private BooleanExpression authorEq(Long authorId, Boolean isAdmin) {
+        // 관리자일 경우 작성자 ID가 null인 경우 모든 Inquiry를 조회
+        if (isAdmin != null && isAdmin) {
+            return authorId == null ? null : QInquiry.inquiry.authorId.eq(authorId);
+        }
+        // 일반 사용자의 경우 작성자 ID가 null이 아니어야 함
         if (authorId == null) {
             throw new IllegalArgumentException("작성자 ID는 필수입니다.");
         }
         return QInquiry.inquiry.authorId.eq(authorId);
+    }
+
+    private BooleanExpression authorRoleEq(String authorRole, Boolean isAdmin) {
+        // 관리자가 아닐 경우 null
+        if (isAdmin != null && !isAdmin) {
+            return Expressions.asBoolean(false);
+        }
+
+        // 관리자가 문의를 조회할 때 작성자 유형이 지정되어야 함
+        if (isAdmin != null && isAdmin && (authorRole == null || authorRole.isEmpty())) {
+            throw new IllegalArgumentException("관리자가 문의를 조회할 때 조회할 작성자 유형을 지정해야합니다.");
+        }
+
+        // 작성자 유형에 따라 조건식 생성
+        if (UserRole.CUSTOMER.name().equals(authorRole)) {
+            return QInquiry.inquiry.authorRole.eq(UserRole.CUSTOMER);
+        } else if (UserRole.MANAGER.name().equals(authorRole)) {
+            return QInquiry.inquiry.authorRole.eq(UserRole.MANAGER);
+        } else {
+            throw new IllegalArgumentException("유효하지 않은 작성자 유형입니다.");
+        }
     }
 
     /**
