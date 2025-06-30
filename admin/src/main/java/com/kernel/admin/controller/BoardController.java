@@ -76,7 +76,7 @@ public class BoardController {
     ) {
         BoardDetailRspDTO updateBoard = boardService.updateBoard(boardId, requestDto);
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "게시글 수정 완료", null));
+        return ResponseEntity.ok(new ApiResponse<>(true, "게시글 수정 완료", updateBoard));
     }
 
     /**
@@ -85,7 +85,7 @@ public class BoardController {
      */
     @DeleteMapping("/{board-id}")
     public ResponseEntity<ApiResponse<Void>> deleteBoard(
-            @PathVariable("{board-id}") Long boardId
+            @PathVariable("board-id") Long boardId
     ) {
         boardService.deleteBoard(boardId);
 
