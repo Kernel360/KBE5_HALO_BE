@@ -1,14 +1,13 @@
 package com.kernel.inquiry.service.dto.request;
 
-import com.kernel.global.common.enums.UserRole;
+import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.domain.entity.Inquiry;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
@@ -34,14 +33,13 @@ public class InquiryCreateReqDTO {
     @NotNull(message = "카테고리를 선택해주세요.")
     private Enum<?> category;
 
-    // reqDTO to Entity Mapping
-    public static Inquiry toEntity(InquiryCreateReqDTO request, Long authorId, UserRole authorRole) {
+    public static Inquiry toEntity(InquiryCreateReqDTO request, Long authorId, AuthorType authorType) {
         return Inquiry.builder()
                 .authorId(authorId)
                 .authorRole(authorRole)
                 .title(request.getTitle())
                 .content(request.getContent())
-                .fileId(request.getFilePaths() != null && !request.getFilePaths().isEmpty() ? Long.parseLong(request.getFilePaths().get(0)) : null)
+                .fileId(request.getFilePaths() != null && !request.getFilePaths().isEmpty() ? Long.parseLong(request.getFilePaths().get(0)) : null) // 첫 번째 파일 ID 사용
                 .category(request.getCategory())
                 .build();
     }
