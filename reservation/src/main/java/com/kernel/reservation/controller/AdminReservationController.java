@@ -27,8 +27,8 @@ public class AdminReservationController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<AdminReservationSummaryRspDTO>>> getReservationList(
-            @RequestParam(required = false) AdminReservationSearchCondDTO searchCondDTO,
-            @PageableDefault(size = 20) Pageable pageable
+            @ModelAttribute AdminReservationSearchCondDTO searchCondDTO,
+            @PageableDefault(size = 15) Pageable pageable
     ) {
         Page<AdminReservationSummaryRspDTO> list = adminReservationService.getReservationList(searchCondDTO, pageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "관리자 예약 목록 조회 성공", list));
