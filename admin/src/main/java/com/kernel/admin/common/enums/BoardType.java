@@ -1,12 +1,12 @@
-package com.kernel.common.global.enums;
+package com.kernel.admin.common.enums;
 
-public enum NoticeType {
+public enum BoardType {
     NOTICE("공지"),
     EVENT("이벤트");
 
     private String noticeName;
 
-    NoticeType(String noticeName) {
+    BoardType(String noticeName) {
         this.noticeName = noticeName;
     }
 
