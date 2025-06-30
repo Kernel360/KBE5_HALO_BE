@@ -20,11 +20,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.kernel.inquiry.domain.entity.QInquiry.inquiry;
+
 @Repository
 @RequiredArgsConstructor
 public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 
     private final JPQLQueryFactory jpaQueryFactory;
+    private final QInquiry inquiry = QInquiry.inquiry;
 
     /**
      * Inquiry 검색 및 페이징 처리
@@ -36,7 +39,6 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
      */
     @Override
     public Page<InquirySummaryInfo> searchInquiriesWithPagination(InquirySearchReqDTO request, Long authorId, Boolean isAdmin, Pageable pageable) {
-        QInquiry inquiry = QInquiry.inquiry;
 
         // 전체 개수 조회
         long total = Optional.ofNullable(
@@ -98,13 +100,13 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
     private BooleanExpression authorEq(Long authorId, Boolean isAdmin) {
         // 관리자일 경우 작성자 ID가 null인 경우 모든 Inquiry를 조회
         if (isAdmin != null && isAdmin) {
-            return authorId == null ? null : QInquiry.inquiry.authorId.eq(authorId);
+            return authorId == null ? null : inquiry.authorId.eq(authorId);
         }
         // 일반 사용자의 경우 작성자 ID가 null이 아니어야 함
         if (authorId == null) {
             throw new IllegalArgumentException("작성자 ID는 필수입니다.");
         }
-        return QInquiry.inquiry.authorId.eq(authorId);
+        return inquiry.authorId.eq(authorId);
     }
 
     private BooleanExpression authorRoleEq(String authorRole, Boolean isAdmin) {
@@ -120,9 +122,9 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
 
         // 작성자 유형에 따라 조건식 생성
         if (UserRole.CUSTOMER.name().equals(authorRole)) {
-            return QInquiry.inquiry.authorRole.eq(UserRole.CUSTOMER);
+            return inquiry.authorRole.eq(UserRole.CUSTOMER);
         } else if (UserRole.MANAGER.name().equals(authorRole)) {
-            return QInquiry.inquiry.authorRole.eq(UserRole.MANAGER);
+            return inquiry.authorRole.eq(UserRole.MANAGER);
         } else {
             throw new IllegalArgumentException("유효하지 않은 작성자 유형입니다.");
         }
@@ -134,7 +136,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
      * @return 삭제되지 않은 Inquiry 조건식
      */
     private BooleanExpression notDeleted() {
-        return QInquiry.inquiry.isDeleted.isFalse();
+        return inquiry.isDeleted.isFalse();
     }
 
     /**
@@ -144,7 +146,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
      * @return 지정된 날짜 이후인 Inquiry 조건식
      */
     private BooleanExpression createdAtGoe(LocalDateTime fromCreatedAt) {
-        return fromCreatedAt != null ? QInquiry.inquiry.createdAt.goe(fromCreatedAt) : null;
+        return fromCreatedAt != null ? inquiry.createdAt.goe(fromCreatedAt) : null;
     }
 
     /**
@@ -154,7 +156,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
      * @return 지정된 날짜 이전인 Inquiry 조건식
      */
     private BooleanExpression createdAtLoe(LocalDateTime toCreatedAt) {
-        return toCreatedAt != null ? QInquiry.inquiry.createdAt.loe(toCreatedAt) : null;
+        return toCreatedAt != null ? inquiry.createdAt.loe(toCreatedAt) : null;
     }
 
     /**
@@ -164,7 +166,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
      * @return 제목에 키워드가 포함된 Inquiry 조건식
      */
     private BooleanExpression titleContains(String titleKeyword) {
-        return titleKeyword != null && !titleKeyword.isEmpty() ? QInquiry.inquiry.title.containsIgnoreCase(titleKeyword) : null;
+        return titleKeyword != null && !titleKeyword.isEmpty() ? inquiry.title.containsIgnoreCase(titleKeyword) : null;
     }
 
     /**
@@ -174,7 +176,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
      * @return 내용에 키워드가 포함된 Inquiry 조건식
      */
     private BooleanExpression contentContains(String contentKeyword) {
-        return contentKeyword != null && !contentKeyword.isEmpty() ? QInquiry.inquiry.content.containsIgnoreCase(contentKeyword) : null;
+        return contentKeyword != null && !contentKeyword.isEmpty() ? inquiry.content.containsIgnoreCase(contentKeyword) : null;
     }
 
     /**

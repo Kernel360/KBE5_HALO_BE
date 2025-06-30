@@ -3,6 +3,7 @@ package com.kernel.inquiry.controller.inquiry;
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.inquiry.service.dto.request.InquirySearchReqDTO;
+import com.kernel.inquiry.service.dto.response.InquiryDetailRspDTO;
 import com.kernel.inquiry.service.dto.response.InquirySummaryRspDTO;
 import com.kernel.inquiry.service.inquiry.InquiryService;
 
@@ -36,10 +37,10 @@ public class InquiryAdminController {
 
     // 문의사항 상세 조회
     @GetMapping("{inquiry-id}")
-    public ResponseEntity<ApiResponse<InquirySummaryRspDTO>> getInquiryDetails(
+    public ResponseEntity<ApiResponse<InquiryDetailRspDTO>> getInquiryDetails(
             @PathVariable("inquiry-id") Long inquiryId
     ) {
-        InquirySummaryRspDTO inquiryDetails = inquiryService.getInquiryDetails(inquiryId);
+        InquiryDetailRspDTO inquiryDetails = inquiryService.getInquiryDetails(inquiryId);
         return ResponseEntity.ok(new ApiResponse<>(true, "문의사항 상세 조회 성공", inquiryDetails));
     }
 }
