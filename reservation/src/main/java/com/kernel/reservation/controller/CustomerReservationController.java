@@ -115,9 +115,9 @@ public class CustomerReservationController {
      * @param user 로그인한 유저
      * @return 조회된 예약 상세 정보
      */
-    @GetMapping("{reservation_id}")
+    @GetMapping("{reservation-id}")
     public ResponseEntity<ApiResponse<CustomerReservationDetailRspDTO>> getCustomerReservationDetail(
-            @PathVariable("reservation_id") Long reservationId,
+            @PathVariable("reservation-id") Long reservationId,
             @AuthenticationPrincipal CustomUserDetails user
     ){
         CustomerReservationDetailRspDTO detailRspDTO
@@ -151,9 +151,9 @@ public class CustomerReservationController {
      * @param reservationId 예약ID
      * @param user 수요자ID
      */
-    @PatchMapping("/{reservation_id}/pre-cancel")
+    @PatchMapping("/{reservation-id}/pre-cancel")
     public ResponseEntity<ApiResponse<Void>> cancelBeforeConfirmReservation(
-            @PathVariable("reservation_id") Long reservationId,
+            @PathVariable("reservation-id") Long reservationId,
             @AuthenticationPrincipal CustomUserDetails user
     ){
         customerReservationService.cancelBeforeConfirmReservation(user.getUserId(), user.getRole(), reservationId);
