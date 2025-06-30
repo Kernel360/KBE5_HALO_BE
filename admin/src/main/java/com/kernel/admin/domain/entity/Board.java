@@ -44,7 +44,7 @@ public class Board extends BaseEntity {
     // 삭제 여부
     @Column(nullable = false)
     @Builder.Default
-    private Boolean is_Deleted = Boolean.FALSE;
+    private Boolean isDeleted = Boolean.FALSE;
 
     // 조회 수
     @Column(nullable = false)
@@ -77,6 +77,6 @@ public class Board extends BaseEntity {
 
     // 삭제
     public void delete(){
-        this.is_Deleted = true;
+        this.isDeleted = true;
     }
 }
