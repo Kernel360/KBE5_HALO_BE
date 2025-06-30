@@ -47,7 +47,7 @@ public class BoardDetailRspDTO {
                 .content(board.getContent())
                 .fileId(board.getFile().getFileId())
                 .filePathsJson(board.getFile().getFilePathsJson())
-                .deleted(board.getIs_Deleted())
+                .deleted(board.getIsDeleted())
                 .views(board.getViews())
                 .build();
     }

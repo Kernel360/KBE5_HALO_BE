@@ -39,7 +39,7 @@ public class BoardSummaryRspDTO {
                 .boardType(board.getBoardType())
                 .title(board.getTitle())
                 .content(trimContent(board.getContent()))
-                .deleted(board.getIs_Deleted())
+                .deleted(board.getIsDeleted())
                 .views(board.getViews())
                 .build();
     }

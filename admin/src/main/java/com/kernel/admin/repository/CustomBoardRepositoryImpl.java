@@ -53,7 +53,7 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
                         board.boardType,
                         board.title,
                         board.content,
-                        board.is_Deleted.as("deleted"),
+                        board.isDeleted.as("deleted"),
                         board.views
                 ))
                 .from(board)
