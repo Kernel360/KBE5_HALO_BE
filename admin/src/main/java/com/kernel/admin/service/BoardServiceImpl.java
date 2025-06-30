@@ -8,7 +8,6 @@ import com.kernel.admin.service.dto.request.BoardSearchCondDTO;
 import com.kernel.admin.service.dto.response.BoardDetailRspDTO;
 import com.kernel.admin.service.dto.response.BoardSummaryRspDTO;
 import com.kernel.admin.service.info.BoardInfo;
-import com.kernel.global.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +21,6 @@ import java.util.NoSuchElementException;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
-    private final FileUploadService fileUploadService;
 
     /**
      * 공지/이벤트 생성
@@ -103,7 +101,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public void deleteBoard(Long boardId) {
 
-        Board deleteBoard = boardRepository.findById(boardId)
+        Board deleteBoard = boardRepository.findByBoardIdAndIsDeleted(boardId, false)
                 .orElseThrow(() -> new NoSuchElementException("삭제할 공지/이벤트가 존재하지 않습니다.."));
 
         deleteBoard.delete();
