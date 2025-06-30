@@ -4,13 +4,13 @@ public enum BoardType {
     NOTICE("공지"),
     EVENT("이벤트");
 
-    private String noticeName;
+    private String BoardName;
 
-    BoardType(String noticeName) {
-        this.noticeName = noticeName;
+    BoardType(String boardName) {
+        this.BoardName = boardName;
     }
 
-    public String getNoticeName() {
-        return noticeName;
+    public String getBoardName() {
+        return BoardName;
     }
 }
