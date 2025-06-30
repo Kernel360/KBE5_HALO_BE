@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ServiceCategoryController {
 
-    private ServiceCategoryService serviceCategoryService;
+    private final ServiceCategoryService serviceCategoryService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<ServiceCategoryTreeDTO>>> getAllServiceCategory() {
