@@ -25,7 +25,7 @@ public class Customer extends BaseEntity {
     // 포인트 TODO 테스트용 초기값 설정
     @Column(nullable = false)
     @Builder.Default
-    private Integer point = 500000;
+    private Integer point = 1000000;
 
     public void updatePoint(Integer point) {
         this.point = point;
