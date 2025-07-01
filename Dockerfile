@@ -2,11 +2,14 @@
 FROM amazoncorretto:17-alpine AS build
 WORKDIR /workspace
 
-COPY build.gradle settings.gradle gradlew gradle/ ./
+COPY gradle gradle
+COPY gradlew .
+COPY settings.gradle .
+COPY build.gradle .
 RUN ./gradlew dependencies
 
-COPY src ./src
-RUN ./gradlew bootJar -x test
+COPY . .
+RUN ./gradlew clean bootJar -x test
 
 # Runtime Stage
 FROM amazoncorretto:17-alpine
