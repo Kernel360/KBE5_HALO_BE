@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface CustomInquiryRepository {
 
-    Page<InquirySummaryInfo> searchInquiriesWithPagination(InquirySearchReqDTO request, Long authorId, Pageable pageable);
+    Page<InquirySummaryInfo> searchInquiriesWithPagination(InquirySearchReqDTO request, Long authorId,  Boolean isAdmin, Pageable pageable);
 }

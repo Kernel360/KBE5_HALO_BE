@@ -1,5 +1,6 @@
 package com.kernel.inquiry.domain.entity;
 
+import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
@@ -34,7 +35,7 @@ public class Inquiry extends BaseEntity {
 
     // 작성자 유형
     @Column
-    private AuthorType authorType;
+    private UserRole authorRole;
 
     // 제목
     @Column(length = 50)

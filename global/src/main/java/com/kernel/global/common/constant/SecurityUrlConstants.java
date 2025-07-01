@@ -26,7 +26,7 @@ public class SecurityUrlConstants  {
     // 인증 필요 (로그인한 모든 사용자)
     public static final String[] AUTHENTICATED_URLS = {
             "/api/logout",
-            "/api/reissue",
+
             "/api/files/**",
             "/api/auth/password-check",
             "/api/auth/reset-pwd",
