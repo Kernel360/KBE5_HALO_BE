@@ -1,7 +1,7 @@
 name: Main Branch CD
 
 on:
-  pull_request:
+  push:
     branches:
       - main
       - server/dev # test 용
