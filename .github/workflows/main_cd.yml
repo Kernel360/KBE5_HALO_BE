@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - server/dev # test 용
+      - server/dev # 환경 분리 후 수정 예정
 
 jobs:
   BuildAndPushImage:
