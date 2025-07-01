@@ -45,7 +45,7 @@ public class Reservation extends BaseEntity {
     private String phone;
 
     // 서비스 ID
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
     private ServiceCategory serviceCategory;
 

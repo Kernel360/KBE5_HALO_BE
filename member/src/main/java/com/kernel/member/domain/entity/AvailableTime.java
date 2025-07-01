@@ -26,7 +26,7 @@ public class AvailableTime {
     private Long availableTimeId;
 
     // 매니저 ID
-    @OneToOne
+    @ManyToOne
     @JoinColumn(columnDefinition = "manager_id", nullable = false)
     private Manager manager;
 
