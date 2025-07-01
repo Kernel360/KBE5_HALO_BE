@@ -43,7 +43,7 @@ public class BoardController {
     @GetMapping("")
     public ResponseEntity<ApiResponse<Page<BoardSummaryRspDTO>>> searchBoardList(
             @ModelAttribute BoardSearchCondDTO searchCondDTO,
-            @PageableDefault(size = 20) Pageable pageable
+            @PageableDefault(size = 15) Pageable pageable
     ) {
         Page<BoardSummaryRspDTO> dtoPage = boardService.searchBoardList(searchCondDTO, pageable);
 
