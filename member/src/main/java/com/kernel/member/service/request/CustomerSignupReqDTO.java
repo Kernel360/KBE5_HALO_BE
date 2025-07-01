@@ -20,8 +20,4 @@ public class CustomerSignupReqDTO {
     @Valid
     private UserInfoSignupReqDTO userInfoSignupReqDTO;
 
-    @Schema(description = "고객 정보", required = true)
-    @Valid
-    private CustomerReqDTO customerReqDTO;
-
 }
