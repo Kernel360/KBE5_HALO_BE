@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Customer API", description = "수요자 계정 관리 API")
 @RestController
-@RequestMapping("/api/customer/auth")
+@RequestMapping("/api/customers/auth")
 @RequiredArgsConstructor
 public class CustomerController {
 
