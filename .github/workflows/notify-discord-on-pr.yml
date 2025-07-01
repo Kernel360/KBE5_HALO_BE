@@ -1,0 +1,51 @@
+name: Notify Discord on PR
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+      - refactor/#170
+    types: [opened, synchronize]
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR 생성 알림 (opened)
+        if: github.event.action == 'opened'
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          content: |
+            # 🛠️ Pull Request 알림
+            **제목**: ${{ github.event.pull_request.title }}
+            **작성자**: `${{ github.actor }}`
+            **URL**: <${{ github.event.pull_request.html_url }}>
+            # 📝 리뷰 요청
+            `${{ github.event.pull_request.body || '리뷰 부탁드립니다!' }}`
+
+      - name: 커밋 메시지 가져오기 (synchronize)
+        if: github.event.action == 'synchronize'
+        id: get_commits
+        run: |
+          echo "🔍 PR 커밋 메시지를 가져옵니다..."
+          commits=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "${{ github.event.pull_request.commits_url }}" || echo "[]")
+          messages=$(echo "$commits" | jq -r '.[].commit.message' 2>/dev/null | sed ':a;N;$!ba;s/\n/\\n- /g')
+          if [ -z "$messages" ]; then
+            messages="(❗커밋 메시지를 가져오는 데 실패했습니다.)"
+          else
+            messages="- ${messages}"
+          fi
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$messages" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: PR 업데이트 알림 (synchronize)
+        if: github.event.action == 'synchronize'
+        run: |
+            curl -X POST -H "Content-Type: application/json" \
+              -d "{
+                \"content\": \"**🔄 Pull Request가 업데이트되었습니다!**\\n**제목**: ${{ github.event.pull_request.title }}\\n**작성자**: ${{ github.actor }}\\n**URL**: <${{ github.event.pull_request.html_url }}>\\n**📦 변경 사항 커밋:**\\n${{ steps.get_commits.outputs.commits }}\\n👉 변경된 내용을 다시 확인해주세요!\"
+              }" ${{ secrets.DISCORD_WEBHOOK_URL }}

@@ -1,1 +1,11 @@
-rootProject.name = 'Halo'
+rootProject.name = 'HaloCare'
+
+include (":admin")
+include (":evaluation")
+include (":global")
+include (":inquiry")
+include (":member")
+include (":payment")
+include (":reservation")
+include (":shared-domain")
+

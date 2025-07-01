@@ -4,7 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.kernel360'
+group = 'com.kernel'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -24,16 +24,31 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// 멀티모듈 의존성
+	implementation project(':admin')
+	implementation project(':member')
+	implementation project(':reservation')
+	implementation project(':payment')
+	implementation project(':inquiry')
+	implementation project(':global')
+	implementation project(':evaluation')
+	implementation project(':shared-domain')
+
+	// Spring Boot dependencies
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'com.h2database:h2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// Testing dependencies
+	//testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	//testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+	//testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+tasks.named('bootJar') {
+	mainClass.set('com.kernel.ApiApplication')
+	enabled = true
+}
+
+jar {
+	enabled = false
 }
