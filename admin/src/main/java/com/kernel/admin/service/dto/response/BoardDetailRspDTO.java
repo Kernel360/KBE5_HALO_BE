@@ -3,15 +3,13 @@ package com.kernel.admin.service.dto.response;
 import com.kernel.admin.common.enums.BoardType;
 import com.kernel.admin.domain.entity.Board;
 import com.kernel.admin.service.info.BoardInfo;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Getter
 @Builder
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BoardDetailRspDTO {
 
     // 공지/이벤트 ID
