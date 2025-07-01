@@ -18,12 +18,12 @@ public class SecurityUrlConstants  {
             "/swagger-ui/**",
             "/v1/api-docs/**",
             "swagger-resources/**",
+            "/api/common/serviceCategory"
     };
 
     // 인증 필요 (로그인한 모든 사용자)
     public static final String[] AUTHENTICATED_URLS = {
             "/api/logout",
-
             "/api/files/**",
             "/api/auth/password-check",
             "/api/auth/reset-pwd",
@@ -43,7 +43,8 @@ public class SecurityUrlConstants  {
             "/api/managers/auth/signup",
             "/api/admin/auth/login",
             "/api/common/recovery-id",
-            "/api/common/recovery-pwd"
+            "/api/common/recovery-pwd",
+            "/api/common/serviceCategory"
     };
 
     // JWT 필터 제외 URL

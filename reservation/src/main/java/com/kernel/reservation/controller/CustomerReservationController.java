@@ -3,8 +3,10 @@ package com.kernel.reservation.controller;
 
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
+import com.kernel.member.service.CustomerService;
+import com.kernel.payment.service.PaymentService;
 import com.kernel.reservation.service.MatchService;
-import com.kernel.reservation.service.request.ChooseManagerReqDTO;
+import com.kernel.reservation.service.request.ReservationConfirmReqDTO;
 import com.kernel.reservation.service.response.common.MatchedManagersRspDTO;
 import com.kernel.reservation.service.response.common.ReservationMatchedRspDTO;
 import com.kernel.reservation.service.response.common.ServiceCategoryTreeDTO;
@@ -34,6 +36,8 @@ public class CustomerReservationController {
     private final CustomerReservationService customerReservationService;
     private final ServiceCategoryService serviceCategoryService;
     private final MatchService matchServiceService;
+    private final PaymentService paymentService;
+    private final CustomerService customerService;
 
     /**
      * 예약 요청
@@ -46,47 +50,59 @@ public class CustomerReservationController {
             @AuthenticationPrincipal CustomUserDetails user,
             @Valid @RequestBody ReservationReqDTO reservationReqDTO
     ){
-        // 1. 예약 요청 저장
+
+        // 1. 보유 포인트 검사
+        customerReservationService.validateSufficientPoints(user.getUserId(), reservationReqDTO.getPrice());
+
+        // 2. 예약 요청 저장
         ReservationRspDTO requestedReservation = customerReservationService.makeReservationByCustomer(user.getUserId(), reservationReqDTO);
 
-        // 2. 예약 요청 서비스 카테고리 조회
+        // 3. 예약 요청 서비스 카테고리 조회
         ServiceCategoryTreeDTO requestCategory
                 = serviceCategoryService.getRequestServiceCategory(reservationReqDTO.getMainServiceId(), reservationReqDTO.getAdditionalServiceIds());
 
-        // 3. 매칭 매니저 조회
+        // 4. 매칭 매니저 조회
         List<MatchedManagersRspDTO> matchedManagers = matchServiceService.getMatchingManagers(reservationReqDTO, user.getUserId());
 
-        // 4. 예약ID + 매칭 매니저 리스트
+        // 5. 예약ID + 매칭 매니저 리스트
         ReservationMatchedRspDTO result = ReservationMatchedRspDTO.builder()
                 .reservation(requestedReservation)
                 .requestCategory(requestCategory)
                 .matchedManagers(matchedManagers)
                 .build();
 
-
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 예약 요청 성공", result));
     }
 
     /**
-     * 예약 매칭 저장
+     * 예약 확정
      * @param reservationId 예약ID
      * @param user 로그인한 유저
-     * @param chooseReqDTO 예약 매칭 매니저 ID
+     * @param confirmReqDTO 예약 확정 DTO
      * @return 확정한 예약 정보
      */
     @PatchMapping("/{reservation-id}/confirm")
-    public ResponseEntity<ApiResponse<CustomerReservationSummaryRspDTO>> chooseManager(
+    public ResponseEntity<ApiResponse<CustomerReservationConfirmRspDTO>> chooseManager(
             @PathVariable("reservation-id") Long reservationId,
             @AuthenticationPrincipal CustomUserDetails user,
-            @Valid @RequestBody ChooseManagerReqDTO chooseReqDTO
+            @Valid @RequestBody ReservationConfirmReqDTO confirmReqDTO
     ){
-        // 1. 예약 매칭 저장
-        matchServiceService.saveReservationMatch(user.getUserId(), reservationId, chooseReqDTO);
+        // 1. 보유 포인트 검사
+        customerReservationService.validateSufficientPoints(user.getUserId(), confirmReqDTO.getPayReqDTO().getAmount());
 
-        // 2. 예약 요청 조회
-        //CustomerReservationSummaryRspDTO rspDTO = customerReservationService;
+        // 2. 예약 매칭 저장
+        matchServiceService.saveReservationMatch(user.getUserId(), reservationId, confirmReqDTO.getSelectedManagerId());
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "수요자 예약 확정 성공", null));
+        // 3. 보유 포인트 차감
+        customerService.payByPoint(user.getUserId(), confirmReqDTO.getPayReqDTO().getAmount());
+
+        // 4. 결제
+        paymentService.processReservationPayment(reservationId, confirmReqDTO.getPayReqDTO());
+
+        // 5. 예약 요청 조회
+        CustomerReservationConfirmRspDTO rspDTO = CustomerReservationConfirmRspDTO.builder().reservationId(reservationId).build();
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "수요자 예약 확정 성공", rspDTO));
     }
 
 

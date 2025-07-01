@@ -29,4 +29,8 @@ public interface CustomerReservationService {
 
     // 예약 확정 전 취소
     void cancelBeforeConfirmReservation(Long userId, UserRole role, Long reservationId);
+
+    // 보유 포인트 검사
+    void validateSufficientPoints(Long userId, Integer price);
+
 }

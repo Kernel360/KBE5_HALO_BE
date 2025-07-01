@@ -1,7 +1,6 @@
 package com.kernel.reservation.service;
 
 
-import com.kernel.reservation.service.request.ChooseManagerReqDTO;
 import com.kernel.reservation.service.request.ReservationReqDTO;
 import com.kernel.reservation.service.response.common.MatchedManagersRspDTO;
 import java.util.List;
@@ -15,5 +14,5 @@ public interface MatchService {
     void changeStatus(Long reservationId);
 
     // 예약 매칭 저장
-    void saveReservationMatch(Long userId, Long reservationId, ChooseManagerReqDTO chooseManagerReqDTO);
+    void saveReservationMatch(Long userId, Long reservationId, Long selectedManagerId);
 }

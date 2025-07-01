@@ -14,6 +14,7 @@ import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -69,11 +70,12 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 ))
                 .from(reservation)
                 .leftJoin(reservation.serviceCategory, serviceCategory)
-                .leftJoin(reservation, location.reservation)
-                .leftJoin(reservation, schedule.reservation)
-                .leftJoin(match.manager, user)
+                .leftJoin(location).on(location.reservation.eq(reservation))
+                .leftJoin(schedule).on(schedule.reservation.eq(reservation))
+                .leftJoin(match).on(match.reservation.eq(reservation))
+                .leftJoin(user).on(match.manager.eq(user))
                 .leftJoin(review).on(
-                        review.reservation.reservationId.eq(reservation.reservationId),
+                        review.reservation.eq(reservation),
                         review.authorId.eq(userId),
                         review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER)
                 )
@@ -123,20 +125,25 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                         reservation.serviceCategory.serviceId, // 서비스 ID
                         serviceCategory.serviceName,           // 서비스 이름(대분류)
                         serviceCategory.serviceTime,           // 서비스 시간
-                        match.manager.userName,                // 매니저 이름
-                        manager.bio,                           // 매니저 한줄 소개
+                        match.manager.userName.as("managerName"),                // 매니저 이름
+                        manager.bio,                          // 매니저 한줄 소개
                         managerStatistic.averageRating,        // 매니저 평점 평균
                         managerStatistic.reviewCount,           // 리뷰 수
                         managerStatistic.reservationCount       // 예약 건수
                 ))
                 .from(reservation)
-                .leftJoin(reservation, location.reservation)
-                .leftJoin(reservation, location.reservation)
-                .leftJoin(reservation, match.reservation)
-                .leftJoin(match.manager, user)
-                .leftJoin(manager.user, user)
-                .leftJoin(managerStatistic.user, user)
-                .leftJoin(reservation.serviceCategory, serviceCategory)
+                .leftJoin(location).on(location.reservation.eq(reservation))
+                .leftJoin(schedule).on(schedule.reservation.eq(reservation))
+                .leftJoin(match).on(match.reservation.eq(reservation)
+                        .and(match.matchId.eq(
+                                JPAExpressions.select(match.matchId.max())
+                                        .from(match)
+                                        .where(match.reservation.eq(reservation))
+                        ))
+                )
+                .leftJoin(manager).on(match.manager.eq(manager.user))
+                .leftJoin(managerStatistic).on(managerStatistic.user.eq(manager.user))
+                .leftJoin(serviceCategory).on(reservation.serviceCategory.eq(serviceCategory))
                 .where(
                         reservation.reservationId.eq(reservationId),
                         reservation.user.userId.eq(userId)
@@ -166,7 +173,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         }
 
         // 4. 예약 취소인 경우 예약 취소 정보 조회 및 설정
-        if(ReservationStatus.CANCELED.equals(detailInfo.getReservationStatus()))
+        if(ReservationStatus.CANCELED.equals(detailInfo.getStatus()))
         {
             ReservationCancelInfo cancelInfo = queryFactory
                     .select(Projections.fields(ReservationCancelInfo.class,

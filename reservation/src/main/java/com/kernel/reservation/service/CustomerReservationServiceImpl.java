@@ -3,6 +3,8 @@ package com.kernel.reservation.service;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
+import com.kernel.reservation.common.exception.InsufficientPointsException;
+import com.kernel.member.service.CustomerService;
 import com.kernel.reservation.domain.entity.ReservationCancel;
 import com.kernel.reservation.domain.entity.ReservationLocation;
 import com.kernel.reservation.domain.entity.ReservationSchedule;
@@ -15,6 +17,7 @@ import com.kernel.reservation.service.info.CustomerReservationDetailInfo;
 import com.kernel.reservation.service.info.CustomerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ReservationCancelReqDTO;
 import com.kernel.reservation.service.request.ReservationReqDTO;
+import com.kernel.reservation.service.response.CustomerReservationConfirmRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationDetailRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationSummaryRspDTO;
 import com.kernel.reservation.service.response.common.ReservationRspDTO;
@@ -29,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
+import static com.kernel.reservation.common.enums.ReservationErrorCode.INSUFFICIENT_POINTS;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerReservationServiceImpl implements CustomerReservationService {
@@ -40,6 +45,7 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
     private final ReservationUserRepository userRepository;
     private final ServiceCategoryService serviceCategoryService;
     private final ExtraServiceService extraService;
+    private final CustomerService customerService;
 
     /**
      * 예약 요청
@@ -132,12 +138,13 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
                         .cancelReason(cancelReqDTO.getCancelReason())
                         .build());
 
+        // 4. 포인트 원복
+        customerService.chargePoint(userId, foundReservation.getPrice() );
     }
 
     /**
      * 예약 확정 전 취소
      * @param userId 수요자ID
-     *
      * @param reservationId 예약ID
      */
     @Override
@@ -162,5 +169,24 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
                 .build());
 
     }
+
+
+
+    /**
+     * 포인트 검사
+     * @param userId 수요자ID
+     * @param price 가격
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public void validateSufficientPoints(Long userId, Integer price) {
+
+        Integer point = customerService.getCustomerPoints(userId);
+
+        if(point < price)
+            throw new InsufficientPointsException(INSUFFICIENT_POINTS);
+    }
+
+
 
 }

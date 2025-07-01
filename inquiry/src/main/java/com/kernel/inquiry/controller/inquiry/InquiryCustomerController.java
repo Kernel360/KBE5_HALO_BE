@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "문의사항 관리 API", description = "고객 문의사항 조회, 생성, 수정, 삭제 API")
 @RestController
-@RequestMapping("/api/customers/inquiry")
+@RequestMapping("/api/customers/inquiries")
 @RequiredArgsConstructor
 public class InquiryCustomerController {
 

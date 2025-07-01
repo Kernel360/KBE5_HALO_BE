@@ -61,4 +61,23 @@ public class CustomerController {
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 정보 수정 성공", updateRspDTO));
     }
 
+    /**
+     * 포인트 추가
+     * @param customer 수요자ID
+     * @param amount 충전 포인트
+     * @return 수요자 정보를 담은 응답
+     */
+    @PatchMapping("/my/point")
+    public ResponseEntity<ApiResponse<CustomerDetailRspDTO>> chargePoint(
+            @AuthenticationPrincipal CustomUserDetails customer,
+            @RequestParam("amount") Integer amount
+    ) {
+
+        customerService.chargePoint(customer.getUserId(), amount);
+        CustomerDetailRspDTO infoRspDTO = customerService.getCustomer(customer.getUserId());
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "포인트 충전 성공", infoRspDTO));
+    }
+
+
 }

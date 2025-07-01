@@ -5,10 +5,7 @@ import com.kernel.payment.common.enums.PaymentMethod;
 import com.kernel.payment.common.enums.PaymentStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
@@ -46,6 +43,7 @@ public class Payment extends BaseEntity {
 
     // 결제 시점
     @Column(nullable = false, columnDefinition = "datetime(0)")
-    private LocalDateTime paidAt;
+    @Builder.Default
+    private LocalDateTime paidAt = LocalDateTime.now();
 
 }

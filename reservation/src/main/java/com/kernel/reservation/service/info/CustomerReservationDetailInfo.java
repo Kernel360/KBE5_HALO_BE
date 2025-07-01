@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomerReservationDetailInfo {
 
@@ -21,13 +21,13 @@ public class CustomerReservationDetailInfo {
     private Long reservationId;
 
     // 서비스 ID
-    private Long serviceCategoryId;
+    private Long serviceId;
 
     // 예약 금액
     private Integer price;
 
     // 예약 상태
-    private ReservationStatus reservationStatus;
+    private ReservationStatus status;
 
     // 고객 요청사항 메모
     private String memo;

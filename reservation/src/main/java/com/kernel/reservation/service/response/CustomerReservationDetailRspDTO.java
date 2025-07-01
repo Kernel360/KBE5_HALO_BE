@@ -90,9 +90,9 @@ public class CustomerReservationDetailRspDTO {
     public static CustomerReservationDetailRspDTO fromInfo(CustomerReservationDetailInfo info){
         return CustomerReservationDetailRspDTO.builder()
                 .reservationId(info.getReservationId())
-                .serviceCategoryId(info.getServiceCategoryId())
+                .serviceCategoryId(info.getServiceId())
                 .price(info.getPrice())
-                .reservationStatus(info.getReservationStatus())
+                .reservationStatus(info.getStatus())
                 .memo(info.getMemo())
                 .phone(info.getPhone())
                 .serviceName(info.getServiceName())
@@ -106,10 +106,17 @@ public class CustomerReservationDetailRspDTO {
                 .managerName(info.getManagerName())
                 .bio(info.getBio())
                 .mangerStatistic(StatisticRspDTO.fromInfo(info))
-                .reservationCancel(ReservationCancelRspDTO.fromInfo(info.getReservationCancel()))
-                .review(ReviewRspDTO.fromInfo(info.getReview()))
+                .reservationCancel(
+                        info.getReservationCancel() != null
+                                ? ReservationCancelRspDTO.fromInfo(info.getReservationCancel())
+                                : null
+                )
+                .review(
+                        info.getReview() != null
+                                ? ReviewRspDTO.fromInfo(info.getReview())
+                                : null
+                )
                 .build();
-
     }
 
 }
