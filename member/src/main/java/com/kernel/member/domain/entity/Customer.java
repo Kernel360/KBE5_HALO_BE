@@ -26,4 +26,8 @@ public class Customer extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private Integer point = 500000;
+
+    public void updatePoint(Integer point) {
+        this.point = point;
+    }
 }
