@@ -128,4 +128,31 @@ public class CustomerServiceImpl implements CustomerService {
                 CustomerDetailInfo.fromEntity(foundCustomer)
         );
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getCustomerPoints(Long userId) {
+
+        // 1. User 조회
+        User foundUser = userService.getByUserIdAndStatus(userId, UserStatus.ACTIVE);
+
+        // 2. Customer 조회
+        Customer foundCustomer = customerRepository.findById(foundUser.getUserId())
+                .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
+
+        return foundCustomer.getPoint();
+    }
+
+    @Override
+    @Transactional
+    public void payByPoint(Long userId, Integer amount) {
+        // 1. User 조회
+        User foundUser = userService.getByUserIdAndStatus(userId, UserStatus.ACTIVE);
+
+        // 2. Customer 조회
+        Customer foundCustomer = customerRepository.findById(foundUser.getUserId())
+                .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
+
+        foundCustomer.updatePoint(foundCustomer.getPoint() - amount);
+    }
 }
