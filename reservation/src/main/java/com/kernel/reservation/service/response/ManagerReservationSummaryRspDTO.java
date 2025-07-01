@@ -1,10 +1,8 @@
 package com.kernel.reservation.service.response;
 
 import com.kernel.reservation.domain.enums.ReservationStatus;
-
-import java.time.LocalTime;
-
 import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,48 +11,48 @@ import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalTime;
 
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Schema(description = "매니저 예약 요약 응답 DTO")
 public class ManagerReservationSummaryRspDTO {
 
-    // 예약ID
+    @Schema(description = "예약 ID", example = "123", required = true)
     private Long reservationId;
 
-    // 청소 요청 날짜
+    @Schema(description = "청소 요청 날짜", example = "2023-01-01", required = true)
     private LocalDate requestDate;
 
-    // 예약시간
+    @Schema(description = "예약 시간", example = "14:00", required = true)
     private LocalTime startTime;
 
-    // 소요시간
+    @Schema(description = "소요 시간(분)", example = "120", required = true)
     private Integer turnaround;
 
-    // 고객 ID
+    @Schema(description = "고객 ID", example = "456", required = true)
     private Long customerId;
 
-    // 상태
+    @Schema(description = "예약 상태", example = "CONFIRMED", required = true)
     private ReservationStatus status;
 
-    // 체크 ID
+    @Schema(description = "체크 ID", example = "789", required = false)
     private Long reservationCheckId;
 
-    // 체크인 여부
+    @Schema(description = "체크인 여부", example = "true", required = false)
     private Boolean isCheckedIn;
-    
-    // 체크인 일시
+
+    @Schema(description = "체크인 일시", example = "2023-01-01T14:00:00", required = false)
     private LocalDateTime inTime;
 
-    // 체크아웃 여부
+    @Schema(description = "체크아웃 여부", example = "false", required = false)
     private Boolean isCheckedOut;
-    
-    // 체크아웃 일시
+
+    @Schema(description = "체크아웃 일시", example = "2023-01-01T16:00:00", required = false)
     private LocalDateTime outTime;
 
-    // ManagerReservationSummaryInfo에서 필요한 필드만 포함
+    @Schema(description = "ManagerReservationSummaryInfo에서 필요한 필드만 포함하여 DTO로 변환")
     public static Page<ManagerReservationSummaryRspDTO> fromInfo(Page<ManagerReservationSummaryInfo> info) {
         return info.map(reservation -> ManagerReservationSummaryRspDTO.builder()
                 .reservationId(reservation.getReservationId())

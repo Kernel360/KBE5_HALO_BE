@@ -63,7 +63,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                     reservationStatus(searchCondDTO.getReservationStatus()),    // 예약 상태
                     isCheckedIn(searchCondDTO.getIsCheckedIn()),                // 체크인 여부
                     isCheckedOut(searchCondDTO.getIsCheckedOut()),              // 체크아웃 여부
-                    customerNameLike(searchCondDTO.customerNameKeyword)         // 고객명 검색어 포함
+                    customerNameLike(searchCondDTO.getCustomerNameKeyword())         // 고객명 검색어 포함
                 )
                 .fetchOne()
         ).orElse(0L);
@@ -95,7 +95,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                         reservationStatus(searchCondDTO.getReservationStatus()),
                         isCheckedIn(searchCondDTO.getIsCheckedIn()),
                         isCheckedOut(searchCondDTO.getIsCheckedOut()),
-                        customerNameLike(searchCondDTO.customerNameKeyword)
+                        customerNameLike(searchCondDTO.getCustomerNameKeyword())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

@@ -1,5 +1,6 @@
 package com.kernel.inquiry.service.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -7,26 +8,26 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Schema(description = "문의 검색 요청 DTO")
 public class InquirySearchReqDTO {
 
-    // 작성일시 시작일
+    @Schema(description = "작성일시 시작일", example = "2023-01-01", required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fromCreatedAt;
 
-    // 작성일시 종료일
+    @Schema(description = "작성일시 종료일", example = "2023-12-31", required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate toCreatedAt;
 
-    // 답변상태
+    @Schema(description = "답변 상태", example = "true", required = false)
     private Boolean replyStatus;
 
-    // 제목키워드
+    @Schema(description = "제목 키워드", example = "문의 제목 예시", required = false)
     private String titleKeyword;
 
-    // 내용키워드
+    @Schema(description = "내용 키워드", example = "문의 내용 예시", required = false)
     private String contentKeyword;
 
-    // LocalDate -> LocalDateTime 변환
     public LocalDateTime getFromCreatedAt() {
         return fromCreatedAt != null ? fromCreatedAt.atStartOfDay() : null;
     }
@@ -34,5 +35,4 @@ public class InquirySearchReqDTO {
     public LocalDateTime getToCreatedAt() {
         return toCreatedAt != null ? toCreatedAt.atTime(23, 59, 59) : null;
     }
-
 }

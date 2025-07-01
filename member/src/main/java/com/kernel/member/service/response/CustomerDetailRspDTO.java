@@ -4,6 +4,7 @@ import com.kernel.member.common.enums.Gender;
 import com.kernel.member.service.common.info.CustomerDetailInfo;
 import com.kernel.member.service.common.info.UserDetailInfo;
 import com.kernel.member.service.common.info.UserAccountInfo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,42 +17,43 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "고객 상세 응답 DTO")
 public class CustomerDetailRspDTO {
 
     /* User */
-    // 핸드폰 번호
+    @Schema(description = "핸드폰 번호", example = "010-1234-5678", required = true)
     private String phone;
 
-    // 이메일
+    @Schema(description = "이메일 주소", example = "example@email.com", required = true)
     private String email;
 
-    // 이름
+    @Schema(description = "사용자 이름", example = "홍길동", required = true)
     private String userName;
 
     /* UserInfo */
-    // 생년월일
+    @Schema(description = "생년월일", example = "1990-01-01", required = true)
     private LocalDate birthDate;
 
-    // 성별
+    @Schema(description = "성별", example = "MALE", required = true)
     private Gender gender;
 
-    // 위도
+    @Schema(description = "위도", example = "37.5665", required = true)
     private BigDecimal latitude;
 
-    // 경도
+    @Schema(description = "경도", example = "126.9780", required = true)
     private BigDecimal longitude;
 
-    // 도로명주소
+    @Schema(description = "도로명 주소", example = "서울특별시 중구 세종대로 110", required = true)
     private String roadAddress;
 
-    // 상세주소
+    @Schema(description = "상세 주소", example = "10층", required = true)
     private String detailAddress;
 
     /* Customer */
-    // 포인트
+    @Schema(description = "포인트", example = "1000", required = true)
     private Integer point;
 
-    // UserAccountInfo + UserDetailInfo + CustomerDetailInfo -> CustomerDetailRspDTO
+    @Schema(description = "UserAccountInfo, UserDetailInfo, CustomerDetailInfo를 CustomerDetailRspDTO로 변환")
     public static CustomerDetailRspDTO fromInfos(
             UserAccountInfo userAccountInfo,
             UserDetailInfo userDetailInfo,

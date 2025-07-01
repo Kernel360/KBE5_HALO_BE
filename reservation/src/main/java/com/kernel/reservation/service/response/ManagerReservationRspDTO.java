@@ -1,8 +1,8 @@
 package com.kernel.reservation.service.response;
 
 import com.kernel.reservation.domain.enums.ReservationStatus;
-
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -13,53 +13,54 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder
+@Schema(description = "매니저 예약 응답 DTO")
 public class ManagerReservationRspDTO {
 
-    // 예약ID
+    @Schema(description = "예약 ID", example = "123", required = true)
     private Long reservationId;
 
-    // 청소 요청 날짜
+    @Schema(description = "청소 요청 날짜", example = "2023-01-01", required = true)
     private LocalDate requestDate;
 
-    // 예약시간
+    @Schema(description = "예약 시간", example = "14:00", required = true)
     private LocalTime startTime;
 
-    // 소요시간
+    @Schema(description = "소요 시간(분)", example = "120", required = true)
     private Integer turnaround;
 
-    // 서비스명
+    @Schema(description = "서비스명", example = "프리미엄 청소 서비스", required = true)
     private String serviceName;
 
-    // 상태
+    @Schema(description = "예약 상태", example = "CONFIRMED", required = true)
     private ReservationStatus status;
 
-    // 고객 ID
+    @Schema(description = "고객 ID", example = "456", required = true)
     private Long customerId;
 
-    // 추가 서비스
+    @Schema(description = "추가 서비스명", example = "창문 청소", required = false)
     private String extraServiceName;
 
-    // 고객 요청사항
+    @Schema(description = "고객 요청사항", example = "창문 청소를 꼼꼼히 해주세요.", required = false)
     private String memo;
 
-    // 체크ID
+    @Schema(description = "체크 ID", example = "789", required = false)
     private Long checkId;
 
-    // 체크인 일시
+    @Schema(description = "체크인 일시", example = "2023-01-01T14:00:00", required = false)
     private LocalDateTime inTime;
 
-    // 체크인 첨부파일
+    @Schema(description = "체크인 첨부파일 ID", example = "101", required = false)
     private Long inFileId;
 
-    // 체크아웃 일시
+    @Schema(description = "체크아웃 일시", example = "2023-01-01T16:00:00", required = false)
     private LocalDateTime outTime;
 
-    // 체크아웃 첨부파일
+    @Schema(description = "체크아웃 첨부파일 ID", example = "102", required = false)
     private Long outFileId;
 
-    // ManagerReservationDetailInfo에서 필요한 필드만 포함
+    @Schema(description = "ManagerReservationDetailInfo에서 필요한 필드만 포함하여 DTO로 변환")
     public static ManagerReservationRspDTO fromInfo(ManagerReservationDetailInfo info) {
-       return  ManagerReservationRspDTO.builder()
+        return ManagerReservationRspDTO.builder()
                 .reservationId(info.getReservationId())
                 .requestDate(info.getRequestDate())
                 .startTime(info.getStartTime())
@@ -76,5 +77,4 @@ public class ManagerReservationRspDTO {
                 .outFileId(info.getOutFileId())
                 .build();
     }
-
 }

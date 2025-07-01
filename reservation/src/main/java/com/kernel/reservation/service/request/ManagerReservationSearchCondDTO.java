@@ -1,35 +1,36 @@
 package com.kernel.reservation.service.request;
 
 import com.kernel.reservation.domain.enums.ReservationStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
+@Schema(description = "매니저 예약 검색 조건 DTO")
 public class ManagerReservationSearchCondDTO {
 
-    // 예약 날짜 시작일
-    public LocalDate fromRequestDate;
+    @Schema(description = "예약 날짜 시작일", example = "2023-01-01", required = true)
+    private LocalDate fromRequestDate;
 
-    // 예약 날짜 종료일
-    public LocalDate toRequestDate;
+    @Schema(description = "예약 날짜 종료일", example = "2023-01-31", required = true)
+    private LocalDate toRequestDate;
 
-    // 예약 상태
+    @Schema(description = "예약 상태 목록", example = "[\"CONFIRMED\", \"CANCELLED\"]", required = false)
     private List<ReservationStatus> reservationStatus;
 
-    // 체크인 여부
+    @Schema(description = "체크인 여부", example = "true", required = false)
     private Boolean isCheckedIn;
 
-    // 체크아웃 여부
+    @Schema(description = "체크아웃 여부", example = "false", required = false)
     private Boolean isCheckedOut;
 
-    // 리뷰 작성 여부
+    @Schema(description = "리뷰 작성 여부", example = "true", required = false)
     private Boolean isReviewed;
 
-    // 고객명
-    public String customerNameKeyword;
+    @Schema(description = "고객명 키워드", example = "홍길동", required = false)
+    private String customerNameKeyword;
 }

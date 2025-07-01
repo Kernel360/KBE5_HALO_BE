@@ -6,33 +6,34 @@ import com.kernel.global.domain.info.AdminUserSearchInfo;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@Schema(description = "관리자 검색 응답 DTO")
 public class AdminSearchRspDTO {
 
-    // 관리자 ID
+    @Schema(description = "관리자 ID", example = "1")
     private Long adminId;
 
-    // 관리자 이름
+    @Schema(description = "관리자 이름", example = "홍길동")
     private String userName;
 
-    // 관리자 전화번호
+    @Schema(description = "관리자 전화번호", example = "01012345678")
     private String phone;
 
-    // 관리자 이메일
+    @Schema(description = "관리자 이메일", example = "example@domain.com")
     private String email;
 
-    // 관리자 상태
+    @Schema(description = "관리자 상태", example = "ACTIVE")
     private UserStatus status;
 
-    // 관리자 생성일
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "관리자 생성일", example = "2023-01-01 12:00:00")
     private LocalDateTime createdAt;
 
-    // info -> AdminSearchRspDTO 변환 메서드
     public static Page<AdminSearchRspDTO> fromInfo(Page<AdminUserSearchInfo> info) {
         return info.map(adminUserSearchInfo -> AdminSearchRspDTO.builder()
                 .adminId(adminUserSearchInfo.getUserId())
