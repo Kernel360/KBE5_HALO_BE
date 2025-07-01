@@ -2,7 +2,7 @@ package com.kernel.evaluation.domain.entity;
 
 import com.kernel.evaluation.common.enums.ReviewAuthorType;
 import com.kernel.global.domain.entity.BaseEntity;
-import com.kernel.reservation.domain.entity.Reservation;
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

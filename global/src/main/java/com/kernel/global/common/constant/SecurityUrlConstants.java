@@ -11,11 +11,8 @@ public class SecurityUrlConstants  {
 
     // 인증 불필요 (모든 사용자 접근 가능)
     public static final String[] PUBLIC_URLS = {
-            //"/api/customers/auth/login",
             "/api/customers/auth/signup",
-            //"/api/managers/auth/login",
             "/api/managers/auth/signup",
-            //"/api/admin/auth/login",
             "/api/common/recovery-id",
             "/api/common/recovery-pwd",
             "/swagger-ui/**",
@@ -38,8 +35,19 @@ public class SecurityUrlConstants  {
     public static final String[] MANAGER_URLS = {"/api/managers/**"};
     public static final String[] ADMIN_URLS = {"/api/admin/**"};
 
-    // JWT 필터 제외 URL (PUBLIC_URLS와 동일하게 유지)
-    public static final Set<String> JWT_FILTER_EXCLUDE_PATHS = Set.of(PUBLIC_URLS);
+    // 인증 불필요 (모든 사용자 접근 가능)
+    public static final String[] JWT_FILTER_EXCLUDE_URLS = {
+            "/api/customers/auth/login",
+            "/api/customers/auth/signup",
+            "/api/managers/auth/login",
+            "/api/managers/auth/signup",
+            "/api/admin/auth/login",
+            "/api/common/recovery-id",
+            "/api/common/recovery-pwd"
+    };
+
+    // JWT 필터 제외 URL
+    public static final Set<String> JWT_FILTER_EXCLUDE_PATHS = Set.of(JWT_FILTER_EXCLUDE_URLS);
 
     // 전체 관리 URL 조회 메서드
     public static String[] getAllManagedUrls() {

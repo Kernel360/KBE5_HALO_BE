@@ -7,4 +7,5 @@ include (":inquiry")
 include (":member")
 include (":payment")
 include (":reservation")
+include (":shared-domain")
 

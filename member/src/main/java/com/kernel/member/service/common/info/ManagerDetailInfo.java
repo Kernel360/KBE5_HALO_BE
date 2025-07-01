@@ -1,10 +1,8 @@
 package com.kernel.member.service.common.info;
 
-import com.kernel.global.domain.entity.File;
 import com.kernel.member.common.enums.ContractStatus;
 import com.kernel.member.domain.entity.Manager;
-import com.kernel.reservation.domain.entity.ServiceCategory;
-import jakarta.persistence.*;
+import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import lombok.Builder;
 import lombok.Getter;
 

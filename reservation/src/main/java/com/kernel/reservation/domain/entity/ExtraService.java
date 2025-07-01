@@ -1,5 +1,7 @@
 package com.kernel.reservation.domain.entity;
 
+import com.kernel.sharedDomain.domain.entity.Reservation;
+import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +23,11 @@ public class ExtraService {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
+
+    // 서비스 카테고리ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id", nullable = false)
+    private ServiceCategory serviceCategory;
 
     // 서비스 가격
     @Column(nullable = false)

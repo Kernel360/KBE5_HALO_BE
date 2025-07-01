@@ -20,6 +20,10 @@ repositories {
 dependencies {
     // Module dependencies
     implementation project(':global')
+    implementation project(':shared-domain')
+    implementation project(':member')
+    implementation project(':evaluation')
+    implementation project(':payment')
 
     // Spring Boot dependencies
     implementation 'org.springframework.boot:spring-boot-starter-web'

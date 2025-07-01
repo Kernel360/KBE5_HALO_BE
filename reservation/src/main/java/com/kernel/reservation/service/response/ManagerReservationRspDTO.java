@@ -1,7 +1,7 @@
 package com.kernel.reservation.service.response;
 
-import com.kernel.reservation.domain.enums.ReservationStatus;
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -77,4 +77,5 @@ public class ManagerReservationRspDTO {
                 .outFileId(info.getOutFileId())
                 .build();
     }
+
 }

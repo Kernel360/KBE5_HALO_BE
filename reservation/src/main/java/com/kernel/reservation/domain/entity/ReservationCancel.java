@@ -2,13 +2,13 @@ package com.kernel.reservation.domain.entity;
 
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.BaseEntity;
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -23,8 +23,10 @@ public class ReservationCancel extends BaseEntity {
 
     // 예약 ID
     @Id
-    @OneToOne(fetch = FetchType.LAZY)
+    private Long reservationId;
+
     @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 

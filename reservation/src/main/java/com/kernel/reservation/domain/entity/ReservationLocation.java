@@ -1,5 +1,6 @@
 package com.kernel.reservation.domain.entity;
 
+import com.kernel.sharedDomain.domain.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,10 +13,13 @@ import java.math.BigDecimal;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class ReservationLocation {
+
     // 예약 ID
     @Id
-    @OneToOne(fetch = FetchType.LAZY)
+    private Long reservationId;
+
     @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
