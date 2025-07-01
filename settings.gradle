@@ -1,4 +1,11 @@
 rootProject.name = 'HaloCare'
 
-include (":api")
-include (":common")
+include (":admin")
+include (":evaluation")
+include (":global")
+include (":inquiry")
+include (":member")
+include (":payment")
+include (":reservation")
+include (":shared-domain")
+
