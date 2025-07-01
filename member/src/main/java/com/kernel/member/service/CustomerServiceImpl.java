@@ -166,9 +166,6 @@ public class CustomerServiceImpl implements CustomerService {
         Customer foundCustomer = customerRepository.findById(foundUser.getUserId())
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
-        if(foundCustomer.getPoint() + amount > 10000000)
-            throw new IllegalArgumentException("최대 보유 가능 포인트는 1,000,000P 입니다.");
-
         foundCustomer.updatePoint(foundCustomer.getPoint() + amount);
     }
 }
