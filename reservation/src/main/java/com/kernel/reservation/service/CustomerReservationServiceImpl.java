@@ -138,6 +138,8 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
                         .cancelReason(cancelReqDTO.getCancelReason())
                         .build());
 
+        // 4. 포인트 원복
+        customerService.chargePoint(userId, foundReservation.getPrice() );
     }
 
     /**
