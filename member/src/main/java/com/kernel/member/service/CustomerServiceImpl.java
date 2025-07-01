@@ -155,4 +155,20 @@ public class CustomerServiceImpl implements CustomerService {
 
         foundCustomer.updatePoint(foundCustomer.getPoint() - amount);
     }
+
+    @Override
+    @Transactional
+    public void chargePoint(Long userId, Integer amount) {
+        // 1. User 조회
+        User foundUser = userService.getByUserIdAndStatus(userId, UserStatus.ACTIVE);
+
+        // 2. Customer 조회
+        Customer foundCustomer = customerRepository.findById(foundUser.getUserId())
+                .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
+
+        if(foundCustomer.getPoint() + amount > 10000000)
+            throw new IllegalArgumentException("최대 보유 가능 포인트는 1,000,000P 입니다.");
+
+        foundCustomer.updatePoint(foundCustomer.getPoint() + amount);
+    }
 }

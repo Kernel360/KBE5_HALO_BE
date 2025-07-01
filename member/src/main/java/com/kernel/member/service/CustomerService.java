@@ -21,4 +21,7 @@ public interface CustomerService {
 
      // 포인트 차감
     void payByPoint(Long userId, Integer amount);
+
+    // 포인트 충전
+     void chargePoint(Long userId, Integer amount);
 }
