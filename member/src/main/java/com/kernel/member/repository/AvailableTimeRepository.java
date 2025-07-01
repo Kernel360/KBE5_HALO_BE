@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface AvailableTimeRepository extends JpaRepository<AvailableTime, Long> {
     List<AvailableTime> findByManager(Manager manager);
+    List<AvailableTime> findAllByManager(Manager manager);
 }
