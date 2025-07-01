@@ -6,6 +6,7 @@ import com.kernel.member.service.AdminManagerService;
 import com.kernel.member.service.request.AdminManagerSearchReqDTO;
 import com.kernel.member.service.response.AdminManagerRspDTO;
 import com.kernel.member.service.response.AdminManagerSummaryRspDTO;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Tag(name = "AdminManagerController", description = "관리자 매니저 관리 API")
 @RestController
 @RequiredArgsConstructor
 @Validated

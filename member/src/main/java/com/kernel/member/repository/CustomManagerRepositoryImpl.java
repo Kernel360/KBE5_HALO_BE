@@ -49,7 +49,7 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         user.userName,
                         user.phone,
                         user.email,
-                        managerStatistic.rating,
+                        managerStatistic.averageRating,
                         user.status,
                         managerStatistic.reservationCount,
                         managerStatistic.reviewCount))
@@ -120,11 +120,11 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
     }
 
     private BooleanExpression averageRatingGoe(BigDecimal minRating) {
-        return minRating != null ? managerStatistic.rating.goe(minRating) : null;
+        return minRating != null ? managerStatistic.averageRating.goe(minRating) : null;
     }
 
     private BooleanExpression averageRatingLoe(BigDecimal maxRating) {
-        return maxRating != null ? managerStatistic.rating.loe(maxRating) : null;
+        return maxRating != null ? managerStatistic.averageRating.loe(maxRating) : null;
     }
 
     @Override
@@ -145,7 +145,7 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         manager.fileId,
                         manager.contractStatus,
                         manager.contractDate,
-                        managerStatistic.rating,
+                        managerStatistic.averageRating,
                         managerStatistic.reservationCount,
                         managerStatistic.reviewCount,
                         managerTermination.terminatedAt,
