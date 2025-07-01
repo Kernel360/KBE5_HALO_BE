@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - server/dev # 환경 분리 후 수정 예정
-  pull_request:
+      - dev # 환경 분리 후 수정 예정
+  pull_request: # 배포 테스트 용
     branches:
       - main
-      - server/dev # 환경 분리 후 수정 예정
+      - dev # 환경 분리 후 수정 예정
 
 jobs:
   BuildAndPushImage:
