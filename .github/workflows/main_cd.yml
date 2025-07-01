@@ -61,7 +61,5 @@ jobs:
         run: |
           docker buildx create --use
           docker buildx build --platform linux/arm64/v8 \
-          --cache-from type=gha \
-          --cache-to type=gha,mode=max \
           -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:${{ env.VERSION_TAG }} \
           --push .
