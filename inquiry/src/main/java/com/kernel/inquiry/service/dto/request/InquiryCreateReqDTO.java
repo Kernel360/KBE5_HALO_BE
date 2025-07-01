@@ -1,7 +1,8 @@
 package com.kernel.inquiry.service.dto.request;
 
-import com.kernel.inquiry.common.enums.AuthorType;
+import com.kernel.global.common.enums.UserRole;
 import com.kernel.inquiry.domain.entity.Inquiry;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,7 +34,7 @@ public class InquiryCreateReqDTO {
     @NotNull(message = "카테고리를 선택해주세요.")
     private Enum<?> category;
 
-    public static Inquiry toEntity(InquiryCreateReqDTO request, Long authorId, AuthorType authorType) {
+    public static Inquiry toEntity(InquiryCreateReqDTO request, Long authorId, UserRole authorRole) {
         return Inquiry.builder()
                 .authorId(authorId)
                 .authorRole(authorRole)
