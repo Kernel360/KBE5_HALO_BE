@@ -33,6 +33,7 @@ public class ExtraServiceServiceImpl implements ExtraServiceService {
         List<ExtraService> extraServices = categories.stream()
                 .map(category -> ExtraService.builder()
                         .reservation(requestedReservation)
+                        .serviceCategory(category)
                         .price(category.getPrice())
                         .serviceTime(category.getServiceTime())
                         .build())
