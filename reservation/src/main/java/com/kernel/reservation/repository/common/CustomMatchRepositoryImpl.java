@@ -1,6 +1,5 @@
 package com.kernel.reservation.repository.common;
 
-import com.kernel.evaluation.common.enums.FeedbackType;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.QFile;
 import com.kernel.global.domain.entity.QUser;
@@ -114,8 +113,8 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                         JPAExpressions
                                 .selectOne()
                                 .from(reservation)
-                                .leftJoin(reservation, schedule.reservation)
-                                .leftJoin(reservation, match.reservation)
+                                .leftJoin(schedule).on(schedule.reservation.eq(reservation))
+                                .leftJoin(match).on(match.reservation.eq(reservation))
                                 .where(
                                         match.manager.userId.eq(manager.userId),
                                         schedule.requestDate.eq(reservationReqDTO.getRequestDate()),
@@ -147,8 +146,8 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                         schedule.requestDate.max()
                 )
                 .from(reservation)
-                .leftJoin(reservation, match.reservation)
-                .leftJoin(reservation, schedule.reservation)
+                .leftJoin(match).on(match.reservation.eq(reservation))
+                .leftJoin(schedule).on(schedule.reservation.eq(reservation))
                 .where(
                         reservation.user.userId.eq(customerId),             // 수요자ID
                         match.manager.userId.in(managerIds),                // 매니저ID
@@ -177,9 +176,9 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                         manager.bio
                 )
                 .from(user)
-                .leftJoin(user, manager.user)
-                .leftJoin(user, managerStatistic.user)
-                .join(manager).on(manager.profileImageFileId.fileId.eq(file.fileId))
+                .leftJoin(manager).on(manager.user.eq(user))
+                .leftJoin(managerStatistic).on(managerStatistic.user.eq(user))
+                .leftJoin(file).on(file.fileId.eq(manager.profileImageFileId.fileId))
                 .where(manager.userId.in(managerIds))
                 .fetch();
 
