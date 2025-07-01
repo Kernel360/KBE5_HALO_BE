@@ -7,8 +7,10 @@ import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.User;
 import com.kernel.member.domain.entity.Customer;
+import com.kernel.member.domain.entity.CustomerStatistic;
 import com.kernel.member.domain.entity.UserInfo;
 import com.kernel.member.repository.CustomerRepository;
+import com.kernel.member.repository.CustomerStatisticRepository;
 import com.kernel.member.service.common.UserInfoService;
 import com.kernel.member.service.common.UserService;
 import com.kernel.member.service.common.info.UserDetailInfo;
@@ -19,7 +21,6 @@ import com.kernel.member.service.response.CustomerDetailRspDTO;
 import com.kernel.member.service.common.info.CustomerDetailInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final UserService userService;
     private final UserInfoService userInfoService;
     private final CustomerRepository customerRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final CustomerStatisticRepository statisticRepository;
 
     /**
      * 수요자 회원가입
@@ -51,7 +52,14 @@ public class CustomerServiceImpl implements CustomerService {
         UserInfo savedUserInfo = userInfoService.createUserInfo(signupReqDTO.getUserInfoSignupReqDTO(), savedUser);
 
         // 4. Customer 저장
-        customerRepository.save(signupReqDTO.getCustomerReqDTO().toEntity(savedUser, savedUserInfo));
+        customerRepository.save(Customer.builder()
+                                .user(savedUser).build()
+        );
+
+        // 5. 수요자 통계 저장
+        statisticRepository.save(CustomerStatistic.builder()
+                                  .user(savedUser)
+                                  .build());
 
     }
 

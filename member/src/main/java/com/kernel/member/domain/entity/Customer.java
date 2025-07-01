@@ -22,8 +22,8 @@ public class Customer extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // 포인트
+    // 포인트 TODO 테스트용 초기값 설정
     @Column(nullable = false)
     @Builder.Default
-    private Integer point = 0;
+    private Integer point = 500000;
 }
