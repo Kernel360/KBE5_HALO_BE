@@ -1,6 +1,7 @@
 package com.kernel.member.service.response;
 
 import com.kernel.global.common.enums.UserStatus;
+import com.kernel.member.common.enums.ContractStatus;
 import com.kernel.member.service.common.info.ManagerSummaryInfo;
 
 import lombok.*;
@@ -20,18 +21,20 @@ public class AdminManagerSummaryRspDTO {
     private String email;
     private BigDecimal averageRating;
     private UserStatus userstatus;
+    private ContractStatus contractStatus;
     private Integer reservationCount;
     private Integer reviewCount;
 
     // AdminManagerSummaryRspDTO ->  AdminManagerSummaryRspDTO 리스트
     public static Page<AdminManagerSummaryRspDTO> toDTOList(Page<ManagerSummaryInfo> managers) {
         return managers.map(manager -> AdminManagerSummaryRspDTO.builder()
-                .managerId(manager.getManagerId())
+                .managerId(manager.getUserId())
                 .userName(manager.getUserName())
                 .phone(manager.getPhone())
                 .email(manager.getEmail())
                 .averageRating(manager.getAverageRating())
                 .userstatus(manager.getUserstatus())
+                .contractStatus(manager.getContractStatus())
                 .reservationCount(manager.getReservationCount())
                 .reviewCount(manager.getReviewCount())
                 .build());
