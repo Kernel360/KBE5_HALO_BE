@@ -13,4 +13,9 @@ public class MemberExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleManagerNotFoundException(ManagerNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null));
     }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, ex.getMessage(), null));
+    }
 }
