@@ -24,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -157,12 +157,12 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                 .fetch();
 
         // 1. 매니저별 최근 예약일자 설정
-        Map<Long, LocalDate> recentDateMap = recentReservationDate.stream()
-                .collect(Collectors.toMap(
-                        r -> r.get(match.manager.userId),
-                        r -> Optional.ofNullable(r.get(schedule.requestDate)).orElse(null),
-                        (v1, v2) -> v1
-                ));
+        Map<Long, LocalDate> recentDateMap = new HashMap<>();
+        for (Tuple r : recentReservationDate) {
+            Long managerId = r.get(match.manager.userId);
+            LocalDate recentDate = r.get(schedule.requestDate);
+            recentDateMap.put(managerId, recentDate);
+        }
 
         // 2. 예약 가능한 매니저 정보 추출
         List<Tuple> matchedManagers = queryFactory
