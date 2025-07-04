@@ -7,7 +7,8 @@ import com.kernel.payment.service.request.ReservationPayReqDTO;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +17,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
 
     @Override
-    @Transactional
     public void processReservationPayment(Long reservationId, ReservationPayReqDTO payReqDTO) {
 
         paymentRepository.save(Payment.builder()
@@ -26,5 +26,15 @@ public class PaymentServiceImpl implements PaymentService {
                 .status(PaymentStatus.SUCCESS)
                 .build()
         );
+    }
+
+    @Override
+    public void changeStatus(Long reservationId, PaymentStatus newStatus) {
+
+        Payment foundPayment = paymentRepository.findByReservation_ReservationId(reservationId)
+                .orElseThrow(() -> new NoSuchElementException("결제 정보가 존재하지 않습니다."));
+
+        foundPayment.updateStatus(newStatus);
+
     }
 }
