@@ -5,6 +5,8 @@ import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
 import com.kernel.reservation.common.enums.MatchStatus;
+import com.kernel.reservation.common.enums.ReservationErrorCode;
+import com.kernel.reservation.common.exception.NoAvailableManagerException;
 import com.kernel.reservation.domain.entity.ReservationMatch;
 import com.kernel.reservation.repository.CustomerReservationRepository;
 import com.kernel.reservation.repository.common.MatchRepository;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +43,11 @@ public class MatchServiceImpl implements MatchService {
 
         List<Long> matchedManagers = matchingRepository.getMatchedManagers(reservationReqDTO);
 
+        // 매니저가 없을 경우 예외 발생
+        if (matchedManagers.isEmpty()) {
+            throw new NoAvailableManagerException(ReservationErrorCode.NO_AVAILABLE_MANAGER);
+        }
+
         List<MatchedManagersInfo> matchedManagersInfo = matchingRepository.getMatchingManagersInfo(userId, matchedManagers);
 
         return MatchedManagersRspDTO.fromInfoList(matchedManagersInfo);
@@ -53,7 +61,7 @@ public class MatchServiceImpl implements MatchService {
     @Transactional
     public void changeStatus(Long reservationId) {
 
-        // 매칭 조회
+        // 예약 조회
         ReservationMatch foundMatch = matchingRepository.findByReservation_ReservationId(reservationId);
 
         // 매칭 상태값 변경
@@ -72,20 +80,20 @@ public class MatchServiceImpl implements MatchService {
     @Transactional
     public void saveReservationMatch(Long userId, Long reservationId, Long selectedManagerId) {
 
-        // 1. 예약 조회
-        Reservation foundReservation = customerReservationRepository.findByReservationIdAndUser_UserId(reservationId, userId)
-                .orElseThrow(() -> new NoSuchElementException("예약이 존재하지 않습니다."));
 
-        // 2. 매니저 조회
-        User foundUser = userRepository.findByUserIdAndStatusAndRole(selectedManagerId, UserStatus.ACTIVE, UserRole.MANAGER)
-                .orElseThrow(() -> new NoSuchElementException("해당 매니저가 존재하지 않습니다."));
+            // 1. 예약 조회
+            Reservation foundReservation = customerReservationRepository.findById(reservationId)
+                    .orElseThrow(() -> new NoSuchElementException("예약이 존재하지 않습니다."));
 
-        // 3. 매칭 정보 저장
-        matchingRepository.save(
-                ReservationMatch.builder()
-                    .reservation(foundReservation)
-                    .manager(foundUser)
-                    .build()
-        );
+            // 2. 매니저 조회
+            User foundUser = userRepository.findByUserIdAndStatusAndRole(selectedManagerId, UserStatus.ACTIVE, UserRole.MANAGER)
+                    .orElseThrow(() -> new NoSuchElementException("해당 매니저가 존재하지 않습니다."));
+
+            // 3. 매칭 정보 저장
+            matchingRepository.save(ReservationMatch.builder()
+                .reservation(foundReservation)
+                .manager(foundUser)
+                .build());
+
     }
 }
