@@ -3,8 +3,10 @@ package com.kernel.reservation.service;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
-import com.kernel.reservation.common.exception.InsufficientPointsException;
 import com.kernel.member.service.CustomerService;
+import com.kernel.payment.common.enums.PaymentStatus;
+import com.kernel.payment.service.PaymentService;
+import com.kernel.reservation.common.exception.InsufficientPointsException;
 import com.kernel.reservation.domain.entity.ReservationCancel;
 import com.kernel.reservation.domain.entity.ReservationLocation;
 import com.kernel.reservation.domain.entity.ReservationSchedule;
@@ -13,9 +15,11 @@ import com.kernel.reservation.repository.common.ReservationCancelRepository;
 import com.kernel.reservation.repository.common.ReservationLocationRepository;
 import com.kernel.reservation.repository.common.ReservationScheduleRepository;
 import com.kernel.reservation.repository.common.ReservationUserRepository;
+import com.kernel.reservation.service.info.CustomerReservationConfirmInfo;
 import com.kernel.reservation.service.info.CustomerReservationDetailInfo;
 import com.kernel.reservation.service.info.CustomerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ReservationCancelReqDTO;
+import com.kernel.reservation.service.request.ReservationConfirmReqDTO;
 import com.kernel.reservation.service.request.ReservationReqDTO;
 import com.kernel.reservation.service.response.CustomerReservationConfirmRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationDetailRspDTO;
@@ -25,6 +29,7 @@ import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,6 +41,7 @@ import static com.kernel.reservation.common.enums.ReservationErrorCode.INSUFFICI
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomerReservationServiceImpl implements CustomerReservationService {
 
     private final CustomerReservationRepository customerReservationRepository;
@@ -45,7 +51,9 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
     private final ReservationUserRepository userRepository;
     private final ServiceCategoryService serviceCategoryService;
     private final ExtraServiceService extraService;
+    private final MatchService matchServiceService;
     private final CustomerService customerService;
+    private final PaymentService paymentService;
 
     /**
      * 예약 요청
@@ -121,10 +129,10 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
      */
     @Override
     @Transactional
-    public void cancelReservationByCustomer(Long userId, UserRole userRole, ReservationCancelReqDTO cancelReqDTO) {
+    public void cancelReservationByCustomer(Long userId, UserRole userRole, Long reservationId, ReservationCancelReqDTO cancelReqDTO) {
 
         // 1. 예약 조회
-        Reservation foundReservation = customerReservationRepository.getCancelableReservation(cancelReqDTO.getReservationId(), userId)
+        Reservation foundReservation = customerReservationRepository.getCancelableReservation(reservationId, userId)
                 .orElseThrow(() -> new NoSuchElementException("취소 가능한 예약이 존재하지 않습니다."));
 
         // 2. 예약 상태 변경
@@ -140,6 +148,9 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
 
         // 4. 포인트 원복
         customerService.chargePoint(userId, foundReservation.getPrice() );
+
+        // 5. 결제 취소 저장
+        paymentService.changeStatus(reservationId, PaymentStatus.CANCELED);
     }
 
     /**
@@ -170,8 +181,6 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
 
     }
 
-
-
     /**
      * 포인트 검사
      * @param userId 수요자ID
@@ -187,6 +196,35 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
             throw new InsufficientPointsException(INSUFFICIENT_POINTS);
     }
 
+    /**
+     * 예약 확정
+     * @param reservationId 예약ID
+     * @param userId 로그인한 유저 ID
+     * @param confirmReqDTO 예약 확정 DTO
+     * @return 확정한 예약 정보
+     */
+    @Override
+    @Transactional
+    public CustomerReservationConfirmRspDTO confirmReservation(Long userId, Long reservationId, ReservationConfirmReqDTO confirmReqDTO) {
+
+            // 1. 보유 포인트 검사
+            validateSufficientPoints(userId, confirmReqDTO.getPayReqDTO().getAmount());
+
+            // 2. 예약 매칭 저장
+            matchServiceService.saveReservationMatch(userId, reservationId, confirmReqDTO.getSelectedManagerId());
+
+            // 3. 보유 포인트 차감
+            customerService.payByPoint(userId, confirmReqDTO.getPayReqDTO().getAmount());
+
+            // 4. 결제
+            paymentService.processReservationPayment(reservationId, confirmReqDTO.getPayReqDTO());
+
+            // 5. 예약 요청 조회
+            CustomerReservationConfirmInfo rspDTO = customerReservationRepository.getConfirmReservation(reservationId);
+
+            return CustomerReservationConfirmRspDTO.fromInfo(rspDTO);
+
+    }
 
 
 }
