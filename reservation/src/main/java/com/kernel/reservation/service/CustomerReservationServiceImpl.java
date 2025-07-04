@@ -3,6 +3,7 @@ package com.kernel.reservation.service;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
+import com.kernel.member.common.enums.PointChargeType;
 import com.kernel.member.service.CustomerService;
 import com.kernel.payment.common.enums.PaymentStatus;
 import com.kernel.payment.service.PaymentService;
@@ -147,7 +148,7 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
                         .build());
 
         // 4. 포인트 원복
-        customerService.chargePoint(userId, foundReservation.getPrice() );
+        customerService.chargePoint(userId, foundReservation.getPrice(), PointChargeType.CANCEL);
 
         // 5. 결제 취소 저장
         paymentService.changeStatus(reservationId, PaymentStatus.CANCELED);
