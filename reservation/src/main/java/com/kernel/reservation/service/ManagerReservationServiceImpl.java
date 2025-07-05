@@ -4,6 +4,8 @@ import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.UserRepository;
+import com.kernel.reservation.common.enums.ReservationErrorCode;
+import com.kernel.reservation.common.exception.ReservationException;
 import com.kernel.reservation.domain.entity.ReservationCancel;
 import com.kernel.reservation.domain.entity.ReservationMatch;
 import com.kernel.reservation.repository.ManagerReservationRepository;
@@ -94,11 +96,11 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     public void acceptReservation(Long managerId, Long reservationId) {
         // 1. 매니저에게 할당된 예약 조회
         Reservation requestedReservation = managerReservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
         // 2. 매니저와 예약 매칭 정보 조회
         ReservationMatch reservationMatch = reservationMatchRepository.findByReservation_ReservationIdAndManager_UserId(reservationId, managerId)
-                .orElseThrow(() -> new IllegalArgumentException("매니저와 예약 매칭 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION_MATCH));
 
         // 3. 매니저 수락 처리
         String reason = "매니저가 예약을 수락하였습니다.";
@@ -119,11 +121,11 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     public void rejectReservation(Long managerId, Long reservationId, ReservationCancelReqDTO request) {
         // 1. 매니저에게 할당된 예약 조회
         Reservation requestedReservation = managerReservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
         // 2. 매니저와 예약 매칭 정보 조회
         ReservationMatch reservationMatch = reservationMatchRepository.findByReservation_ReservationIdAndManager_UserId(reservationId, managerId)
-                .orElseThrow(() -> new IllegalArgumentException("매니저와 예약 매칭 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION_MATCH));
 
         // 3. 매니저 거절 처리
         requestedReservation.changeStatus(request.getCancelReason(), ReservationStatus.CANCELED);
