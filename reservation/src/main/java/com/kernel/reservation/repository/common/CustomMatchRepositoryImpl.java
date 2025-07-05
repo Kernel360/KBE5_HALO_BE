@@ -16,21 +16,23 @@ import com.kernel.reservation.service.request.ReservationReqDTO;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.QReservation;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.DatePath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
+@Slf4j
 public class CustomMatchRepositoryImpl implements CustomMatchRepository {
 
     private final JPAQueryFactory queryFactory;
@@ -139,11 +141,13 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
     @Override
     public List<MatchedManagersInfo> getMatchingManagersInfo(Long customerId, List<Long> managerIds) {
 
+        DatePath<LocalDate> maxRequestDate = Expressions.datePath(LocalDate.class, "maxRequestDate");
+
         // 최근 예약 일자
         List<Tuple> recentReservationDate = queryFactory
                 .select(
                         match.manager.userId,
-                        schedule.requestDate.max()
+                        schedule.requestDate.max().as(maxRequestDate)
                 )
                 .from(reservation)
                 .leftJoin(match).on(match.reservation.eq(reservation))
@@ -156,13 +160,13 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                 .groupBy(match.manager.userId)
                 .fetch();
 
-        // 1. 매니저별 최근 예약일자 설정
-        Map<Long, LocalDate> recentDateMap = new HashMap<>();
-        for (Tuple r : recentReservationDate) {
-            Long managerId = r.get(match.manager.userId);
-            LocalDate recentDate = r.get(schedule.requestDate);
-            recentDateMap.put(managerId, recentDate);
-        }
+        // 2. 튜플에서 alias를 통해 값 추출
+        Map<Long, LocalDate> recentDateMap = recentReservationDate.stream()
+                .filter(t -> t.get(match.manager.userId) != null)
+                .collect(Collectors.toMap(
+                        t -> t.get(match.manager.userId),
+                        t -> t.get(maxRequestDate)  // 반드시 같은 alias로 get
+                ));
 
         // 2. 예약 가능한 매니저 정보 추출
         List<Tuple> matchedManagers = queryFactory
