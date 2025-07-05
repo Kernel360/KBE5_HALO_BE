@@ -81,8 +81,6 @@ public class ManagerReservationRspDTO {
     @Schema(description = "예약 취소자 유형", example = "MANAGER", required = false)
     private UserRole canceledByRole;
 
-
-
     @Schema(description = "ManagerReservationDetailInfo에서 필요한 필드만 포함하여 DTO로 변환")
     public static ManagerReservationRspDTO fromInfo(ManagerReservationDetailInfo info, User canceledBy) {
         return ManagerReservationRspDTO.builder()
@@ -93,18 +91,18 @@ public class ManagerReservationRspDTO {
                 .serviceName(info.getServiceName())
                 .status(info.getStatus())
                 .customerId(info.getCustomerId())
-                .extraServiceName(info.getExtraService())
-                .memo(info.getMemo())
-                .checkId(info.getReservationCheckId())
-                .inTime(info.getInTime() != null ? info.getInTime().toLocalDateTime() : null)
-                .inFileId(info.getInFileId())
-                .outTime(info.getOutTime() != null ? info.getOutTime().toLocalDateTime() : null)
-                .outFileId(info.getOutFileId())
                 .roadAddress(info.getRoadAddress())
                 .detailAddress(info.getDetailAddress())
                 .userName(info.getUserName())
-                .cancelDate(info.getCancelDate())
-                .cancelReason(info.getCancelReason())
+                .extraServiceName(info.getExtraService() != null ? info.getExtraService() : null)
+                .memo(info.getMemo() != null ? info.getMemo() : null)
+                .checkId(info.getReservationCheckId() != null ? info.getReservationCheckId() : null)
+                .inTime(info.getInTime() != null ? info.getInTime().toLocalDateTime() : null)
+                .inFileId(info.getInFileId() != null ? info.getInFileId() : null)
+                .outTime(info.getOutTime() != null ? info.getOutTime().toLocalDateTime() : null)
+                .outFileId(info.getOutFileId() != null ? info.getOutFileId() : null)
+                .cancelDate(info.getCancelDate() != null ? info.getCancelDate() : null)
+                .cancelReason(info.getCancelReason() != null ? info.getCancelReason() : null)
                 .canceledByName(canceledBy != null ? canceledBy.getUserName() : null)
                 .canceledByRole(canceledBy != null ? canceledBy.getRole() : null)
                 .build();
