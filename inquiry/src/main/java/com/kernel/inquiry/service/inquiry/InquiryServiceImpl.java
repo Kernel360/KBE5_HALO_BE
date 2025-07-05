@@ -1,11 +1,12 @@
 package com.kernel.inquiry.service.inquiry;
 
 import com.kernel.global.common.enums.UserRole;
-import com.kernel.global.repository.UserRepository;
 import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
+import com.kernel.inquiry.common.enums.InquiryErrorCode;
 import com.kernel.inquiry.common.enums.ManagerInquiryCategory;
-import com.kernel.inquiry.common.utils.InquiryCategoryUtils;
+import com.kernel.inquiry.common.exception.InquiryNotFoundException;
+import com.kernel.inquiry.common.exception.InvalidInquiryCategoryException;
 import com.kernel.inquiry.domain.entity.Inquiry;
 import com.kernel.inquiry.domain.entity.Reply;
 import com.kernel.inquiry.repository.InquiryRepository;
@@ -21,8 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -57,9 +56,9 @@ public class InquiryServiceImpl implements InquiryService {
     public InquiryDetailRspDTO getInquiryDetails(Long inquiryId, Long userId) {
 
         Inquiry foundInquiry = inquiryRepository.findByIdAndAuthorId(inquiryId, userId)
-                .orElseThrow(() -> new NoSuchElementException("문의사항을 찾을 수 없습니다."));
+                .orElseThrow(() -> new InquiryNotFoundException(InquiryErrorCode.INQUIRY_NOT_FOUND));
 
-        Reply foundReply = replyRepository.findByInquiryId(foundInquiry);
+        Reply foundReply = replyRepository.findByInquiryId(foundInquiry).orElse(null);
 
         return InquiryDetailRspDTO.fromEntity(foundInquiry, foundReply);
     }
@@ -101,9 +100,10 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     public void updateInquiry(Long inquiryId, InquiryUpdateReqDTO updateReqDTO, Long userId, UserRole userRole)
     {
+
         // 1. 문의사항 조회
         Inquiry foundInquiry = inquiryRepository.findByIdAndAuthorId(inquiryId, userId)
-                .orElseThrow(() -> new NoSuchElementException("문의사항을 찾을 수 없습니다."));
+                .orElseThrow(() -> new InquiryNotFoundException(InquiryErrorCode.INQUIRY_NOT_FOUND));
 
         // 2. 작성자 타입 변환
         AuthorType authorType = AuthorType.fromUserRole(userRole);
@@ -131,7 +131,7 @@ public class InquiryServiceImpl implements InquiryService {
 
         // 1. 문의사항 조회
         Inquiry foundInquiry = inquiryRepository.findByIdAndAuthorId(inquiryId, userId)
-                .orElseThrow(() -> new NoSuchElementException("문의사항을 찾을 수 없습니다."));
+                .orElseThrow(() -> new InquiryNotFoundException(InquiryErrorCode.INQUIRY_NOT_FOUND));
 
         foundInquiry.delete();
     }
@@ -142,14 +142,15 @@ public class InquiryServiceImpl implements InquiryService {
      * @param authorType  작성자 타입
      */
     public void validateCategory(String categoryName, AuthorType authorType) {
+        
         try {
             switch (authorType) {
                 case CUSTOMER -> CustomerInquiryCategory.valueOf(categoryName);
                 case MANAGER -> ManagerInquiryCategory.valueOf(categoryName);
-                default -> throw new IllegalArgumentException("사용할 수 없는 사용자입니다.");
+                default -> throw new InvalidInquiryCategoryException(InquiryErrorCode.UNSUPPORTED_USER_TYPE);
             }
         } catch (IllegalArgumentException e) {
-            throw new CustomBadRequestException("잘못된 카테고리입니다.");
+            throw new InvalidInquiryCategoryException(InquiryErrorCode.INVALID_INQUIRY_CATEGORY);
         }
     }
 }
