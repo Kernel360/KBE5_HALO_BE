@@ -6,6 +6,9 @@ import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.User;
+import com.kernel.member.common.enums.MemberErrorCode;
+import com.kernel.member.common.enums.PointChargeType;
+import com.kernel.member.common.exception.PointException;
 import com.kernel.member.domain.entity.Customer;
 import com.kernel.member.domain.entity.CustomerStatistic;
 import com.kernel.member.domain.entity.UserInfo;
@@ -13,12 +16,12 @@ import com.kernel.member.repository.CustomerRepository;
 import com.kernel.member.repository.CustomerStatisticRepository;
 import com.kernel.member.service.common.UserInfoService;
 import com.kernel.member.service.common.UserService;
-import com.kernel.member.service.common.info.UserDetailInfo;
+import com.kernel.member.service.common.info.CustomerDetailInfo;
 import com.kernel.member.service.common.info.UserAccountInfo;
+import com.kernel.member.service.common.info.UserDetailInfo;
 import com.kernel.member.service.request.CustomerSignupReqDTO;
 import com.kernel.member.service.request.CustomerUpdateReqDTO;
 import com.kernel.member.service.response.CustomerDetailRspDTO;
-import com.kernel.member.service.common.info.CustomerDetailInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -129,6 +132,11 @@ public class CustomerServiceImpl implements CustomerService {
         );
     }
 
+    /**
+     * 수요자 포인트 조회
+     * @param userId 수요자ID
+     * @return 수요자 정보를 담은 응답
+     */
     @Override
     @Transactional(readOnly = true)
     public Integer getCustomerPoints(Long userId) {
@@ -143,8 +151,12 @@ public class CustomerServiceImpl implements CustomerService {
         return foundCustomer.getPoint();
     }
 
+    /**
+     * 수요자 포인트로 결제하기
+     * @param userId 수요자ID
+     * @param amount 결제 금액
+     */
     @Override
-    @Transactional
     public void payByPoint(Long userId, Integer amount) {
         // 1. User 조회
         User foundUser = userService.getByUserIdAndStatus(userId, UserStatus.ACTIVE);
@@ -156,9 +168,15 @@ public class CustomerServiceImpl implements CustomerService {
         foundCustomer.updatePoint(foundCustomer.getPoint() - amount);
     }
 
+    /**
+     * 수요자 포인트 충전하기
+     * @param userId 수요자ID
+     * @param amount 충전 금액
+     */
     @Override
     @Transactional
-    public void chargePoint(Long userId, Integer amount) {
+    public void chargePoint(Long userId, Integer amount, PointChargeType pointChargeType) {
+
         // 1. User 조회
         User foundUser = userService.getByUserIdAndStatus(userId, UserStatus.ACTIVE);
 
@@ -166,6 +184,14 @@ public class CustomerServiceImpl implements CustomerService {
         Customer foundCustomer = customerRepository.findById(foundUser.getUserId())
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
+        Integer currentPoint = foundCustomer.getPoint() ;
+
+        // 3. 충전
+        if(pointChargeType == PointChargeType.CHARGE) {
+            if (currentPoint + amount > 1_000_000) {
+                throw new PointException(MemberErrorCode.POINT_EXCEED_LIMIT);
+            }
+        }
         foundCustomer.updatePoint(foundCustomer.getPoint() + amount);
     }
 }

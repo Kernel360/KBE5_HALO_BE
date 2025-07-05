@@ -3,15 +3,15 @@ package com.kernel.reservation.service;
 
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.reservation.service.request.ReservationCancelReqDTO;
+import com.kernel.reservation.service.request.ReservationConfirmReqDTO;
 import com.kernel.reservation.service.request.ReservationReqDTO;
+import com.kernel.reservation.service.response.CustomerReservationConfirmRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationDetailRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationSummaryRspDTO;
 import com.kernel.reservation.service.response.common.ReservationRspDTO;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface CustomerReservationService {
 
@@ -25,7 +25,7 @@ public interface CustomerReservationService {
     CustomerReservationDetailRspDTO getCustomerReservationDetail(Long customerId, Long reservationId);
 
     // 수요자 예약 취소
-    void cancelReservationByCustomer(Long customerId, UserRole userRole, ReservationCancelReqDTO cancelReqDTO);
+    void cancelReservationByCustomer(Long customerId, UserRole userRole, Long reservationId, ReservationCancelReqDTO cancelReqDTO);
 
     // 예약 확정 전 취소
     void cancelBeforeConfirmReservation(Long userId, UserRole role, Long reservationId);
@@ -33,4 +33,6 @@ public interface CustomerReservationService {
     // 보유 포인트 검사
     void validateSufficientPoints(Long userId, Integer price);
 
+    // 예약 확정
+    CustomerReservationConfirmRspDTO confirmReservation(Long userId, Long reservationId, ReservationConfirmReqDTO confirmReqDTO);
 }

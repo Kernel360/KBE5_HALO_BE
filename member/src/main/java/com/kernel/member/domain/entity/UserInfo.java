@@ -36,11 +36,11 @@ public class UserInfo extends BaseEntity {
     private Gender gender;
 
     // 위도
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 7)
     private BigDecimal latitude;
 
     // 경도
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 7)
     private BigDecimal longitude;
 
     // 도로명 주소

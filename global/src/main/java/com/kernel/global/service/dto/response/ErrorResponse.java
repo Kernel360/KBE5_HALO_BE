@@ -1,6 +1,6 @@
 package com.kernel.global.service.dto.response;
 
-import com.kernel.global.common.enums.ErrorCode;
+import com.kernel.global.common.enums.ErrorCodeInterface;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -22,7 +22,7 @@ public class ErrorResponse {
     @Schema(description = "타임스탬프", example = "2023-10-01T12:00:00", required = true)
     private final LocalDateTime timestamp;
 
-    public ErrorResponse(ErrorCode errorCode) {
+    public ErrorResponse(ErrorCodeInterface errorCode) {
         this.success = false;
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();

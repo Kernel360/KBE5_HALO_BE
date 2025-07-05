@@ -5,13 +5,12 @@ import com.kernel.evaluation.domain.entity.QReview;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.member.domain.entity.QManager;
 import com.kernel.member.domain.entity.QManagerStatistic;
+import com.kernel.payment.domain.QPayment;
 import com.kernel.reservation.domain.entity.*;
 import com.kernel.reservation.service.info.*;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.QReservation;
 import com.kernel.sharedDomain.domain.entity.QServiceCategory;
-import com.kernel.sharedDomain.domain.entity.Reservation;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -40,6 +39,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
     private final QReservationLocation location = QReservationLocation.reservationLocation;
     private final QReservationSchedule schedule = QReservationSchedule.reservationSchedule;
     private final QReservationCancel reservationCancel = QReservationCancel.reservationCancel;
+    private final QPayment payment = QPayment.payment;
 
     /**
      * 수요자 예약 내역 조회
@@ -57,6 +57,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         List<CustomerReservationSummaryInfo> content = queryFactory
                 .select(Projections.fields(CustomerReservationSummaryInfo.class,
                         reservation.reservationId,
+                        reservation.serviceCategory.serviceId.as("serviceCategoryId"),
                         reservation.status,
                         reservation.price,
                         location.roadAddress,
@@ -82,7 +83,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 .where(byCustomerIdAndStatus)
                 .orderBy(
                         schedule.requestDate.desc(),
-                        schedule.startTime.desc()
+                        schedule.startTime.desc(),
+                        reservation.createdAt.desc()
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -209,6 +211,61 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
         }
 
         return detailInfo;
+    }
+
+    /**
+     * 예약 확정 내역 조회
+     * @param reservationId 예약 ID
+     * @return 조회된 예약 정보
+     */
+    @Override
+    public CustomerReservationConfirmInfo getConfirmReservation(Long reservationId) {
+
+        CustomerReservationConfirmInfo confirmInfo = queryFactory
+                .select(Projections.fields(CustomerReservationConfirmInfo.class,
+                        reservation.reservationId,
+                        reservation.serviceCategory.serviceId.as("serviceCategoryId"),
+                        reservation.serviceCategory.serviceName,
+                        schedule.requestDate,
+                        schedule.startTime,
+                        schedule.turnaround,
+                        location.roadAddress,
+                        location.detailAddress,
+                        match.manager.userName.as("managerName"),
+                    //    manager.profileImageFileId.filePathsJson.as("profileImagePath"),
+                        payment.paymentMethod,
+                        payment.amount
+                ))
+                .from(reservation)
+                .leftJoin(location).on(location.reservation.eq(reservation))
+                .leftJoin(schedule).on(schedule.reservation.eq(reservation))
+                .leftJoin(match).on(match.reservation.eq(reservation))
+                .leftJoin(manager).on(match.manager.eq(manager.user))
+                .leftJoin(payment).on(payment.reservation.eq(reservation))
+                .where(reservation.reservationId.eq(reservationId))
+                .fetchOne();
+
+        if (confirmInfo == null) {
+            throw new NoSuchElementException("해당 예약을 찾을 수 없습니다.");
+        }
+
+        // 3. 추가 서비스 조회 및 설정
+        List<ExtraServiceInfo> extraServiceList = queryFactory
+                .select(Projections.fields(ExtraServiceInfo.class,
+                        extraService.serviceCategory.serviceId,
+                        serviceCategory.serviceName,        // 카테고리 이름
+                        extraService.price,               // 카테고리 가격
+                        extraService.serviceTime        // 카테고리 소요 시간
+                ))
+                .from(extraService)
+                .leftJoin(extraService.serviceCategory, serviceCategory)
+                .where(extraService.reservation.reservationId.eq(reservationId))
+                .fetch();
+
+        if(extraServiceList != null)
+            confirmInfo.initExtraService(extraServiceList);
+
+        return confirmInfo;
     }
 
     /**

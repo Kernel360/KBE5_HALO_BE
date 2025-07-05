@@ -46,4 +46,9 @@ public class Payment extends BaseEntity {
     @Builder.Default
     private LocalDateTime paidAt = LocalDateTime.now();
 
+    // 결제 상태 변경
+    public void updateStatus(PaymentStatus newStatus) {
+        this.status = newStatus;
+    }
+
 }

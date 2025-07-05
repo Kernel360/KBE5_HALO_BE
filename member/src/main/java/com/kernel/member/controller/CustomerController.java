@@ -2,7 +2,9 @@ package com.kernel.member.controller;
 
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
+import com.kernel.member.common.enums.PointChargeType;
 import com.kernel.member.service.CustomerService;
+import com.kernel.member.service.request.ChargePointReqDTO;
 import com.kernel.member.service.request.CustomerSignupReqDTO;
 import com.kernel.member.service.request.CustomerUpdateReqDTO;
 import com.kernel.member.service.response.CustomerDetailRspDTO;
@@ -64,16 +66,16 @@ public class CustomerController {
     /**
      * 포인트 추가
      * @param customer 수요자ID
-     * @param amount 충전 포인트
+     * @param pointReqDTO 충전 포인트
      * @return 수요자 정보를 담은 응답
      */
     @PatchMapping("/my/point")
     public ResponseEntity<ApiResponse<CustomerDetailRspDTO>> chargePoint(
             @AuthenticationPrincipal CustomUserDetails customer,
-            @RequestParam("amount") Integer amount
+            @Valid @RequestBody ChargePointReqDTO pointReqDTO
     ) {
 
-        customerService.chargePoint(customer.getUserId(), amount);
+        customerService.chargePoint(customer.getUserId(), pointReqDTO.getPoint(), PointChargeType.CHARGE);
         CustomerDetailRspDTO infoRspDTO = customerService.getCustomer(customer.getUserId());
 
         return ResponseEntity.ok(new ApiResponse<>(true, "포인트 충전 성공", infoRspDTO));
