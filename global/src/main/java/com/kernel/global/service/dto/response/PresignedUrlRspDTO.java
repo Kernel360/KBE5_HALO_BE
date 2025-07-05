@@ -9,18 +9,20 @@ import java.util.List;
 
 @Getter
 @Builder
-@Schema(description = "프리사인 URL 응답 DTO")
+@Schema(description = "Presigned URL 응답 DTO")
 public class PresignedUrlRspDTO {
 
-    @Schema(description = "프리사인 URL 목록", example = "[\"https://example.com/file1\", \"https://example.com/file2\"]", required = true)
+    @Schema(description = "Presigned URL 목록", example = "[\"https://example.com/file1\", \"https://example.com/file2\"]", required = true)
     private List<String> preSignedUrls;
 
     // PresignedPutObjectRequest to PresignedUrlRspDTO 변환 메소드
-    public static List<PresignedUrlRspDTO> fromPresignedUrls(List<PresignedPutObjectRequest> preSignedUrls) {
-        return preSignedUrls.stream()
-                .map(url -> PresignedUrlRspDTO.builder()
-                        .preSignedUrls(List.of(url.url().toString()))
-                        .build())
-                .toList();
+    public static PresignedUrlRspDTO fromPresignedUrls(List<PresignedPutObjectRequest> preSignedUrls) {
+        return PresignedUrlRspDTO.builder()
+                .preSignedUrls(preSignedUrls.stream()
+                        .map(PresignedPutObjectRequest::url)
+                        .map(Object::toString)
+                        .toList())
+                .build();
+
     }
 }
