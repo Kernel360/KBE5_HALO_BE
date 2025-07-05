@@ -1,6 +1,7 @@
 package com.kernel.evaluation.service.review.dto.response;
 
 import com.kernel.evaluation.domain.info.CustomerReviewInfo;
+import com.kernel.sharedDomain.service.response.ScheduleAndMatchInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -43,18 +44,26 @@ public class CustomerReviewRspDTO {
     @Schema(description = "리뷰 작성 일자", example = "2023-01-01T14:00:00")
     private LocalDateTime createdAt;
 
+    @Schema(description = "매니저 이름", example = "김청소")
+    private String managerName;
+
+    @Schema(description = "매니저 프로필 path", example = "..")
+    private String path;
+
     @Schema(hidden = true)
-    public static CustomerReviewRspDTO fromInfo(CustomerReviewInfo info) {
+    public static CustomerReviewRspDTO fromInfo(CustomerReviewInfo info, ScheduleAndMatchInfo scheduleAndMatchInfo) {
         return CustomerReviewRspDTO.builder()
-                .reviewId(info.getReviewId())
-                .reservationId(info.getReservationId())
-                .requestDate(info.getRequestDate())
-                .startTime(info.getStartTime())
-                .turnaround(info.getTurnaround())
-                .serviceCategoryName(info.getServiceCategoryName())
-                .rating(info.getRating())
-                .content(info.getContent())
-                .createdAt(info.getCreatedAt())
+                .reservationId(scheduleAndMatchInfo.getReservationId())
+                .requestDate(scheduleAndMatchInfo.getRequestDate())
+                .startTime(scheduleAndMatchInfo.getStartTime())
+                .turnaround(scheduleAndMatchInfo.getTurnaround())
+                .managerName(scheduleAndMatchInfo.getManagerName())
+                .path(scheduleAndMatchInfo.getPath())
+                .reviewId(info != null ? info.getReviewId() : null)
+                .serviceCategoryName(info != null ? info.getServiceCategoryName() : null)
+                .rating(info != null ? info.getRating() : null)
+                .content(info != null ? info.getContent() : null)
+                .createdAt(info != null ? info.getCreatedAt() : null)
                 .build();
     }
 }

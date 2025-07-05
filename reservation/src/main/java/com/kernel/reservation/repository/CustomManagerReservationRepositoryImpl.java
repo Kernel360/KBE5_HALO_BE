@@ -3,12 +3,13 @@ package com.kernel.reservation.repository;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.member.domain.entity.QUserInfo;
-import com.kernel.reservation.common.enums.MatchStatus;
-import com.kernel.reservation.domain.entity.*;
+import com.kernel.reservation.domain.entity.QExtraService;
+import com.kernel.reservation.domain.entity.QReservationMatch;
+import com.kernel.reservation.domain.entity.QReservationSchedule;
+import com.kernel.reservation.domain.entity.QServiceCheckLog;
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
 import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
-
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.QReservation;
 import com.kernel.sharedDomain.domain.entity.QServiceCategory;
@@ -17,17 +18,17 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQueryFactory;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor

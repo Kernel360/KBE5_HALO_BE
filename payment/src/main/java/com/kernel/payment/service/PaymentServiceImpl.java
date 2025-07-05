@@ -22,49 +22,42 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void processReservationPayment(Long reservationId, ReservationPayReqDTO payReqDTO) {
-        
-        log.info("결제 처리 시작 - 예약ID: {}, 금액: {}, 결제방법: {}", 
-                reservationId, payReqDTO.getAmount(), payReqDTO.getPaymentMethod());
+    public void processReservationPayment(Reservation foundReservation, ReservationPayReqDTO payReqDTO) {
 
         try {
             // 1. 결제 금액 유효성 검증
             validatePaymentAmount(payReqDTO.getAmount());
             
             // 2. 중복 결제 확인
-            checkDuplicatePayment(reservationId);
+            checkDuplicatePayment(foundReservation.getReservationId());
             
             // 3. 결제 처리
             Payment payment = Payment.builder()
-                    .reservation(Reservation.builder().reservationId(reservationId).build())
+                    .reservation(foundReservation)
                     .amount(payReqDTO.getAmount())
                     .paymentMethod(payReqDTO.getPaymentMethod())
                     .status(PaymentStatus.SUCCESS)
                     .build();
             
             paymentRepository.save(payment);
-            
-            log.info("결제 처리 완료 - 예약ID: {}, 결제ID: {}", reservationId, payment.getPaymentId());
-            
+
         } catch (DataAccessException e) {
-            log.error("결제 처리 중 데이터베이스 오류 발생 - 예약ID: {}", reservationId, e);
+            log.error("결제 처리 중 데이터베이스 오류 발생 - 예약ID: {}", foundReservation.getReservationId(), e);
             throw new PaymentException(PaymentErrorCode.PAYMENT_SERVER_ERROR);
         } catch (Exception e) {
-            log.error("결제 처리 중 예상치 못한 오류 발생 - 예약ID: {}", reservationId, e);
+            log.error("결제 처리 중 예상치 못한 오류 발생 - 예약ID: {}", foundReservation.getReservationId(), e);
             throw new PaymentException(PaymentErrorCode.PAYMENT_FAILED);
         }
     }
 
     @Override
     @Transactional
-    public void changeStatus(Long reservationId, PaymentStatus newStatus) {
-        
-        log.info("결제 상태 변경 시작 - 예약ID: {}, 새로운 상태: {}", reservationId, newStatus);
+    public void changeStatus(Reservation foundReservation, PaymentStatus newStatus) {
 
         try {
-            Payment foundPayment = paymentRepository.findByReservation_ReservationId(reservationId)
+            Payment foundPayment = paymentRepository.findByReservation_ReservationId(foundReservation.getReservationId())
                     .orElseThrow(() -> {
-                        log.warn("결제 정보를 찾을 수 없음 - 예약ID: {}", reservationId);
+                        log.warn("결제 정보를 찾을 수 없음 - 예약ID: {}", foundReservation.getReservationId());
                         return new NotFoundPaymentException(PaymentErrorCode.NOT_FOUND_PAYMENT);
                     });
 
@@ -72,12 +65,9 @@ public class PaymentServiceImpl implements PaymentService {
             validateStatusChange(foundPayment.getStatus(), newStatus);
 
             foundPayment.updateStatus(newStatus);
-            
-            log.info("결제 상태 변경 완료 - 예약ID: {}, 이전 상태: {}, 새로운 상태: {}", 
-                    reservationId, foundPayment.getStatus(), newStatus);
 
         } catch (DataAccessException e) {
-            log.error("결제 상태 변경 중 데이터베이스 오류 발생 - 예약ID: {}", reservationId, e);
+            log.error("결제 상태 변경 중 데이터베이스 오류 발생 - 예약ID: {}", foundReservation.getReservationId(), e);
             throw new PaymentException(PaymentErrorCode.PAYMENT_SERVER_ERROR);
         }
     }
