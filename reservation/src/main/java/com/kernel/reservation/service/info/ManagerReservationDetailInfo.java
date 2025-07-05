@@ -2,6 +2,7 @@ package com.kernel.reservation.service.info;
 
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ManagerReservationDetailInfo {
 
     private Long reservationId;
@@ -27,5 +29,8 @@ public class ManagerReservationDetailInfo {
     private Long inFileId;
     private Timestamp outTime;
     private Long outFileId;
+    private String roadAddress;
+    private String detailAddress;
+    private String userName;
 
 }

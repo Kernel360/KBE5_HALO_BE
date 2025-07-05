@@ -24,7 +24,7 @@ public class ManagerReservationSearchCondDTO {
     @Schema(description = "예약 날짜 종료일", example = "2023-01-31", required = true)
     private LocalDate toRequestDate;
 
-    @Schema(description = "예약 상태 목록", example = "[\"CONFIRMED\", \"CANCELLED\"]", required = false)
+    @Schema(description = "예약 상태 목록", example = "[\"REQUESTED\", \"CONFIRMED\", \"COMPLETED\", \"CANCELED\"]", required = false)
     private List<ReservationStatus> reservationStatus;
 
     @Schema(description = "체크인 여부", example = "true", required = false)
@@ -38,4 +38,7 @@ public class ManagerReservationSearchCondDTO {
 
     @Schema(description = "고객명 키워드", example = "홍길동", required = false)
     private String customerNameKeyword;
+
+    @Schema(description = "고객 주소 키워드", example = "서울특별시 강남구", required = false)
+    private String customerAddressKeyword;
 }
