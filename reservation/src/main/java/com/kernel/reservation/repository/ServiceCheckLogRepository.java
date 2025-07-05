@@ -4,6 +4,8 @@ import com.kernel.reservation.domain.entity.ServiceCheckLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ServiceCheckLogRepository extends JpaRepository<ServiceCheckLog, Long> {
 
@@ -11,5 +13,5 @@ public interface ServiceCheckLogRepository extends JpaRepository<ServiceCheckLog
     Boolean existsByReservation_ReservationId(Long reservationId);
 
     // 예약ID로 조회
-    ServiceCheckLog findByReservation_ReservationId(Long reservationId);
+    Optional<ServiceCheckLog> findByReservation_ReservationId(Long reservationId);
 }

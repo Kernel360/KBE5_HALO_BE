@@ -8,11 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "cleaning_log")
+@Table(name = "service_check_log")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -38,15 +40,27 @@ public class ServiceCheckLog extends BaseEntity {
     private Long inFileId;
 
     // 체크아웃 시간
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Timestamp outTime;
 
     // 체크아웃 파일 ID
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long outFileId;
 
     @PreRemove
     private void preventRemove() {
         throw new UnsupportedOperationException("예약 관련 정보는 삭제할 수 없습니다.");
+    }
+
+    // 체크인
+    public void checkIn(Long inFileId) {
+        this.inTime = new Timestamp(System.currentTimeMillis());
+        this.inFileId = inFileId;
+    }
+
+    // 체크아웃
+    public void checkOut(Long outFileId) {
+        this.outTime = new Timestamp(System.currentTimeMillis());
+        this.outFileId = outFileId;
     }
 }

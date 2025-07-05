@@ -163,7 +163,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 reservationCancel.cancelDate,
                 reservationCancel.canceledById,
                 reservationCancel.cancelReason,
-                serviceCheckLog.reservation,
+                serviceCheckLog.reservation.reservationId.as("reservationCheckId"),
                 serviceCheckLog.inTime,
                 serviceCheckLog.inFileId,
                 serviceCheckLog.outTime,
