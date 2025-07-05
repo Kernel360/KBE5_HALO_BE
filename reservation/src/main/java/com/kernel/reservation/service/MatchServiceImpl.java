@@ -4,7 +4,7 @@ package com.kernel.reservation.service;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
-import com.kernel.reservation.common.enums.MatchStatus;
+import com.kernel.sharedDomain.common.enums.MatchStatus;
 import com.kernel.reservation.common.enums.ReservationErrorCode;
 import com.kernel.reservation.common.exception.NoAvailableManagerException;
 import com.kernel.reservation.domain.entity.ReservationMatch;

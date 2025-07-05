@@ -1,4 +1,4 @@
-package com.kernel.reservation.common.enums;
+package com.kernel.sharedDomain.common.enums;
 
 public enum MatchStatus {
     PENDING("대기"),
