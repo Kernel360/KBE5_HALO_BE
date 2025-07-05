@@ -125,6 +125,9 @@ public class CustomCustomerRepositoryImpl implements CustomCustomerRepository{
                     query.orderBy(order.isAscending() ? path.asc() : path.desc());
                 }
             }
+        } else {
+            // 기본 정렬: 사용자 ID 오름차순
+            query.orderBy(user.createdAt.desc());
         }
         return query;
     }
