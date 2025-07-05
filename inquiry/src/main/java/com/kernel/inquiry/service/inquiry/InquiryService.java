@@ -12,18 +12,18 @@ import org.springframework.data.domain.Pageable;
 public interface InquiryService {
 
     // 문의사항 검색
-    Page<InquirySummaryRspDTO> searchInquiries(InquirySearchReqDTO request, Long authorId, Pageable pageable);
+    Page<InquirySummaryRspDTO> searchInquiries(InquirySearchReqDTO searchReqDTO, Long userId, Pageable pageable);
 
     // 문의사항 상세 조회
-    InquiryDetailRspDTO getInquiryDetails(Long inquiryId);
+    InquiryDetailRspDTO getInquiryDetails(Long inquiryId, Long userId);
 
     // 문의사항 생성
-    void createInquiry(InquiryCreateReqDTO request, Long authorId, UserRole authorRole);
+    void createInquiry(InquiryCreateReqDTO createReqDTO, Long userId, UserRole userRole);
 
     // 문의사항 수정
-    void updateInquiry(InquiryUpdateReqDTO request, Long authorId);
+    void updateInquiry(Long inquiryId, InquiryUpdateReqDTO updateReqDTO, Long userId, UserRole userRole);
 
     // 문의사항 삭제
-    void deleteInquiry(Long inquiryId, Long authorId);
+    void deleteInquiry(Long inquiryId, Long userId);
 
 }

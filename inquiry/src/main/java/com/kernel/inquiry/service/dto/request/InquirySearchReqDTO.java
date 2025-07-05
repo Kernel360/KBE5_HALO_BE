@@ -1,7 +1,6 @@
 package com.kernel.inquiry.service.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -30,7 +29,7 @@ public class InquirySearchReqDTO {
     private String contentKeyword;
 
     // 작성자 역할
-    @NotBlank(message = "작성자 역할을 입력해주세요.")
+    @Schema(description = "작성자 역할", example = "CUSTOMER", required = false)
     private String authorRole;
 
     // LocalDate -> LocalDateTime 변환
