@@ -55,7 +55,11 @@ public class Reservation extends BaseEntity {
     }
 
     // 예약 상태 변경
-    public void changeStatus(String cancelReason, ReservationStatus reservationStatus) {
+    public void changeStatus(String reason, ReservationStatus reservationStatus) {
         this.status = reservationStatus;
+        // TODO: 상태 변경 사유를 매개변수로 받는데 어떻게 처리할지 결정해야 함
+
     }
+
+
 }

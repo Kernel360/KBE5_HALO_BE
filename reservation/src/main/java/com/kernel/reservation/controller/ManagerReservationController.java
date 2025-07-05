@@ -5,6 +5,7 @@ import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.reservation.service.ManagerReservationService;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
+import com.kernel.reservation.service.request.ReservationCancelReqDTO;
 import com.kernel.reservation.service.response.ManagerReservationRspDTO;
 import com.kernel.reservation.service.response.ManagerReservationSummaryRspDTO;
 
@@ -15,11 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Manager Reservation API", description = "매니저 예약 관리 API")
 @RestController
@@ -63,4 +60,39 @@ public class ManagerReservationController {
         ManagerReservationRspDTO responseDTO = reservationService.getManagerReservation(user.getUserId(), reservationId);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 예약 상세 조회 성공", responseDTO));
     }
+
+    /**
+     * 매니저가 예약을 수락 API
+     * @param user 매니저
+     * @param reservationId 예약ID
+     */
+    @PostMapping("/{reservation-id}/accept")
+    public ResponseEntity<ApiResponse<Void>> acceptReservation(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable("reservation-id") Long reservationId
+    ) {
+        reservationService.acceptReservation(user.getUserId(), reservationId);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "예약 수락 성공", null));
+    }
+
+    /**
+     * 매니저가 예약을 거절 API
+     * @param user 매니저
+     * @param reservationId 예약ID
+     * @return 예약 거절 성공 응답
+     */
+    @PostMapping("/{reservation-id}/reject")
+    public ResponseEntity<ApiResponse<Void>> rejectReservation(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @PathVariable("reservation-id") Long reservationId,
+            @RequestBody(required = true) ReservationCancelReqDTO request
+
+    ) {
+        reservationService.rejectReservation(user.getUserId(), reservationId, request);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "예약 거절 성공", null));
+    }
+
+
 }

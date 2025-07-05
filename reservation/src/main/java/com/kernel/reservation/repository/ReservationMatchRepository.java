@@ -3,7 +3,9 @@ package com.kernel.reservation.repository;
 import com.kernel.reservation.domain.entity.ReservationMatch;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface ReservationMatchRepository extends JpaRepository<ReservationMatch, Long> {
 
-    // Define any additional query methods if needed
+    Optional<ReservationMatch> findByReservation_ReservationIdAndManager_UserId(Long reservationId, Long managerId);
 }

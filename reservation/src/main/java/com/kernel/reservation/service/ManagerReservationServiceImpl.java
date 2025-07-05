@@ -1,26 +1,38 @@
 package com.kernel.reservation.service;
 
+import com.kernel.global.common.enums.UserRole;
+import com.kernel.global.common.enums.UserStatus;
+import com.kernel.global.domain.entity.User;
+import com.kernel.global.repository.UserRepository;
+import com.kernel.reservation.domain.entity.ReservationCancel;
+import com.kernel.reservation.domain.entity.ReservationMatch;
 import com.kernel.reservation.repository.ManagerReservationRepository;
+import com.kernel.reservation.repository.ReservationMatchRepository;
+import com.kernel.reservation.repository.common.ReservationCancelRepository;
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
 import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
+import com.kernel.reservation.service.request.ReservationCancelReqDTO;
 import com.kernel.reservation.service.response.ManagerReservationRspDTO;
 import com.kernel.reservation.service.response.ManagerReservationSummaryRspDTO;
+import com.kernel.sharedDomain.common.enums.MatchStatus;
+import com.kernel.sharedDomain.common.enums.ReservationStatus;
+import com.kernel.sharedDomain.domain.entity.Reservation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ManagerReservationServiceImpl implements ManagerReservationService {
 
+    private final UserRepository userRepository;
     private final ManagerReservationRepository managerReservationRepository;
+    private final ReservationMatchRepository reservationMatchRepository;
+    private final ReservationCancelRepository cancelRepository;
 
     /**
      * 매니저에게 할당된 예약 목록 조회 (검색 조건 및 페이징 처리)
@@ -53,11 +65,81 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     @Transactional(readOnly = true)
     public ManagerReservationRspDTO getManagerReservation(Long managerId, Long reservationId) {
 
-        // 매니저에게 할당된 예약 상세 조회
+        // 1. 매니저에게 할당된 예약 상세 정보 조회
         ManagerReservationDetailInfo managerDetail = managerReservationRepository.findByManagerIdAndReservationId(managerId, reservationId);
 
-        ManagerReservationRspDTO responseDTO = ManagerReservationRspDTO.fromInfo(managerDetail);
+        // 2. managerDetail에 cancelDate가 있을 때 cancelById로 취소한 사용자 정보를 조회
+        User canceledBy;
+        if (managerDetail.getCancelDate() != null) {
+            canceledBy = userRepository.findById(managerDetail.getCanceledById())
+                    .orElseThrow(() -> new IllegalArgumentException("취소한 사용자가 존재하지 않습니다."));
+        } else {
+            // 취소되지 않은 경우, canceledBy는 null로 설정
+            canceledBy = null;
+        }
+
+        // 3. DTO로 매핑
+        ManagerReservationRspDTO responseDTO = ManagerReservationRspDTO.fromInfo(managerDetail, canceledBy);
 
         return responseDTO;
+    }
+
+    /**
+     * 매니저가 예약을 수락
+     * @param managerId 매니저ID
+     * @param reservationId 예약ID
+     */
+    @Override
+    @Transactional
+    public void acceptReservation(Long managerId, Long reservationId) {
+        // 1. 매니저에게 할당된 예약 조회
+        Reservation requestedReservation = managerReservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
+
+        // 2. 매니저와 예약 매칭 정보 조회
+        ReservationMatch reservationMatch = reservationMatchRepository.findByReservation_ReservationIdAndManager_UserId(reservationId, managerId)
+                .orElseThrow(() -> new IllegalArgumentException("매니저와 예약 매칭 정보가 존재하지 않습니다."));
+
+        // 3. 매니저 수락 처리
+        String reason = "매니저가 예약을 수락하였습니다.";
+        requestedReservation.changeStatus(reason, ReservationStatus.CONFIRMED);
+
+        // 4. 매니저 예약 매칭 정보 업데이트
+        reservationMatch.changeStatus(MatchStatus.MATCHED);
+
+    }
+
+    /**
+     * 매니저가 예약을 거절
+     * @param managerId 매니저ID
+     * @param reservationId 예약ID
+     */
+    @Override
+    @Transactional
+    public void rejectReservation(Long managerId, Long reservationId, ReservationCancelReqDTO request) {
+        // 1. 매니저에게 할당된 예약 조회
+        Reservation requestedReservation = managerReservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("예약이 존재하지 않습니다."));
+
+        // 2. 매니저와 예약 매칭 정보 조회
+        ReservationMatch reservationMatch = reservationMatchRepository.findByReservation_ReservationIdAndManager_UserId(reservationId, managerId)
+                .orElseThrow(() -> new IllegalArgumentException("매니저와 예약 매칭 정보가 존재하지 않습니다."));
+
+        // 3. 매니저 거절 처리
+        requestedReservation.changeStatus(request.getCancelReason(), ReservationStatus.CANCELED);
+
+        // 4. 매니저 예약 매칭 정보 업데이트
+        reservationMatch.changeStatus(MatchStatus.REJECTED);
+
+        // 5. 예약 취소 테이블 생성
+        ReservationCancel reservationCancelRecord = ReservationCancel.builder()
+                .reservation(requestedReservation)
+                .canceledById(managerId)
+                .canceledByType(UserRole.MANAGER)
+                .cancelReason(request.getCancelReason())
+                .build();
+
+        cancelRepository.save(reservationCancelRecord);
+
     }
 }
