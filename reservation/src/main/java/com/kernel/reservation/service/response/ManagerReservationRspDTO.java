@@ -1,5 +1,7 @@
 package com.kernel.reservation.service.response;
 
+import com.kernel.global.common.enums.UserRole;
+import com.kernel.global.domain.entity.User;
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -67,8 +69,20 @@ public class ManagerReservationRspDTO {
     @Schema(description = "고객 이름", example = "홍길동", required = true)
     private String userName;
 
+    @Schema(description = "예약 취소 일시", example = "2023-01-01T15:00:00", required = false)
+    private LocalDateTime cancelDate;
+
+    @Schema(description = "예약 취소 사유", example = "고객 요청으로 예약 취소", required = false)
+    private String cancelReason;
+
+    @Schema(description = "예약 취소자 이름" , example = "김매니저", required = false)
+    private String canceledByName;
+
+    @Schema(description = "예약 취소자 유형", example = "MANAGER", required = false)
+    private UserRole canceledByRole;
+
     @Schema(description = "ManagerReservationDetailInfo에서 필요한 필드만 포함하여 DTO로 변환")
-    public static ManagerReservationRspDTO fromInfo(ManagerReservationDetailInfo info) {
+    public static ManagerReservationRspDTO fromInfo(ManagerReservationDetailInfo info, User canceledBy) {
         return ManagerReservationRspDTO.builder()
                 .reservationId(info.getReservationId())
                 .requestDate(info.getRequestDate())
@@ -77,16 +91,20 @@ public class ManagerReservationRspDTO {
                 .serviceName(info.getServiceName())
                 .status(info.getStatus())
                 .customerId(info.getCustomerId())
-                .extraServiceName(info.getExtraService())
-                .memo(info.getMemo())
-                .checkId(info.getReservationCheckId())
-                .inTime(info.getInTime() != null ? info.getInTime().toLocalDateTime() : null)
-                .inFileId(info.getInFileId())
-                .outTime(info.getOutTime() != null ? info.getOutTime().toLocalDateTime() : null)
-                .outFileId(info.getOutFileId())
                 .roadAddress(info.getRoadAddress())
                 .detailAddress(info.getDetailAddress())
                 .userName(info.getUserName())
+                .extraServiceName(info.getExtraService() != null ? info.getExtraService() : null)
+                .memo(info.getMemo() != null ? info.getMemo() : null)
+                .checkId(info.getReservationCheckId() != null ? info.getReservationCheckId() : null)
+                .inTime(info.getInTime() != null ? info.getInTime().toLocalDateTime() : null)
+                .inFileId(info.getInFileId() != null ? info.getInFileId() : null)
+                .outTime(info.getOutTime() != null ? info.getOutTime().toLocalDateTime() : null)
+                .outFileId(info.getOutFileId() != null ? info.getOutFileId() : null)
+                .cancelDate(info.getCancelDate() != null ? info.getCancelDate() : null)
+                .cancelReason(info.getCancelReason() != null ? info.getCancelReason() : null)
+                .canceledByName(canceledBy != null ? canceledBy.getUserName() : null)
+                .canceledByRole(canceledBy != null ? canceledBy.getRole() : null)
                 .build();
     }
 

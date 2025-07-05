@@ -3,10 +3,7 @@ package com.kernel.reservation.repository;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.member.domain.entity.QUserInfo;
-import com.kernel.reservation.domain.entity.QExtraService;
-import com.kernel.reservation.domain.entity.QReservationMatch;
-import com.kernel.reservation.domain.entity.QReservationSchedule;
-import com.kernel.reservation.domain.entity.QServiceCheckLog;
+import com.kernel.reservation.domain.entity.*;
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
 import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
@@ -41,6 +38,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
     private final QReservationSchedule reservationSchedule = QReservationSchedule.reservationSchedule;
     private final QServiceCheckLog serviceCheckLog = QServiceCheckLog.serviceCheckLog;
     private final QReservationMatch reservationMatch = QReservationMatch.reservationMatch;
+    private final QReservationCancel reservationCancel = QReservationCancel.reservationCancel;
     private final QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
     private final QExtraService extraService = QExtraService.extraService;
 
@@ -162,6 +160,9 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 reservation.user.userId,
                 //extraServiceNameExpr,
                 reservation.memo,
+                reservationCancel.cancelDate,
+                reservationCancel.canceledById,
+                reservationCancel.cancelReason,
                 serviceCheckLog.reservation,
                 serviceCheckLog.inTime,
                 serviceCheckLog.inFileId,
@@ -176,6 +177,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             .leftJoin(serviceCheckLog).on(serviceCheckLog.reservation.eq(reservation))
             .leftJoin(reservationMatch).on(reservationMatch.reservation.eq(reservation))
             .leftJoin(reservation.serviceCategory, serviceCategory)
+            .leftJoin(reservationCancel).on(reservationCancel.reservation.eq(reservation))
             .leftJoin(user).on(reservation.user.eq(user))
             .leftJoin(userInfo).on(userInfo.user.eq(user))
             .where(

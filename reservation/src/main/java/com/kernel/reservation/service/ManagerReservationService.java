@@ -2,6 +2,7 @@ package com.kernel.reservation.service;
 
 
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
+import com.kernel.reservation.service.request.ReservationCancelReqDTO;
 import com.kernel.reservation.service.response.ManagerReservationRspDTO;
 import com.kernel.reservation.service.response.ManagerReservationSummaryRspDTO;
 import org.springframework.data.domain.Page;
@@ -25,4 +26,18 @@ public interface ManagerReservationService {
      * @return 매니저에게 할당된 예약 상세 정보를 담은 응답
      */
     ManagerReservationRspDTO getManagerReservation(Long managerId, Long reservationId);
+
+    /**
+     * 매니저가 예약을 수락
+     * @param managerId 매니저ID
+     * @param reservationId 예약ID
+     */
+    void acceptReservation(Long managerId, Long reservationId);
+
+    /**
+     * 매니저가 예약을 거절
+     * @param managerId 매니저ID
+     * @param reservationId 예약ID
+     */
+    void rejectReservation(Long managerId, Long reservationId, ReservationCancelReqDTO request);
 }
