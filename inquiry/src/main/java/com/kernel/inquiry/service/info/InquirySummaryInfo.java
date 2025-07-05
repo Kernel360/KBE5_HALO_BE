@@ -1,5 +1,6 @@
-package com.kernel.inquiry.domain.info;
+package com.kernel.inquiry.service.info;
 
+import com.kernel.inquiry.common.enums.AuthorType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,8 +14,10 @@ import java.time.LocalDateTime;
 public class InquirySummaryInfo {
 
     private Long inquiryId;
-    private Enum<?> category;
+    private String categoryName;
     private String title;
     private LocalDateTime createdAt;
     private Boolean isReplied;
+    private AuthorType authorType;
+
 }
