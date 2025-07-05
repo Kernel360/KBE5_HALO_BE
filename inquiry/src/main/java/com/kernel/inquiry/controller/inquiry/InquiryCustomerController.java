@@ -70,7 +70,7 @@ public class InquiryCustomerController {
      * @param user      수요자ID
      * @return 상세 문의사항 정보
      */
-    @GetMapping("{inquiry-id}")
+    @GetMapping("/{inquiry-id}")
     public ResponseEntity<ApiResponse<InquiryDetailRspDTO>> getInquiryDetails(
             @PathVariable("inquiry-id") Long inquiryId,
             @AuthenticationPrincipal CustomUserDetails user
@@ -121,9 +121,9 @@ public class InquiryCustomerController {
      * @param user      수요자ID
      * @return ResponseEntity<ApiResponse < Void>>
      */
-    @DeleteMapping("/{inquiry_id}")
+    @DeleteMapping("/{inquiry-id}")
     public ResponseEntity<ApiResponse<Void>> deleteInquiry(
-            @PathVariable("inquiry_id") Long inquiryId,
+            @PathVariable("inquiry-id") Long inquiryId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         inquiryService.deleteInquiry(inquiryId, user.getUserId());
