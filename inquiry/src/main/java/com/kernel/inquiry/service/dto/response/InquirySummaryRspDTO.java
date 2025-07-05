@@ -1,6 +1,7 @@
 package com.kernel.inquiry.service.dto.response;
 
-import com.kernel.inquiry.domain.info.InquirySummaryInfo;
+import com.kernel.inquiry.common.utils.InquiryCategoryUtils;
+import com.kernel.inquiry.service.info.InquirySummaryInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +18,7 @@ public class InquirySummaryRspDTO {
     private Long inquiryId;
 
     @Schema(description = "문의 유형 이름", example = "GENERAL", required = true)
-    private Enum<?> category;
+    private String categoryName;
 
     @Schema(description = "제목", example = "문의 제목 예시", required = true)
     private String title;
@@ -31,7 +32,7 @@ public class InquirySummaryRspDTO {
     public static Page<InquirySummaryRspDTO> fromInfo(Page<InquirySummaryInfo> inquirySummaryInfo) {
         return inquirySummaryInfo.map(info -> InquirySummaryRspDTO.builder()
                 .inquiryId(info.getInquiryId())
-                .category(info.getCategory())
+                .categoryName(InquiryCategoryUtils.getCategoryLabel(info.getCategoryName(), info.getAuthorType()))
                 .title(info.getTitle())
                 .createdAt(info.getCreatedAt())
                 .isReplied(info.getIsReplied())
