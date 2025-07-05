@@ -167,30 +167,35 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     @Transactional
     public ServiceCheckInRspDTO checkIn(Long managerId, Long reservationId, ServiceCheckInReqDTO serviceCheckInReqDTO) {
 
-        // 1. 예약 조회
+        // 1. 체크아웃을 하지 않은 예약이 있는지 확인
+        if (serviceCheckLogRepository.existsByManagerUserIdAndInTimeIsNotNullAndOutTimeIsNull(managerId)) {
+            throw new ServiceCheckLogException(ServiceCheckLogErrorCode.CHECK_IN_NOT_ALLOWED);
+        }
+
+        // 2. 예약 조회
         Reservation reservation = managerReservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
-        // 2. 체크인 로그 존재 여부 확인
+        // 3. 체크인 로그 존재 여부 확인
         if (serviceCheckLogRepository.existsByReservation_ReservationId(reservationId)) {
             throw new ServiceCheckLogException(ServiceCheckLogErrorCode.CHECK_IN_ALREADY_EXISTS);
         }
 
-        // 3. 체크인 로그 생성
+        // 4. 체크인 로그 생성
         ServiceCheckLog checkLog = ServiceCheckLog.builder()
                 .reservation(reservation)
                 .build();
 
-        // 4. 체크인 로그 기록
+        // 5. 체크인 로그 기록
         checkLog.checkIn(serviceCheckInReqDTO.getInFileId());
 
-        // 5. 체크인 로그 저장
+        // 6. 체크인 로그 저장
         serviceCheckLogRepository.save(checkLog);
 
-        // 6. 예약 상태를 IN_PROGRESS로 변경
+        // 7. 예약 상태를 IN_PROGRESS로 변경
         reservation.checkIn();
 
-        // 7. Entity -> ResponseDTO 변환 후, return
+        // 8. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckInRspDTO.toDTO(checkLog);
     }
 
