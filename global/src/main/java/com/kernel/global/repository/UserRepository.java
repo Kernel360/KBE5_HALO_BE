@@ -11,5 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // 핸드폰 번호로 활성 유저 찾기
     Optional<User> findByPhoneAndStatus(String phone, UserStatus status);
+    Optional<User> findByUserIdAndStatus(Long userId, UserStatus status);
 
 }

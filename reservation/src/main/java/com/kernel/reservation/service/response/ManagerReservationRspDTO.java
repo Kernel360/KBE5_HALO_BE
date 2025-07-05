@@ -58,6 +58,15 @@ public class ManagerReservationRspDTO {
     @Schema(description = "체크아웃 첨부파일 ID", example = "102", required = false)
     private Long outFileId;
 
+    @Schema(description = "고객 도로명 주소", example = "서울특별시 강남구 테헤란로 123", required = true)
+    private String roadAddress;
+
+    @Schema(description = "고객 상세 주소", example = "101동 202호", required = true)
+    private String detailAddress;
+
+    @Schema(description = "고객 이름", example = "홍길동", required = true)
+    private String userName;
+
     @Schema(description = "ManagerReservationDetailInfo에서 필요한 필드만 포함하여 DTO로 변환")
     public static ManagerReservationRspDTO fromInfo(ManagerReservationDetailInfo info) {
         return ManagerReservationRspDTO.builder()
@@ -75,6 +84,9 @@ public class ManagerReservationRspDTO {
                 .inFileId(info.getInFileId())
                 .outTime(info.getOutTime() != null ? info.getOutTime().toLocalDateTime() : null)
                 .outFileId(info.getOutFileId())
+                .roadAddress(info.getRoadAddress())
+                .detailAddress(info.getDetailAddress())
+                .userName(info.getUserName())
                 .build();
     }
 

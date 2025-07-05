@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum ErrorCode {
+public enum ErrorCode implements ErrorCodeInterface {
 
     // 회원가입/인증 관련
     DUPLICATE_USER(400, "AUTH001", "이미 존재하는 사용자입니다."),

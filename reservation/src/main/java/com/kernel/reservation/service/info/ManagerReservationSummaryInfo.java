@@ -2,6 +2,7 @@ package com.kernel.reservation.service.info;
 
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,14 +11,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ManagerReservationSummaryInfo {
 
     private Long reservationId;
     private LocalDate requestDate;
     private LocalTime startTime;
     private Integer turnaround;
-    private Long customerId;
+    private Long userId;
+    private String userName;
     private String serviceName;
     private ReservationStatus status;
     private Long serviceCheckId;
@@ -25,5 +28,7 @@ public class ManagerReservationSummaryInfo {
     private Timestamp inTime;
     private Boolean isCheckedOut;
     private Timestamp outTime;
+    private String roadAddress;
+    private String detailAddress;
 
 }

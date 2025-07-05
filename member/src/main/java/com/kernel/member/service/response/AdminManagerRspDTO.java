@@ -43,9 +43,9 @@ public class AdminManagerRspDTO {
     // AdminManagerDetailInfo -> AdminManagerRspDTO
     public static AdminManagerRspDTO fromInfo(AdminManagerDetailInfo info, List<AvailableTimeRspDTO> availableTimes) {
         return AdminManagerRspDTO.builder()
-                .managerId(info.getManagerId())
+                .managerId(info.getUserId())
                 .userName(info.getUserName())
-                .birthDate(info.getBirthDate() != null ? LocalDate.parse(info.getBirthDate()) : null)
+                .birthDate(info.getBirthDate() != null ? info.getBirthDate() : null)
                 .gender(info.getGender())
                 .email(info.getEmail())
                 .phone(info.getPhone())
@@ -54,9 +54,9 @@ public class AdminManagerRspDTO {
                 .status(info.getStatus())
                 .reservationCount(info.getReservationCount())
                 .reviewCount(info.getReviewCount())
-                .averageRating(info.getRating() != null ? BigDecimal.valueOf(info.getRating()) : null)
+                .averageRating(info.getAverageRating())
                 .bio(info.getBio())
-                .profileImageId(info.getProfileImageId())
+                .profileImageId(info.getProfileImageFileId())
                 .fileId(info.getFileId())
                 .availableTimes(availableTimes)
                 .createdAt(info.getCreatedAt())

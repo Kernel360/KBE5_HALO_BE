@@ -3,18 +3,24 @@ package com.kernel.member.repository;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.QUser;
+import com.kernel.member.common.enums.ContractStatus;
+import com.kernel.member.common.exception.ManagerNotFoundException;
 import com.kernel.member.domain.entity.*;
 import com.kernel.member.service.common.info.AdminManagerDetailInfo;
 import com.kernel.member.service.common.info.ManagerSummaryInfo;
 import com.kernel.member.service.request.AdminManagerSearchReqDTO;
 
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.JPQLQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -43,7 +49,8 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
     public Page<ManagerSummaryInfo> searchManagers(AdminManagerSearchReqDTO request, Pageable pageable) {
 
         // QueryDSL을 사용하여 쿼리 실행
-        List<ManagerSummaryInfo> managers = jpaQueryFactory
+        List<ManagerSummaryInfo> managers = applySorting(
+                jpaQueryFactory
                 .select(Projections.fields(ManagerSummaryInfo.class,
                         user.userId,
                         user.userName,
@@ -51,6 +58,7 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         user.email,
                         managerStatistic.averageRating,
                         user.status,
+                        manager.contractStatus,
                         managerStatistic.reservationCount,
                         managerStatistic.reviewCount))
                 .from(user)
@@ -63,13 +71,13 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         phoneEq(request.getPhone()),
                         emailEq(request.getEmail()),
                         statusEq(request.getStatus()),
-                        statusNotIn(request.getExcludeStatus()),
-                        averageRatingGoe(request.getMinRating()),
-                        averageRatingLoe(request.getMaxRating())
+                        contractStatusIn(request.getContractStatus()),
+                        statusNotIn(request.getExcludeStatus())
                 )
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+                .limit(pageable.getPageSize()),
+                pageable
+        ).fetch();
 
         long total = jpaQueryFactory.selectFrom(user)
                 .leftJoin(manager).on(manager.user.eq(user)).fetchJoin()
@@ -81,9 +89,8 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         phoneEq(request.getPhone()),
                         emailEq(request.getEmail()),
                         statusEq(request.getStatus()),
-                        statusNotIn(request.getExcludeStatus()),
-                        averageRatingGoe(request.getMinRating()),
-                        averageRatingLoe(request.getMaxRating())
+                        contractStatusIn(request.getContractStatus()),
+                        statusNotIn(request.getExcludeStatus())
                 )
                 .fetchCount();
 
@@ -111,6 +118,13 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
         return status != null ? user.status.eq(status) : null;
     }
 
+    private BooleanExpression contractStatusIn(List<ContractStatus> contractStatuses) {
+        if (contractStatuses != null && !contractStatuses.isEmpty()) {
+            return manager.contractStatus.in(contractStatuses);
+        }
+        return null;
+    }
+
     private BooleanExpression statusNotIn(List<UserStatus> excludeStatus) {
         if (excludeStatus != null && !excludeStatus.isEmpty()) {
             return user.status.notIn(excludeStatus);
@@ -127,6 +141,32 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
         return maxRating != null ? managerStatistic.averageRating.loe(maxRating) : null;
     }
 
+
+    private JPQLQuery<ManagerSummaryInfo> applySorting(JPQLQuery<ManagerSummaryInfo> query, Pageable pageable) {
+        if (pageable.getSort().isSorted()) {
+            for (Sort.Order order : pageable.getSort()) {
+                ComparableExpressionBase<?> path = getPath(order.getProperty());
+                if (path != null) {
+                    query.orderBy(order.isAscending() ? path.asc() : path.desc());
+                }
+            }
+        }
+        return query;
+    }
+
+    private ComparableExpressionBase<?> getPath(String property) {
+        switch (property) {
+            case "averageRating":
+                return managerStatistic.averageRating;
+            case "reservationCount":
+                return managerStatistic.reservationCount;
+            case "reviewCount":
+                return managerStatistic.reviewCount;
+            default:
+                return null;
+        }
+    }
+
     @Override
     public AdminManagerDetailInfo getAdminManagerDetailInfo(Long managerId) {
         AdminManagerDetailInfo adminManagerDetailInfo = jpaQueryFactory
@@ -141,8 +181,8 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         userInfo.roadAddress,
                         userInfo.detailAddress,
                         manager.bio,
-                        manager.profileImageFileId,
-                        manager.fileId,
+                        manager.profileImageFileId.fileId,
+                        manager.fileId.fileId,
                         manager.contractStatus,
                         manager.contractDate,
                         managerStatistic.averageRating,
@@ -154,16 +194,17 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         user.createdAt,
                         user.updatedAt
                 ))
-                .from(manager)
-                .leftJoin(manager.user, user).fetchJoin()
-                .leftJoin(userInfo.user, user).fetchJoin()
-                .leftJoin(managerStatistic.user, user).fetchJoin()
-                .leftJoin(managerTermination.manager, manager).fetchJoin()
-                .where(manager.userId.eq(managerId))
-                .fetchOne();
+                .from(user)
+                .leftJoin(userInfo).on(userInfo.user.eq(user))
+                .leftJoin(manager).on(manager.user.eq(user))
+                .leftJoin(managerStatistic).on(managerStatistic.user.eq(user))
+                .leftJoin(managerTermination).on(managerTermination.manager.eq(manager))
+                .leftJoin(availableTime).on(availableTime.manager.eq(manager))
+                .where(user.userId.eq(managerId))
+                .fetchFirst();
 
         if (adminManagerDetailInfo == null) {
-            throw new IllegalArgumentException("해당 매니저 ID에 대한 정보가 없습니다. ID: " + managerId);
+            throw new ManagerNotFoundException(managerId);
         }
 
         return adminManagerDetailInfo;

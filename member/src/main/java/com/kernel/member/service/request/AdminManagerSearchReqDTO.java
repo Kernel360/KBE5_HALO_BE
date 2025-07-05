@@ -2,6 +2,7 @@ package com.kernel.member.service.request;
 
 import com.kernel.global.common.enums.UserStatus;
 
+import com.kernel.member.common.enums.ContractStatus;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
@@ -29,6 +30,9 @@ public class AdminManagerSearchReqDTO {
 
     @Schema(description = "매니저 상태")
     private UserStatus status;
+
+    @Schema(description = "계약 상태")
+    private List<ContractStatus> contractStatus;
 
     @Schema(description = "제외시킬 매니저 상태 목록")
     private List<UserStatus> excludeStatus;
