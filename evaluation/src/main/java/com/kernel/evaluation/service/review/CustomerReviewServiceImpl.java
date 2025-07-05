@@ -44,11 +44,9 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
         // 1. 소유자 리뷰 작성 가능 예약 조회
         List<ScheduleAndMatchInfo> scheduleList =
                 reservationQueryPort.findSchedulesAndMatchesByUserIdAndStatus(userId, ReservationStatus.COMPLETED);
-        System.out.println("스케쥴 "+scheduleList);
 
         // 2. 리뷰 조회
         List<CustomerReviewInfo> reviewInfoList = customerReviewRepository.getCustomerReviews(userId, pageable).getContent();
-        System.out.println("리뷰 "+reviewInfoList.toString());
 
         // 3. 예약 ID → 리뷰 정보 매핑
         Map<Long, CustomerReviewInfo> reviewMap = reviewInfoList.stream()
