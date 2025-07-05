@@ -72,24 +72,19 @@ public class MatchServiceImpl implements MatchService {
     /**
      * 예약 매칭 저장
      * @param userId 로그인한 유저
-     * @param reservationId 예약ID
+     * @param foundReservation foundReservation 예약
      * @param selectedManagerId 매칭 매니저ID
      * @return 확정한 예약 정보
      */
     @Override
     @Transactional
-    public void saveReservationMatch(Long userId, Long reservationId, Long selectedManagerId) {
+    public void saveReservationMatch(Long userId, Reservation foundReservation, Long selectedManagerId) {
 
-
-            // 1. 예약 조회
-            Reservation foundReservation = customerReservationRepository.findById(reservationId)
-                    .orElseThrow(() -> new NoSuchElementException("예약이 존재하지 않습니다."));
-
-            // 2. 매니저 조회
+            // 1. 매니저 조회
             User foundUser = userRepository.findByUserIdAndStatusAndRole(selectedManagerId, UserStatus.ACTIVE, UserRole.MANAGER)
                     .orElseThrow(() -> new NoSuchElementException("해당 매니저가 존재하지 않습니다."));
 
-            // 3. 매칭 정보 저장
+            // 2. 매칭 정보 저장
             matchingRepository.save(ReservationMatch.builder()
                 .reservation(foundReservation)
                 .manager(foundUser)

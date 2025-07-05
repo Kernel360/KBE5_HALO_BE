@@ -3,6 +3,8 @@ package com.kernel.reservation.service;
 
 import com.kernel.reservation.service.request.ReservationReqDTO;
 import com.kernel.reservation.service.response.common.MatchedManagersRspDTO;
+import com.kernel.sharedDomain.domain.entity.Reservation;
+
 import java.util.List;
 
 public interface MatchService {
@@ -14,5 +16,5 @@ public interface MatchService {
     void changeStatus(Long reservationId);
 
     // 예약 매칭 저장
-    void saveReservationMatch(Long userId, Long reservationId, Long selectedManagerId);
+    void saveReservationMatch(Long userId, Reservation foundReservation, Long selectedManagerId);
 }

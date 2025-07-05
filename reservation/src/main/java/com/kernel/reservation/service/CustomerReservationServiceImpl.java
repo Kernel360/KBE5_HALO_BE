@@ -7,7 +7,9 @@ import com.kernel.member.common.enums.PointChargeType;
 import com.kernel.member.service.CustomerService;
 import com.kernel.payment.common.enums.PaymentStatus;
 import com.kernel.payment.service.PaymentService;
+import com.kernel.reservation.common.enums.ReservationErrorCode;
 import com.kernel.reservation.common.exception.InsufficientPointsException;
+import com.kernel.reservation.common.exception.ReservationException;
 import com.kernel.reservation.domain.entity.ReservationCancel;
 import com.kernel.reservation.domain.entity.ReservationLocation;
 import com.kernel.reservation.domain.entity.ReservationSchedule;
@@ -151,7 +153,7 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
         customerService.chargePoint(userId, foundReservation.getPrice(), PointChargeType.CANCEL);
 
         // 5. 결제 취소 저장
-        paymentService.changeStatus(reservationId, PaymentStatus.CANCELED);
+        paymentService.changeStatus(foundReservation, PaymentStatus.CANCELED);
     }
 
     /**
@@ -208,22 +210,26 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
     @Transactional
     public CustomerReservationConfirmRspDTO confirmReservation(Long userId, Long reservationId, ReservationConfirmReqDTO confirmReqDTO) {
 
-            // 1. 보유 포인트 검사
-            validateSufficientPoints(userId, confirmReqDTO.getPayReqDTO().getAmount());
+        // 1. 예약 조회
+        Reservation foundReservation = customerReservationRepository.findByReservationIdAndUser_UserId(reservationId, userId)
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
-            // 2. 예약 매칭 저장
-            matchServiceService.saveReservationMatch(userId, reservationId, confirmReqDTO.getSelectedManagerId());
+        // 2. 보유 포인트 검사
+        validateSufficientPoints(userId, confirmReqDTO.getPayReqDTO().getAmount());
 
-            // 3. 보유 포인트 차감
-            customerService.payByPoint(userId, confirmReqDTO.getPayReqDTO().getAmount());
+        // 3. 예약 매칭 저장
+        matchServiceService.saveReservationMatch(userId, foundReservation, confirmReqDTO.getSelectedManagerId());
 
-            // 4. 결제
-            paymentService.processReservationPayment(reservationId, confirmReqDTO.getPayReqDTO());
+        // 4. 보유 포인트 차감
+        customerService.payByPoint(userId, confirmReqDTO.getPayReqDTO().getAmount());
 
-            // 5. 예약 요청 조회
-            CustomerReservationConfirmInfo rspDTO = customerReservationRepository.getConfirmReservation(reservationId);
+        // 5. 결제
+        paymentService.processReservationPayment(foundReservation, confirmReqDTO.getPayReqDTO());
 
-            return CustomerReservationConfirmRspDTO.fromInfo(rspDTO);
+        // 6. 예약 요청 조회
+        CustomerReservationConfirmInfo rspDTO = customerReservationRepository.getConfirmReservation(reservationId);
+
+        return CustomerReservationConfirmRspDTO.fromInfo(rspDTO);
 
     }
 
