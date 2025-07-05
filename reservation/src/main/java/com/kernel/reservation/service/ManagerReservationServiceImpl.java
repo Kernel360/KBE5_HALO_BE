@@ -1,7 +1,9 @@
 package com.kernel.reservation.service;
 
+import com.kernel.global.common.enums.ErrorCode;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
+import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.UserRepository;
 import com.kernel.reservation.common.enums.ReservationErrorCode;
@@ -68,20 +70,20 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     public ManagerReservationRspDTO getManagerReservation(Long managerId, Long reservationId) {
 
         // 1. 매니저에게 할당된 예약 상세 정보 조회
-        ManagerReservationDetailInfo managerDetail = managerReservationRepository.findByManagerIdAndReservationId(managerId, reservationId);
+        ManagerReservationDetailInfo reservationDetail = managerReservationRepository.findByManagerIdAndReservationId(managerId, reservationId);
 
         // 2. managerDetail에 cancelDate가 있을 때 cancelById로 취소한 사용자 정보를 조회
         User canceledBy;
-        if (managerDetail.getCancelDate() != null) {
-            canceledBy = userRepository.findById(managerDetail.getCanceledById())
-                    .orElseThrow(() -> new IllegalArgumentException("취소한 사용자가 존재하지 않습니다."));
+        if (reservationDetail.getCancelDate() != null) {
+            canceledBy = userRepository.findById(reservationDetail.getCanceledById())
+                    .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
         } else {
             // 취소되지 않은 경우, canceledBy는 null로 설정
             canceledBy = null;
         }
 
         // 3. DTO로 매핑
-        ManagerReservationRspDTO responseDTO = ManagerReservationRspDTO.fromInfo(managerDetail, canceledBy);
+        ManagerReservationRspDTO responseDTO = ManagerReservationRspDTO.fromInfo(reservationDetail, canceledBy);
 
         return responseDTO;
     }
@@ -103,8 +105,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION_MATCH));
 
         // 3. 매니저 수락 처리
-        String reason = "매니저가 예약을 수락하였습니다.";
-        requestedReservation.changeStatus(reason, ReservationStatus.CONFIRMED);
+        requestedReservation.managerAccept();
 
         // 4. 매니저 예약 매칭 정보 업데이트
         reservationMatch.changeStatus(MatchStatus.MATCHED);
