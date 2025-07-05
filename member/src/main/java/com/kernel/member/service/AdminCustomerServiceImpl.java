@@ -1,10 +1,10 @@
 package com.kernel.member.service;
 
+import com.kernel.global.common.enums.ErrorCode;
 import com.kernel.global.common.enums.UserStatus;
-import com.kernel.global.common.exception.UserNotFoundException;
+import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.UserRepository;
-import com.kernel.member.domain.entity.Customer;
 import com.kernel.member.repository.CustomerRepository;
 import com.kernel.member.service.common.info.AdminCustomerSummaryInfo;
 import com.kernel.member.service.request.AdminCustomerSearchReqDTO;
@@ -46,7 +46,7 @@ public class AdminCustomerServiceImpl implements AdminCustomerService {
     public void deleteCustomer(Long customerId) {
         // 1. 고객이 존재하는지 확인
         User customer = userRepository.findByUserIdAndStatus(customerId, UserStatus.ACTIVE)
-                .orElseThrow(() -> new UserNotFoundException("해당 고객이 존재하지 않습니다."));
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND));
 
         // 2. 고객의 상태를 비활성화로 변경
         customer.delete();

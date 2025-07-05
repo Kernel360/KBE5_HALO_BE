@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class UserExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<ApiResponse<Void>> handleUserNotFoundException(UserNotFoundException e) {
+    public ResponseEntity<ApiResponse<Void>> handleUserNotFoundException(AuthException e) {
         ApiResponse<Void> response = new ApiResponse<>(false, e.getMessage(), null);
         return ResponseEntity.status(404).body(response);
     }
