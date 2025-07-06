@@ -60,9 +60,8 @@ public class Reservation extends BaseEntity {
         // TODO: 상태 변경 사유를 매개변수로 받는데 어떻게 처리할지 결정해야 함
     }
 
-    public void managerAccept() {
-        this.status = ReservationStatus.CONFIRMED;
+    // 사유 없는 예약 상태 변경
+    public void changeStatus(ReservationStatus reservationStatus) {
+        this.status = reservationStatus;
     }
-
-
 }

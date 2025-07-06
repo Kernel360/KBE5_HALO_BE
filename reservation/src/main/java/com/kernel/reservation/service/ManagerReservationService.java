@@ -1,8 +1,12 @@
 package com.kernel.reservation.service;
 
 
+import com.kernel.reservation.service.request.ServiceCheckInReqDTO;
+import com.kernel.reservation.service.request.ServiceCheckOutReqDTO;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
 import com.kernel.reservation.service.request.ReservationCancelReqDTO;
+import com.kernel.reservation.service.response.ServiceCheckInRspDTO;
+import com.kernel.reservation.service.response.ServiceCheckOutRspDTO;
 import com.kernel.reservation.service.response.ManagerReservationRspDTO;
 import com.kernel.reservation.service.response.ManagerReservationSummaryRspDTO;
 import org.springframework.data.domain.Page;
@@ -40,4 +44,23 @@ public interface ManagerReservationService {
      * @param reservationId 예약ID
      */
     void rejectReservation(Long managerId, Long reservationId, ReservationCancelReqDTO request);
+
+    /**
+     * 체크인
+     * @param managerId
+     * @param reservationId
+     * @param serviceCheckInReqDTO
+     * @return 체크인 정보를 담은 응답
+     */
+    public ServiceCheckInRspDTO checkIn(Long managerId, Long reservationId, ServiceCheckInReqDTO serviceCheckInReqDTO);
+
+    /**
+     * 체크아웃
+     * @param managerId
+     * @param reservationId
+     * @param serviceCheckOutReqDTO
+     * @return 체크아웃 정보를 담은 응답
+     */
+    public ServiceCheckOutRspDTO checkOut(Long managerId, Long reservationId, ServiceCheckOutReqDTO serviceCheckOutReqDTO);
 }
+

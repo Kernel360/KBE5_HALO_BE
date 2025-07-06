@@ -57,7 +57,7 @@ public class FileUploadServiceImpl implements FileUploadService {
      * @return Presigned URL 응답 DTO
      */
     @Override
-    public List<PresignedUrlRspDTO> generatePresignedUrls(PresignedUrlReqDTO request) {
+    public PresignedUrlRspDTO generatePresignedUrls(PresignedUrlReqDTO request) {
         List<PresignedPutObjectRequest> presignedUrls = new ArrayList<>();
 
         for (String file : request.getFiles()) {
