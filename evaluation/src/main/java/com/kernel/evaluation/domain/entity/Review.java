@@ -47,7 +47,7 @@ public class Review extends BaseEntity {
     @Column(nullable = false, length = 20)
     private ReviewAuthorType reviewAuthorType;
 
-   // 타켓ID
+    // 타켓ID - 수요자면 매니저 ID, 매니저면 수요자 ID
     @Column(nullable = false)
     private Long targetId;
 

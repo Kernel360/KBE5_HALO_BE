@@ -1,5 +1,7 @@
 package com.kernel.reservation.repository;
 
+import com.kernel.evaluation.common.enums.ReviewAuthorType;
+import com.kernel.evaluation.domain.entity.QReview;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.member.domain.entity.QUserInfo;
@@ -41,6 +43,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
     private final QReservationCancel reservationCancel = QReservationCancel.reservationCancel;
     private final QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
     private final QExtraService extraService = QExtraService.extraService;
+    private final QReview review = QReview.review;
 
 
     /**
@@ -65,6 +68,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 .leftJoin(reservation.serviceCategory, serviceCategory)
                 .leftJoin(user).on(reservation.user.eq(user))
                 .leftJoin(userInfo).on(userInfo.user.eq(user))
+                .leftJoin(review).on(review.reservation.eq(reservation))
                 .where(
                     reservationMatch.manager.userId.eq(managerId),
                     RequestDateGoe(searchCondDTO.getFromRequestDate()),         // 청소 예약 날짜 >= 시작일
@@ -72,6 +76,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                     reservationStatus(searchCondDTO.getReservationStatus()),
                     isCheckedIn(searchCondDTO.getIsCheckedIn()),
                     isCheckedOut(searchCondDTO.getIsCheckedOut()),
+                    isReviewed(searchCondDTO.getIsReviewed()),
                     customerNameContains(searchCondDTO.getCustomerNameKeyword()),
                     customerAddressContains(searchCondDTO.getCustomerAddressKeyword())
                 )
@@ -95,7 +100,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", serviceCheckLog.outTime).as("isCheckedOut"),
                 serviceCheckLog.outTime,
                 userInfo.roadAddress,
-                userInfo.detailAddress
+                userInfo.detailAddress,
+                Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", review.reviewId).as("isReviewed")
             ))
             .from(reservation)
             .leftJoin(reservationSchedule).on(reservationSchedule.reservation.eq(reservation))
@@ -104,6 +110,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             .leftJoin(reservation.serviceCategory, serviceCategory)
             .leftJoin(user).on(reservation.user.eq(user))
             .leftJoin(userInfo).on(userInfo.user.eq(user))
+            .leftJoin(review).on(review.reservation.eq(reservation)
+                .and(review.reviewAuthorType.eq(ReviewAuthorType.MANAGER)))
             .where(
                 reservationMatch.manager.userId.eq(managerId),
                 RequestDateGoe(searchCondDTO.getFromRequestDate()),
@@ -111,6 +119,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 reservationStatus(searchCondDTO.getReservationStatus()),
                 isCheckedIn(searchCondDTO.getIsCheckedIn()),
                 isCheckedOut(searchCondDTO.getIsCheckedOut()),
+                isReviewed(searchCondDTO.getIsReviewed()),
                 customerNameContains(searchCondDTO.getCustomerNameKeyword()),
                 customerAddressContains(searchCondDTO.getCustomerAddressKeyword())
             )
@@ -190,7 +199,6 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
     // 매니저 ID 일치 및 역할이 매니저인 경우
     private BooleanExpression managerEq(Long managerId) {
         return QUser.user.userId.eq(managerId);
-                //.and(QUser.user.role.eq(UserRole.MANAGER));
     }
 
     // 청소 예약 날짜 >= 시작일
@@ -231,13 +239,15 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             : QServiceCheckLog.serviceCheckLog.outTime.isNull();
     }
 
-    /* // 리뷰 작성 여부 -> 클라이언트에서 review 조회 api를 사용해서 따로 조회
+    // 리뷰 작성 여부
     private BooleanExpression isReviewed(Boolean isReviewed) {
         if (isReviewed == null) return null;
         return isReviewed
-            ? QReview.review.reviewId.isNotNull()
-            : QReview.review.reviewId.isNull();
-    }*/
+                ? QReview.review.reviewId.isNotNull()
+                .and(QReview.review.reviewAuthorType.eq(ReviewAuthorType.MANAGER))
+                : QReview.review.reviewId.isNull()
+                .or(QReview.review.reviewAuthorType.ne(ReviewAuthorType.MANAGER));
+    }
 
     // 고객명 검색어 포함 -> 검색된 이름 중에 role이 CUSTOMER인 경우만 조회 필요
     private BooleanExpression customerNameContains(String keyword) {

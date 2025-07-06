@@ -30,5 +30,5 @@ public class ManagerReservationSummaryInfo {
     private Timestamp outTime;
     private String roadAddress;
     private String detailAddress;
-
+    private Boolean isReviewed;
 }
