@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ServiceCheckLogErrorCode {
 
-    CHECK_IN_ALREADY_EXISTS(400, "SERVICE-CHECK-LOG-1", "체크인 정보가 이미 존재합니다."),
-    CHECK_OUT_ALREADY_EXISTS(400, "SERVICE-CHECK-LOG-2", "체크아웃 정보가 이미 존재합니다."),
+    CHECK_IN_ALREADY_EXISTS(409, "SERVICE-CHECK-LOG-1", "체크인 정보가 이미 존재합니다."),
+    CHECK_OUT_ALREADY_EXISTS(409, "SERVICE-CHECK-LOG-2", "체크아웃 정보가 이미 존재합니다."),
     CHECK_IN_NOT_FOUND(404, "SERVICE-CHECK-LOG-3", "체크인 정보를 찾을 수 없습니다."),
     CHECK_OUT_NOT_FOUND(404, "SERVICE-CHECK-LOG-4", "체크아웃 정보를 찾을 수 없습니다."),
     CHECK_IN_FILE_NOT_FOUND(404, "SERVICE-CHECK-LOG-5", "체크인 첨부파일을 찾을 수 없습니다."),
