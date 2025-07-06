@@ -16,11 +16,6 @@ public enum AuthorType {
         return label;
     }
 
-    @Override
-    public String toString() {
-        return label;
-    }
-
     public static AuthorType fromUserRole(UserRole userRole) {
         return switch (userRole){
             case CUSTOMER -> AuthorType.CUSTOMER;
