@@ -32,6 +32,7 @@ public class Inquiry extends BaseEntity {
 
     // 작성자 유형
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private AuthorType authorType;
 
     // 제목
@@ -83,5 +84,9 @@ public class Inquiry extends BaseEntity {
         if (updateCategory != null && !categoryName.equals(updateCategory)) {
             this.categoryName = updateCategory;
         }
+    }
+
+    public void replied(){
+        this.isReplied = Boolean.TRUE;
     }
 }
