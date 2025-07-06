@@ -1,10 +1,7 @@
 package com.kernel.inquiry.service.dto.response;
 
-import com.kernel.global.domain.entity.User;
-import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.common.utils.InquiryCategoryUtils;
-import com.kernel.inquiry.domain.entity.Inquiry;
-import com.kernel.inquiry.domain.entity.Reply;
+import com.kernel.inquiry.service.info.InquiryAdminDetailInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -29,34 +26,47 @@ public class InquiryAdminDetailRspDTO {
     private String content;
 
     @Schema(description = "작성자ID", example = "1", required = true)
-    private Long userId;
+    private Long authorId;
 
     @Schema(description = "작성자 이름", example = "홍길동", required = true)
-    private String userName;
+    private String authorName;
 
-    @Schema(description = "작성자 타입", example = "CUSOTMER", required = true)
-    private AuthorType authorType;
+    @Schema(description = "작성자 타입", example = "CUSTOMER", required = true)
+    private String authorType;
 
-    @Schema(description = "문의사항 답변", required = false)
-    private ReplyRspDTO reply;
+    @Schema(description = "작성자 핸드폰번호", example = "010-1111-1111", required = true)
+    private String phone;
+
+    @Schema(description = "작성자 이메일", example = "user01@gmail.com", required = true)
+    private String email;
 
     @Schema(description = "첨부파일 ID", example = "123", required = false)
     private Long fileId;
 
-    @Schema(description = "문의사항 작성 일시", example = "2023-01-01T12:00:00", required = false)
+    @Schema(description = "문의사항 작성 일시", example = "2023-01-01T12:00:00", required = true)
     private LocalDateTime createdAt;
 
+    @Schema(description = "답변DTO", required = false)
+    private ReplyAdminDetailRspDTO replyDetail;
 
-    public static InquiryAdminDetailRspDTO fromEntity(Inquiry inquiry, Reply reply, User author) {
+
+    public static InquiryAdminDetailRspDTO fromEntity(InquiryAdminDetailInfo detailInfo) {
         return InquiryAdminDetailRspDTO.builder()
-                .inquiryId(inquiry.getInquiryId())
-                .categoryName(InquiryCategoryUtils.getCategoryLabel(inquiry.getCategoryName(), inquiry.getAuthorType()))
-                .title(inquiry.getTitle())
-                .content(inquiry.getContent())
-                .createdAt(inquiry.getCreatedAt())
-                .userId(author.getUserId())
-                .authorType(AuthorType.fromUserRole(author.getRole()))
-                .reply(reply != null ? ReplyRspDTO.fromEntity(reply) : null)
+                .inquiryId(detailInfo.getInquiryId())
+                .categoryName(InquiryCategoryUtils.getCategoryLabel(detailInfo.getCategoryName(), detailInfo.getAuthorType()))
+                .title(detailInfo.getTitle())
+                .content(detailInfo.getContent())
+                .authorId(detailInfo.getAuthorId())
+                .authorName(detailInfo.getAuthorName())
+                .phone(detailInfo.getPhone())
+                .email(detailInfo.getEmail())
+                .authorType(detailInfo.getAuthorType().getLabel())
+                .fileId(detailInfo.getFileId())
+                .createdAt(detailInfo.getCreatedAt())
+                .replyDetail(
+                        detailInfo.getReplyDetailInfo() != null ?
+                        ReplyAdminDetailRspDTO.fromInfo(detailInfo.getReplyDetailInfo()) : null
+                )
                 .build();
     }
 }
