@@ -33,10 +33,10 @@ public class FileUploadController {
     }
 
     @PostMapping("/presigned-urls")
-    public ResponseEntity<ApiResponse<List<PresignedUrlRspDTO>>> generatePresignedUrls(
+    public ResponseEntity<ApiResponse<PresignedUrlRspDTO>> generatePresignedUrls(
             @RequestBody @Valid PresignedUrlReqDTO request
     ) {
-        List<PresignedUrlRspDTO> response = fileUploadService.generatePresignedUrls(request);
+        PresignedUrlRspDTO response = fileUploadService.generatePresignedUrls(request);
         return ResponseEntity.ok(new ApiResponse<>(true, "프리사인드 URL 생성 성공", response));
     }
 

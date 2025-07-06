@@ -6,10 +6,15 @@ import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.reservation.service.ManagerReservationService;
 import com.kernel.reservation.service.request.ManagerReservationSearchCondDTO;
 import com.kernel.reservation.service.request.ReservationCancelReqDTO;
+import com.kernel.reservation.service.request.ServiceCheckInReqDTO;
+import com.kernel.reservation.service.request.ServiceCheckOutReqDTO;
 import com.kernel.reservation.service.response.ManagerReservationRspDTO;
 import com.kernel.reservation.service.response.ManagerReservationSummaryRspDTO;
 
+import com.kernel.reservation.service.response.ServiceCheckInRspDTO;
+import com.kernel.reservation.service.response.ServiceCheckOutRspDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -92,6 +97,41 @@ public class ManagerReservationController {
         reservationService.rejectReservation(user.getUserId(), reservationId, request);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "예약 거절 성공", null));
+    }
+
+    /**
+     * 체크인 API
+     * @param manager 매니저
+     * @param reservationId 예약ID
+     * @param request 체크인 요청 정보
+     * @return 체크인 정보를 담은 응답
+     */
+    @PostMapping("/{reservation-id}/check-in")
+    public ResponseEntity<ApiResponse<ServiceCheckInRspDTO>> checkIn(
+            @AuthenticationPrincipal CustomUserDetails manager,
+            @PathVariable("reservation-id") Long reservationId,
+            @Valid @RequestBody ServiceCheckInReqDTO request
+    ) {
+
+        ServiceCheckInRspDTO responseDTO = reservationService.checkIn(manager.getUserId(), reservationId, request);
+        return ResponseEntity.ok(new ApiResponse<>(true, "체크인 성공", responseDTO));
+    }
+
+    /**
+     * 체크아웃 API
+     * @param reservationId 예약ID
+     * @param request 체크아웃요청DTO
+     * @return 체크아웃 정보를 담은 응답
+     */
+    @PatchMapping("/{reservation-id}/check-out")
+    public ResponseEntity<ApiResponse<ServiceCheckOutRspDTO>> checkOut(
+            @AuthenticationPrincipal CustomUserDetails manager,
+            @PathVariable("reservation-id") Long reservationId,
+            @Valid @RequestBody ServiceCheckOutReqDTO request
+    ) {
+
+        ServiceCheckOutRspDTO responseDTO = reservationService.checkOut(manager.getUserId(), reservationId, request);
+        return ResponseEntity.ok(new ApiResponse<>(true, "체크아웃 성공", responseDTO));
     }
 
 
