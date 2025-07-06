@@ -179,7 +179,24 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 serviceCheckLog.outFileId,
                 user.userName,
                 userInfo.roadAddress,
-                userInfo.detailAddress
+                userInfo.detailAddress,
+                // 조회해야하는 리뷰가 수요자, 매니저 리뷰 모두 포함되어야 함
+                Expressions.stringTemplate(
+                        "CASE WHEN {0} = 'CUSTOMER' THEN {1} ELSE NULL END",
+                        review.reviewAuthorType, review.content
+                ).as("customerReviewContent"),
+                Expressions.numberTemplate(Integer.class,
+                        "CASE WHEN {0} = 'CUSTOMER' THEN {1} ELSE NULL END",
+                        review.reviewAuthorType, review.rating
+                ).as("customerReviewRating"),
+                Expressions.stringTemplate(
+                        "CASE WHEN {0} = 'MANAGER' THEN {1} ELSE NULL END",
+                        review.reviewAuthorType, review.content
+                ).as("managerReviewContent"),
+                Expressions.numberTemplate(Integer.class,
+                        "CASE WHEN {0} = 'MANAGER' THEN {1} ELSE NULL END",
+                        review.reviewAuthorType, review.rating
+                ).as("managerReviewRating")
             ))
             .from(reservation)
             .leftJoin(reservationSchedule).on(reservationSchedule.reservation.eq(reservation))
@@ -189,6 +206,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             .leftJoin(reservationCancel).on(reservationCancel.reservation.eq(reservation))
             .leftJoin(user).on(reservation.user.eq(user))
             .leftJoin(userInfo).on(userInfo.user.eq(user))
+            .leftJoin(review).on(review.reservation.eq(reservation))
             .where(
                 reservation.reservationId.eq(reservationId),
                 reservationMatch.manager.userId.eq(managerId)

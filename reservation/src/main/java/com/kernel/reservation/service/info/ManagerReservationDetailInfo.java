@@ -36,6 +36,9 @@ public class ManagerReservationDetailInfo {
     private String roadAddress;
     private String detailAddress;
     private String userName;
-
+    private String customerReviewContent;
+    private Integer customerReviewRating;
+    private String managerReviewContent;
+    private Integer managerReviewRating;
 
 }
