@@ -100,11 +100,11 @@ public class ManagerDetailRspDTO {
                 .profileImagePath(managerDetailInfo.getProfileImageFilePath() != null ? managerDetailInfo.getProfileImageFilePath() : "")
                 .filePaths(managerDetailInfo.getFilePaths() != null ? managerDetailInfo.getFilePaths() : "")
                 .status(userAccountInfo.getStatus())
-                .contractAt(managerDetailInfo.getContractDate())
+                .contractAt(managerDetailInfo.getContractDate() != null ? managerDetailInfo.getContractDate() : LocalDateTime.now())
                 .availableTimes(availableTimes)
-                .requestedAt(managerTerminationInfo.getRequestAt())
-                .terminationReason(managerTerminationInfo.getTerminationReason())
-                .terminatedAt(managerTerminationInfo.getTerminatedAt())
+                .requestedAt(managerTerminationInfo.getRequestAt() != null ? managerTerminationInfo.getRequestAt() : null)
+                .terminationReason(managerTerminationInfo.getTerminationReason() != null ? managerTerminationInfo.getTerminationReason() : "")
+                .terminatedAt(managerTerminationInfo.getTerminatedAt() != null ? managerTerminationInfo.getTerminatedAt() : null)
                 .build();
     }
 }
