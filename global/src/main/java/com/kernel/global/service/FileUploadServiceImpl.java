@@ -97,8 +97,6 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new RuntimeException("파일 경로를 JSON으로 변환하는 중 오류가 발생했습니다");
         }
 
-        System.out.println("파일 경로 JSON: " + filePathsJson);
-
         File uploadedFiles = File.builder()
                 .filePathsJson(filePathsJson)
                 .postStatus(PostStatus.REGISTERED)
