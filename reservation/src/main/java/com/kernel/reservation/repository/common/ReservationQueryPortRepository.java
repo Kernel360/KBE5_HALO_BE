@@ -50,4 +50,11 @@ public interface ReservationQueryPortRepository extends JpaRepository<Reservatio
             @Param("userId") Long userId
     );
 
+    // 예약 테이블과 예약 매칭 테이블을 조인해서 매니저 id와 reservationId로 예약 조회
+    @Query("SELECT r FROM Reservation r " +
+            "JOIN ReservationMatch rm ON r.reservationId = rm.reservation.reservationId " +
+            "WHERE r.reservationId = :reservationId " +
+            "AND rm.manager.userId = :managerId")
+    Optional<Reservation> findReservationByReservationIdAndManagerId(Long reservationId, Long managerId);
+
 }
