@@ -115,7 +115,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
                 .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION_MATCH));
 
         // 3. 매니저 수락 처리
-        requestedReservation.managerAccept();
+        requestedReservation.changeStatus(ReservationStatus.CONFIRMED);
 
         // 4. 매니저 예약 매칭 정보 업데이트
         reservationMatch.changeStatus(MatchStatus.MATCHED);
@@ -193,7 +193,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         serviceCheckLogRepository.save(checkLog);
 
         // 7. 예약 상태를 IN_PROGRESS로 변경
-        reservation.checkIn();
+        reservation.changeStatus(ReservationStatus.IN_PROGRESS);
 
         // 8. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckInRspDTO.toDTO(checkLog);
@@ -227,7 +227,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         checkLog.checkOut(cleaningLogCheckOutReqDTO.getOutFileId());
 
         // 6. 예약 상태를 COMPLETED로 변경
-        reservation.checkOut();
+        reservation.changeStatus(ReservationStatus.COMPLETED);
 
         // 7. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckOutRspDTO.toDTO(checkLog);
