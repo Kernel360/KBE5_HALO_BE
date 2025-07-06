@@ -1,8 +1,14 @@
 package com.kernel.inquiry.common.exception;
 
-public class CustomNoDataFoundException extends RuntimeException {
+import com.kernel.global.common.enums.ErrorCodeInterface;
 
-    public CustomNoDataFoundException(String message) {
-        super(message);
+public class CustomNoDataFoundException extends InquiryException {
+
+    public CustomNoDataFoundException(ErrorCodeInterface errorCode) {
+        super(errorCode);
+    }
+    
+    public CustomNoDataFoundException(ErrorCodeInterface errorCode, Throwable cause) {
+        super(errorCode, cause);
     }
 }

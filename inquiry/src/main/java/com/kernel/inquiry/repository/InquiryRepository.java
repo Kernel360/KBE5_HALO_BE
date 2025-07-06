@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface InquiryRepository extends JpaRepository<Inquiry, Long>, CustomInquiryRepository {
 
     // 문의사항 조회
-    Optional<Inquiry> findByIdAndAuthorId(Long inquiryId, Long userId);
+    Optional<Inquiry> findByInquiryIdAndAuthorId(Long inquiryId, Long userId);
 }

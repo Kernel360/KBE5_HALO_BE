@@ -55,7 +55,7 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     public InquiryDetailRspDTO getInquiryDetails(Long inquiryId, Long userId) {
 
-        Inquiry foundInquiry = inquiryRepository.findByIdAndAuthorId(inquiryId, userId)
+        Inquiry foundInquiry = inquiryRepository.findByInquiryIdAndAuthorId(inquiryId, userId)
                 .orElseThrow(() -> new InquiryNotFoundException(InquiryErrorCode.INQUIRY_NOT_FOUND));
 
         Reply foundReply = replyRepository.findByInquiryId(foundInquiry).orElse(null);
@@ -102,7 +102,7 @@ public class InquiryServiceImpl implements InquiryService {
     {
 
         // 1. 문의사항 조회
-        Inquiry foundInquiry = inquiryRepository.findByIdAndAuthorId(inquiryId, userId)
+        Inquiry foundInquiry = inquiryRepository.findByInquiryIdAndAuthorId(inquiryId, userId)
                 .orElseThrow(() -> new InquiryNotFoundException(InquiryErrorCode.INQUIRY_NOT_FOUND));
 
         // 2. 작성자 타입 변환
@@ -130,7 +130,7 @@ public class InquiryServiceImpl implements InquiryService {
     public void deleteInquiry(Long inquiryId, Long userId) {
 
         // 1. 문의사항 조회
-        Inquiry foundInquiry = inquiryRepository.findByIdAndAuthorId(inquiryId, userId)
+        Inquiry foundInquiry = inquiryRepository.findByInquiryIdAndAuthorId(inquiryId, userId)
                 .orElseThrow(() -> new InquiryNotFoundException(InquiryErrorCode.INQUIRY_NOT_FOUND));
 
         foundInquiry.delete();
