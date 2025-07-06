@@ -71,7 +71,7 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
                         contentContains(searchReqDTO.getContentKeyword()),
                         replyStatusCond(searchReqDTO.getReplyStatus(), inquiry)
                 )
-                .orderBy(inquiry.inquiryId.desc()) // 최신순 정렬
+                .orderBy(inquiry.createdAt.desc()) // 최신순 정렬
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -127,6 +127,9 @@ public class CustomInquiryRepositoryImpl implements CustomInquiryRepository {
      * @return 답변 상태에 따른 Inquiry 조건식
      */
     private BooleanExpression replyStatusCond(Boolean replyStatus, QInquiry inquiry) {
-       return replyStatus != null && replyStatus ? inquiry.isReplied.isTrue() : inquiry.isReplied.isFalse();
+        if (replyStatus == null)
+            return null;
+
+        return replyStatus ? inquiry.isReplied.isTrue() : inquiry.isReplied.isFalse();
     }
 }

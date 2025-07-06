@@ -71,7 +71,7 @@ public class InquiryServiceImpl implements InquiryService {
      */
     @Transactional
     @Override
-    public void createInquiry(InquiryCreateReqDTO createReqDTO, Long userId, UserRole userRole) {
+    public Long createInquiry(InquiryCreateReqDTO createReqDTO, Long userId, UserRole userRole) {
 
         // 1. 작성자 타입 변환
         AuthorType authorType = AuthorType.fromUserRole(userRole);
@@ -80,15 +80,17 @@ public class InquiryServiceImpl implements InquiryService {
         validateCategory(createReqDTO.getCategory(), authorType);
 
         // 3. 문의 저장
-        inquiryRepository.save(Inquiry.builder()
-                .categoryName(createReqDTO.getCategory())
-                .authorId(userId)
-                .authorType(authorType)
-                .title(createReqDTO.getTitle())
-                .content(createReqDTO.getContent())
-                .fileId(createReqDTO.getFileId())
-                .build()
-        );
+        Inquiry saveInquiry = inquiryRepository.save(Inquiry.builder()
+                            .categoryName(createReqDTO.getCategory())
+                            .authorId(userId)
+                            .authorType(authorType)
+                            .title(createReqDTO.getTitle())
+                            .content(createReqDTO.getContent())
+                            .fileId(createReqDTO.getFileId())
+                            .build()
+                    );
+
+        return saveInquiry.getInquiryId();
     }
 
     /**
@@ -100,7 +102,6 @@ public class InquiryServiceImpl implements InquiryService {
     @Override
     public void updateInquiry(Long inquiryId, InquiryUpdateReqDTO updateReqDTO, Long userId, UserRole userRole)
     {
-
         // 1. 문의사항 조회
         Inquiry foundInquiry = inquiryRepository.findByInquiryIdAndAuthorId(inquiryId, userId)
                 .orElseThrow(() -> new InquiryNotFoundException(InquiryErrorCode.INQUIRY_NOT_FOUND));

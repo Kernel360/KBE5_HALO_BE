@@ -18,7 +18,7 @@ public interface InquiryService {
     InquiryDetailRspDTO getInquiryDetails(Long inquiryId, Long userId);
 
     // 문의사항 생성
-    void createInquiry(InquiryCreateReqDTO createReqDTO, Long userId, UserRole userRole);
+    Long createInquiry(InquiryCreateReqDTO createReqDTO, Long userId, UserRole userRole);
 
     // 문의사항 수정
     void updateInquiry(Long inquiryId, InquiryUpdateReqDTO updateReqDTO, Long userId, UserRole userRole);

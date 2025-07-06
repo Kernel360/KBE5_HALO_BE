@@ -2,12 +2,14 @@ package com.kernel.inquiry.service.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Schema(description = "수요자/매니저 문의 검색 요청 DTO")
 public class InquirySearchReqDTO {
 
