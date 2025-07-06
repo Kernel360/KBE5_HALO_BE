@@ -81,6 +81,18 @@ public class ManagerReservationRspDTO {
     @Schema(description = "예약 취소자 유형", example = "MANAGER", required = false)
     private UserRole canceledByRole;
 
+    @Schema(description = "고객 리뷰 내용", example = "서비스가 매우 만족스러웠습니다.", required = false)
+    private String customerReviewContent;
+
+    @Schema(description = "고객 리뷰 평점", example = "5", minimum = "1", maximum = "5", required = false)
+    private Integer customerReviewRating;
+
+    @Schema(description = "매니저 리뷰 내용", example = "고객이 매우 친절했습니다.", required = false)
+    private String managerReviewContent;
+
+    @Schema(description = "매니저 리뷰 평점", example = "5", minimum = "1", maximum = "5", required = false)
+    private Integer managerReviewRating;
+
     @Schema(description = "ManagerReservationDetailInfo에서 필요한 필드만 포함하여 DTO로 변환")
     public static ManagerReservationRspDTO fromInfo(ManagerReservationDetailInfo info, User canceledBy) {
         return ManagerReservationRspDTO.builder()
@@ -105,6 +117,10 @@ public class ManagerReservationRspDTO {
                 .cancelReason(info.getCancelReason() != null ? info.getCancelReason() : null)
                 .canceledByName(canceledBy != null ? canceledBy.getUserName() : null)
                 .canceledByRole(canceledBy != null ? canceledBy.getRole() : null)
+                .customerReviewContent(info.getCustomerReviewContent() != null ? info.getCustomerReviewContent() : null)
+                .customerReviewRating(info.getCustomerReviewRating() != null ? info.getCustomerReviewRating() : null)
+                .managerReviewContent(info.getManagerReviewContent() != null ? info.getManagerReviewContent() : null)
+                .managerReviewRating(info.getManagerReviewRating() != null ? info.getManagerReviewRating() : null)
                 .build();
     }
 

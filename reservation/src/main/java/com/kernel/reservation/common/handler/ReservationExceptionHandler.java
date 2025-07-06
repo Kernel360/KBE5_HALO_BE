@@ -3,6 +3,7 @@ package com.kernel.reservation.common.handler;
 
 import com.kernel.reservation.common.exception.InsufficientPointsException;
 import com.kernel.reservation.common.exception.NoAvailableManagerException;
+import com.kernel.reservation.common.exception.ReservationException;
 import com.kernel.reservation.service.response.common.ReservationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +33,11 @@ public class ReservationExceptionHandler {
         return ResponseEntity.status(e.getErrorCode().getStatus()).body(errorResponse);
     }
 
-
-
-
+    // 예약 관련 예외
+    @ExceptionHandler(ReservationException.class)
+    public ResponseEntity<ReservationErrorResponse> handleReservationException(ReservationException e) {
+        log.error("ReservationException error: {}", e.getMessage());
+        ReservationErrorResponse errorResponse = new ReservationErrorResponse(e.getErrorCode());
+        return ResponseEntity.status(e.getErrorCode().getStatus()).body(errorResponse);
+    }
 }

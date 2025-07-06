@@ -56,4 +56,15 @@ public class ReservationQueryPortImpl implements ReservationQueryPort {
         return portRepository.findSchedulesAndMatchesByUserIdAndStatus(status, userId);
     }
 
+    /**
+     * 예약 테이블과 예약 매칭 테이블을 조인해서 매니저 id와 reservationId로 예약 조회
+     * @param reservationId 예약ID
+     * @param managerId 매니저ID
+     * @return Reservation
+     */
+    @Override
+    public Reservation findReservationByReservationIdAndManagerId(Long reservationId, Long managerId) {
+        return portRepository.findReservationByReservationIdAndManagerId(reservationId, managerId)
+                .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION_MATCH));
+    }
 }

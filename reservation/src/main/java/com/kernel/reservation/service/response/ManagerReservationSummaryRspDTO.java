@@ -70,6 +70,9 @@ public class ManagerReservationSummaryRspDTO {
     @Schema(description = "체크아웃 일시", example = "2023-01-01T16:00:00", required = false)
     private LocalDateTime outTime;
 
+    @Schema(description = "리뷰 작성 여부", example = "true", required = false)
+    private Boolean isReviewed;
+
     @Schema(description = "ManagerReservationSummaryInfo에서 필요한 필드만 포함하여 DTO로 변환")
     public static Page<ManagerReservationSummaryRspDTO> fromInfo(Page<ManagerReservationSummaryInfo> info) {
         return info.map(reservation -> ManagerReservationSummaryRspDTO.builder()
@@ -84,10 +87,11 @@ public class ManagerReservationSummaryRspDTO {
                 .customerDetailAddress(reservation.getDetailAddress())
                 .status(reservation.getStatus())
                 .reservationCheckId(reservation.getServiceCheckId())
-                .isCheckedIn(reservation.getIsCheckedIn())
+                .isCheckedIn(reservation.getIsCheckedIn() != null ? reservation.getIsCheckedIn() : false)
                 .inTime(reservation.getInTime() != null ? reservation.getInTime().toLocalDateTime() : null)
-                .isCheckedOut(reservation.getIsCheckedOut())
+                .isCheckedOut(reservation.getIsCheckedOut() != null ? reservation.getIsCheckedOut() : false)
                 .outTime(reservation.getOutTime() != null ? reservation.getOutTime().toLocalDateTime() : null)
+                .isReviewed(reservation.getIsReviewed() != null ? reservation.getIsReviewed() : false)
                 .build());
     }
 }
