@@ -7,6 +7,8 @@ import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.File;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.FileRepository;
+import com.kernel.member.common.enums.MemberErrorCode;
+import com.kernel.member.common.exception.SpecialtyException;
 import com.kernel.member.domain.entity.AvailableTime;
 import com.kernel.member.domain.entity.Manager;
 import com.kernel.member.domain.entity.ManagerTermination;
@@ -14,6 +16,7 @@ import com.kernel.member.domain.entity.UserInfo;
 import com.kernel.member.repository.AvailableTimeRepository;
 import com.kernel.member.repository.ManagerRepository;
 import com.kernel.member.repository.ManagerTerminationRepository;
+import com.kernel.member.repository.common.ManagerServiceCategoryRepository;
 import com.kernel.member.service.common.UserInfoService;
 import com.kernel.member.service.common.UserService;
 import com.kernel.member.service.common.info.*;
@@ -21,6 +24,7 @@ import com.kernel.member.service.request.ManagerSignupReqDTO;
 import com.kernel.member.service.request.ManagerUpdateReqDTO;
 import com.kernel.member.service.response.ManagerDetailRspDTO;
 
+import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +42,7 @@ public class ManagerServiceImpl implements ManagerService {
     private final AvailableTimeRepository availableTimeRepository;
     private final ManagerTerminationRepository managerTerminationRepository;
     private final FileRepository fileRepository;
+    private final ManagerServiceCategoryRepository managerServiceCategoryRepository;
 
     /**
      * 매니저 회원가입
@@ -113,28 +118,28 @@ public class ManagerServiceImpl implements ManagerService {
      */
     @Override
     @Transactional
-    public ManagerDetailRspDTO updateManager(Long userId,ManagerUpdateReqDTO updateReqDTO) {
+    public ManagerDetailRspDTO updateManager(Long userId, ManagerUpdateReqDTO updateReqDTO) {
 
-        // User 조회
+        // 1. User 조회
         User foundUser = userService.getByUserIdAndStatus(userId, UserStatus.ACTIVE);
 
-        // UserInfo 조회
+        // 2. UserInfo 조회
         UserInfo foundUserInfo = userInfoService.getUserById(foundUser.getUserId());
 
-        // Manager 조회
+        // 3. Manager 조회
         Manager foundManager = managerRepository.findById(foundUser.getUserId())
                 .orElseThrow(()-> new AuthException(ErrorCode.USER_NOT_FOUND));
 
-        // Available Time 조회
+        // 4. Available Time 조회
         List<AvailableTime> foundAvailableTimeList = availableTimeRepository.findByManager(foundManager);
 
-        // ManagerTermination 조회
+        // 5. ManagerTermination 조회
         ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager);
 
-        // User 수정
+        // 6. User 수정
         foundUser.updateEmail(updateReqDTO.getUserUpdateReqDTO().getEmail());
 
-        // UserInfo 수정
+        // 7. UserInfo 수정
         foundUserInfo.updateAddress(
                 updateReqDTO.getUserInfoUpdateReqDTO().getRoadAddress(),
                 updateReqDTO.getUserInfoUpdateReqDTO().getDetailAddress(),
@@ -142,15 +147,17 @@ public class ManagerServiceImpl implements ManagerService {
                 updateReqDTO.getUserInfoUpdateReqDTO().getLongitude()
         );
 
-        // Manager 수정
-        foundManager.update(updateReqDTO.getManagerUpdateInfoReqDTO());
+        // 8. Manager 수정
+        ServiceCategory serviceCategory = managerServiceCategoryRepository.findById(updateReqDTO.getManagerUpdateInfoReqDTO().getSpecialty())
+                .orElseThrow(() -> new SpecialtyException(MemberErrorCode.SPECIALTY_NOT_FOUND));
+        foundManager.update(updateReqDTO.getManagerUpdateInfoReqDTO(), serviceCategory);
 
-        // Available Time 수정
+        // 9. Available Time 수정
         availableTimeRepository.deleteAll(foundAvailableTimeList);
-        List<AvailableTime> updatedAvailableTimeList = updateReqDTO.toEntityList(updateReqDTO.getAvailableTimeUpdateReqDTOList());
+        List<AvailableTime> updatedAvailableTimeList = updateReqDTO.toEntityList(updateReqDTO.getAvailableTimeUpdateReqDTOList(), foundManager);
         availableTimeRepository.saveAll(updatedAvailableTimeList);
 
-        // DTO 변환 후 return
+        // 10. DTO 변환 후 return
         return ManagerDetailRspDTO.fromInfos(
                 UserAccountInfo.fromEntity(foundUser),
                 UserDetailInfo.fromEntity(foundUserInfo),

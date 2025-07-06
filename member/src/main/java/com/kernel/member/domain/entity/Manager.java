@@ -61,9 +61,9 @@ public class Manager {
     private LocalDateTime contractDate;
 
     // Manager 정보 수정
-    public void update(ManagerUpdateInfoReqDTO request) {
-        if (request.getSpecialty() != null) {
-            this.specialty = request.getSpecialty();
+    public void update(ManagerUpdateInfoReqDTO request, ServiceCategory specialty) {
+        if (specialty != null) {
+            this.specialty = specialty;
         }
         if (request.getBio() != null) {
             this.bio = request.getBio();
