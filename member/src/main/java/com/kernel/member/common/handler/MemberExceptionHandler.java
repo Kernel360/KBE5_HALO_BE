@@ -1,6 +1,7 @@
 package com.kernel.member.common.handler;
 
 import com.kernel.global.service.dto.response.ApiResponse;
+import com.kernel.member.common.exception.SpecialtyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,13 @@ public class MemberExceptionHandler {
     @ExceptionHandler(PrinterException.class)
     public ResponseEntity<ApiResponse<Void>> handlePrinterException(PrinterException e) {
         log.warn("PrinterException error: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, e.getMessage(), null));
+    }
+
+    // 특기 예외 처리
+    @ExceptionHandler(SpecialtyException.class)
+    public ResponseEntity<ApiResponse<Void>> handleSpecialtyException(SpecialtyException e) {
+        log.error("SpecialtyException error: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, e.getMessage(), null));
     }
 }
