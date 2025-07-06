@@ -2,11 +2,12 @@ package com.kernel.inquiry.controller.inquiry;
 
 import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.global.service.dto.response.EnumValueDTO;
+import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
 import com.kernel.inquiry.common.enums.ManagerInquiryCategory;
 import com.kernel.inquiry.service.dto.request.InquiryAdminSearchReqDTO;
 import com.kernel.inquiry.service.dto.response.InquiryAdminDetailRspDTO;
-import com.kernel.inquiry.service.dto.response.InquirySummaryRspDTO;
+import com.kernel.inquiry.service.dto.response.InquiryAdminSummaryRspDTO;
 import com.kernel.inquiry.service.inquiry.InquiryAdminIService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -56,25 +57,26 @@ public class InquiryAdminController {
     @GetMapping("/authorTypes")
     public ResponseEntity<ApiResponse<List<EnumValueDTO>>> getAllInquiryAuthorTypes() {
 
-        List<EnumValueDTO> result = Arrays.stream(CustomerInquiryCategory.values())
+        List<EnumValueDTO> result = Arrays.stream(AuthorType.values())
                 .map(e -> new EnumValueDTO(e.name(), e.getLabel()))
                 .toList();
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "수요자 문의사항 카테고리 조회 성공", result));
+        return ResponseEntity.ok(new ApiResponse<>(true, "작성자 타입 조회 성공", result));
     }
 
     /**
-     * 문의사항 조회
+     * 문의사항 목록 조회
      * @param searchReqDTO 검색 조건
      * @param pageable     페이징 정보
      * @return 검색된 문의사항 목록
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<InquirySummaryRspDTO>>> searchInquiries(
-            @RequestBody @Valid InquiryAdminSearchReqDTO searchReqDTO,
+    public ResponseEntity<ApiResponse<Page<InquiryAdminSummaryRspDTO>>> searchInquiries(
+            @ModelAttribute @Valid InquiryAdminSearchReqDTO searchReqDTO,
             Pageable pageable
     ) {
-        Page<InquirySummaryRspDTO> inquiries = inquiryAdminIService.searchInquiries(searchReqDTO, pageable);
+        System.out.println(searchReqDTO.toString());
+        Page<InquiryAdminSummaryRspDTO> inquiries = inquiryAdminIService.searchInquiries(searchReqDTO, pageable);
         return ResponseEntity.ok(new ApiResponse<>(true, "문의사항 목록 조회 성공", inquiries));
     }
 

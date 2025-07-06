@@ -54,7 +54,7 @@ public class InquiryCustomerController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<InquirySummaryRspDTO>>> searchCustomerInquiries(
-            @RequestBody @Valid InquirySearchReqDTO searchReqDTO,
+            @ModelAttribute @Valid InquirySearchReqDTO searchReqDTO,
             @AuthenticationPrincipal CustomUserDetails user,
             Pageable pageable
     ) {
@@ -86,14 +86,14 @@ public class InquiryCustomerController {
      * @return ResponseEntity<ApiResponse < Void>>
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> createInquiry(
+    public ResponseEntity<ApiResponse<Long>> createInquiry(
             @RequestBody @Valid InquiryCreateReqDTO createReqDTO,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
 
-        inquiryService.createInquiry(createReqDTO, user.getUserId(), user.getRole());
+        Long savedInquiry = inquiryService.createInquiry(createReqDTO, user.getUserId(), user.getRole());
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "문의사항 등록 성공", null));
+        return ResponseEntity.ok(new ApiResponse<>(true, "문의사항 등록 성공", savedInquiry));
     }
 
     /**
