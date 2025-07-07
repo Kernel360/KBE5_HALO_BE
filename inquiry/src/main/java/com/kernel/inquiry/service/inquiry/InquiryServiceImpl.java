@@ -1,6 +1,7 @@
 package com.kernel.inquiry.service.inquiry;
 
 import com.kernel.global.common.enums.UserRole;
+import com.kernel.global.service.dto.response.EnumValueDTO;
 import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
 import com.kernel.inquiry.common.enums.InquiryErrorCode;
@@ -22,6 +23,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -138,11 +142,35 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     /**
+     * 수요자 문의사항 카테고리 조회
+     * @return 문의사항 카테고리 목록
+     */
+    @Override
+    public List<EnumValueDTO> getCustomerInquiryCategory() {
+
+        return Arrays.stream(CustomerInquiryCategory.values())
+                .map(e -> new EnumValueDTO(e.name(), e.getLabel()))
+                .toList();
+    }
+
+    /**
+     * 관리자 문의사항 카테고리 조회
+     * @return 문의사항 카테고리 목록
+     */
+    @Override
+    public List<EnumValueDTO> getManagerInquiryCategory() {
+
+        return Arrays.stream(ManagerInquiryCategory.values())
+                .map(e -> new EnumValueDTO(e.name(), e.getLabel()))
+                .toList();
+    }
+
+    /**
      * 카테고리 검사
      * @param categoryName 카테고리 name
      * @param authorType  작성자 타입
      */
-    public void validateCategory(String categoryName, AuthorType authorType) {
+    private void validateCategory(String categoryName, AuthorType authorType) {
         
         try {
             switch (authorType) {

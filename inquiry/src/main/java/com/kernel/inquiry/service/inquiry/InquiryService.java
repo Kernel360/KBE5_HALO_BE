@@ -1,6 +1,7 @@
 package com.kernel.inquiry.service.inquiry;
 
 import com.kernel.global.common.enums.UserRole;
+import com.kernel.global.service.dto.response.EnumValueDTO;
 import com.kernel.inquiry.service.dto.request.InquiryCreateReqDTO;
 import com.kernel.inquiry.service.dto.request.InquirySearchReqDTO;
 import com.kernel.inquiry.service.dto.request.InquiryUpdateReqDTO;
@@ -8,6 +9,8 @@ import com.kernel.inquiry.service.dto.response.InquiryDetailRspDTO;
 import com.kernel.inquiry.service.dto.response.InquirySummaryRspDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface InquiryService {
 
@@ -26,4 +29,9 @@ public interface InquiryService {
     // 문의사항 삭제
     void deleteInquiry(Long inquiryId, Long userId);
 
+    // 수요자 문의사항 카테고리 조회
+    List<EnumValueDTO> getCustomerInquiryCategory();
+
+    // 매니저 문의사항 카테고리 조회
+    List<EnumValueDTO> getManagerInquiryCategory();
 }

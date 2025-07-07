@@ -4,7 +4,6 @@ package com.kernel.inquiry.controller.inquiry;
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.global.service.dto.response.EnumValueDTO;
-import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
 import com.kernel.inquiry.service.dto.request.InquiryCreateReqDTO;
 import com.kernel.inquiry.service.dto.request.InquirySearchReqDTO;
 import com.kernel.inquiry.service.dto.request.InquiryUpdateReqDTO;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Tag(name = "수요자 문의사항 관리 API", description = "수요자 문의사항 조회, 생성, 수정, 삭제 API")
@@ -38,9 +36,7 @@ public class InquiryCustomerController {
     @GetMapping("/categories")
     public ResponseEntity<ApiResponse<List<EnumValueDTO>>> getCustomerInquiryCategory() {
 
-        List<EnumValueDTO> result = Arrays.stream(CustomerInquiryCategory.values())
-                .map(e -> new EnumValueDTO(e.name(), e.getLabel()))
-                .toList();
+        List<EnumValueDTO> result = inquiryService.getCustomerInquiryCategory();
 
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 문의사항 카테고리 조회 성공", result));
     }

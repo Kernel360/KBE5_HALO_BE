@@ -1,5 +1,6 @@
 package com.kernel.inquiry.service.inquiry;
 
+import com.kernel.global.service.dto.response.EnumValueDTO;
 import com.kernel.inquiry.repository.InquiryAdminRepository;
 import com.kernel.inquiry.service.dto.request.InquiryAdminSearchReqDTO;
 import com.kernel.inquiry.service.dto.response.InquiryAdminDetailRspDTO;
@@ -12,12 +13,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @Service
 @RequiredArgsConstructor
 public class InquiryAdminIServiceImpl implements InquiryAdminIService {
 
     private final InquiryAdminRepository adminInquiryRepository;
+    private final InquiryService inquiryService;
 
     /**
      * 문의사항 검색
@@ -50,4 +56,22 @@ public class InquiryAdminIServiceImpl implements InquiryAdminIService {
         return InquiryAdminDetailRspDTO.fromEntity(foundInquiry);
     }
 
+    /**
+     * 문의사항 카테고리 조회
+     * @return 문의사항 카테고리 목록
+     */
+    @Override
+    public Map<String, List<EnumValueDTO>> getAllInquiryCategoriesForAdmin() {
+
+        Map<String, List<EnumValueDTO>> result = new HashMap<>();
+
+        result.put("CUSTOMER", inquiryService.getCustomerInquiryCategory());
+        result.put("MANAGER", inquiryService.getManagerInquiryCategory());
+
+        return result;
+    }
+
+
 }
+
+

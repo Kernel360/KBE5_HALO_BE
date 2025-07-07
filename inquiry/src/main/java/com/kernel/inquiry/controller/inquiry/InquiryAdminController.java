@@ -3,8 +3,6 @@ package com.kernel.inquiry.controller.inquiry;
 import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.global.service.dto.response.EnumValueDTO;
 import com.kernel.inquiry.common.enums.AuthorType;
-import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
-import com.kernel.inquiry.common.enums.ManagerInquiryCategory;
 import com.kernel.inquiry.service.dto.request.InquiryAdminSearchReqDTO;
 import com.kernel.inquiry.service.dto.response.InquiryAdminDetailRspDTO;
 import com.kernel.inquiry.service.dto.response.InquiryAdminSummaryRspDTO;
@@ -18,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,22 +27,14 @@ public class InquiryAdminController {
 
     private final InquiryAdminIService inquiryAdminIService;
 
-
     /**
      * 문의사항 카테고리 조회
      * @return 문의사항 카테고리 목록
      */
     @GetMapping("/categories")
     public ResponseEntity<ApiResponse<Map<String, List<EnumValueDTO>>>> getAllInquiryCategoriesForAdmin() {
-        Map<String, List<EnumValueDTO>> result = new HashMap<>();
 
-        result.put("CUSTOMER", Arrays.stream(CustomerInquiryCategory.values())
-                .map(e -> new EnumValueDTO(e.name(), e.getLabel()))
-                .toList());
-
-        result.put("MANAGER", Arrays.stream(ManagerInquiryCategory.values())
-                .map(e -> new EnumValueDTO(e.name(), e.getLabel()))
-                .toList());
+        Map<String, List<EnumValueDTO>> result = inquiryAdminIService.getAllInquiryCategoriesForAdmin();
 
         return ResponseEntity.ok(new ApiResponse<>(true, "문의 카테고리 전체 조회 성공", result));
     }
