@@ -1,12 +1,15 @@
 package com.kernel.evaluation.domain.info;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class ManagerReviewInfo {
 
     // 리뷰ID

@@ -1,6 +1,7 @@
 package com.kernel.member.service.request;
 
 import com.kernel.member.domain.entity.AvailableTime;
+import com.kernel.member.domain.entity.Manager;
 import com.kernel.member.service.common.request.UserInfoUpdateReqDTO;
 import com.kernel.member.service.common.request.UserUpdateReqDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,9 +34,9 @@ public class ManagerUpdateReqDTO {
 
     @Builder
     @Schema(description = "가능 시간 목록을 엔티티 리스트로 변환")
-    public static List<AvailableTime> toEntityList(List<AvailableTimeUpdateReqDTO> availableTimeReqDTOList) {
+    public static List<AvailableTime> toEntityList(List<AvailableTimeUpdateReqDTO> availableTimeReqDTOList, Manager manager) {
         return availableTimeReqDTOList.stream()
-                .map(AvailableTimeUpdateReqDTO::toEntity)
+                .map(availableTimeUpdateReqDTO -> AvailableTimeUpdateReqDTO.toEntity(availableTimeUpdateReqDTO, manager))
                 .toList();
     }
 }

@@ -16,4 +16,7 @@ public interface ReservationQueryPort {
 
     // 예약 일정 및 매칭 조회 List by userId, status
     List<ScheduleAndMatchInfo> findSchedulesAndMatchesByUserIdAndStatus(Long userId, ReservationStatus status);
+
+    // 예약 테이블과 예약 메칭 테이블을 조인해서 매니저 id와 reservationId로 예약 조회
+    Reservation findReservationByReservationIdAndManagerId(Long reservationId, Long managerId);
 }

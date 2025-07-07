@@ -2,6 +2,7 @@ package com.kernel.member.service.request;
 
 import com.kernel.member.common.enums.DayOfWeek;
 import com.kernel.member.domain.entity.AvailableTime;
+import com.kernel.member.domain.entity.Manager;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -22,10 +23,11 @@ public class AvailableTimeReqDTO {
     @NotNull(message = "업무 가능 시간은 필수입니다.")
     private LocalTime time;
 
-    public static AvailableTime toEntity(AvailableTimeReqDTO reqDTO) {
+    public static AvailableTime toEntity(AvailableTimeReqDTO reqDTO, Manager manager) {
         return AvailableTime.builder()
                 .dayOfWeek(reqDTO.getDayOfWeek())
                 .time(reqDTO.getTime())
+                .manager(manager)
                 .build();
     }
 }

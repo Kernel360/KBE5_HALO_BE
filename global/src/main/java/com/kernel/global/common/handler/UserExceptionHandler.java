@@ -1,5 +1,6 @@
-package com.kernel.global.common.exception;
+package com.kernel.global.common.handler;
 
+import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.service.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -15,6 +15,14 @@ public class ManagerTerminationInfo {
 
     // Entity -> Info 변환 메서드
     public static ManagerTerminationInfo fromEntity(ManagerTermination entity) {
+        if (entity == null) {
+            return ManagerTerminationInfo.builder()
+                    .requestAt(null)
+                    .terminatedAt(null)
+                    .TerminationReason(null)
+                    .build();
+        }
+
         return ManagerTerminationInfo.builder()
                 .requestAt(entity.getRequestAt())
                 .terminatedAt(entity.getTerminatedAt())

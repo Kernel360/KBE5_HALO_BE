@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ManagerTerminationRepository extends JpaRepository<ManagerTermination, Long> {
-    Optional<ManagerTermination> findByManager(Manager manager);
+    ManagerTermination findByManager(Manager manager);
 }

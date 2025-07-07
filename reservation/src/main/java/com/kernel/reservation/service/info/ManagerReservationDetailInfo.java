@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -24,6 +25,9 @@ public class ManagerReservationDetailInfo {
     private Long customerId;
     private String extraService;
     private String memo;
+    private LocalDateTime cancelDate;
+    private Long canceledById;
+    private String cancelReason;
     private Long reservationCheckId;
     private Timestamp inTime;
     private Long inFileId;
@@ -32,5 +36,9 @@ public class ManagerReservationDetailInfo {
     private String roadAddress;
     private String detailAddress;
     private String userName;
+    private String customerReviewContent;
+    private Integer customerReviewRating;
+    private String managerReviewContent;
+    private Integer managerReviewRating;
 
 }

@@ -1,10 +1,11 @@
 package com.kernel.member.repository;
 
+import com.kernel.global.common.enums.ErrorCode;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
+import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.member.common.enums.ContractStatus;
-import com.kernel.member.common.exception.ManagerNotFoundException;
 import com.kernel.member.domain.entity.*;
 import com.kernel.member.service.common.info.AdminManagerDetailInfo;
 import com.kernel.member.service.common.info.ManagerSummaryInfo;
@@ -199,12 +200,11 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                 .leftJoin(manager).on(manager.user.eq(user))
                 .leftJoin(managerStatistic).on(managerStatistic.user.eq(user))
                 .leftJoin(managerTermination).on(managerTermination.manager.eq(manager))
-                .leftJoin(availableTime).on(availableTime.manager.eq(manager))
                 .where(user.userId.eq(managerId))
-                .fetchFirst();
+                .fetchOne();
 
         if (adminManagerDetailInfo == null) {
-            throw new ManagerNotFoundException(managerId);
+            throw new AuthException(ErrorCode.USER_NOT_FOUND);
         }
 
         return adminManagerDetailInfo;

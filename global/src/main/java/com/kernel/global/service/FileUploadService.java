@@ -14,7 +14,7 @@ public interface FileUploadService {
 
     FileGetRspDTO getFileList(Long fileId);
 
-    List<PresignedUrlRspDTO> generatePresignedUrls(PresignedUrlReqDTO request);
+    PresignedUrlRspDTO generatePresignedUrls(PresignedUrlReqDTO request);
 
     FileUploadRspDTO uploadFiles(FileUploadReqDTO request);
 

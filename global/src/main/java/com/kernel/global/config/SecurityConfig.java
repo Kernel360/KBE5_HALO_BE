@@ -85,6 +85,8 @@ public class SecurityConfig {
                     .accessDeniedHandler(jwtAccessDeniedHandler)
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // JWT 인증 필터: 요청이 authorizeHttpRequests()의 인증/권한 체크 전에 실행되어 SecurityContextHolder에 인증 객체를 설정
+            .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new CustomLogoutFilter(jwtTokenProvider, refreshRepository), LogoutFilter.class)
             .logout(logout -> logout
                     .logoutUrl("/api/logout")
