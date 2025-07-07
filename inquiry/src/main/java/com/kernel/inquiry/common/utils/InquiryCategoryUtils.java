@@ -3,8 +3,11 @@ package com.kernel.inquiry.common.utils;
 import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
 import com.kernel.inquiry.common.enums.ManagerInquiryCategory;
+import com.kernel.inquiry.common.exception.InvalidInquiryCategoryException;
 
 import java.util.Arrays;
+
+import static com.kernel.inquiry.common.enums.InquiryErrorCode.INQUIRY_CATEGORY_NOT_FOUND;
 
 public class InquiryCategoryUtils {
 
@@ -42,12 +45,12 @@ public class InquiryCategoryUtils {
                     .filter(e -> e.getLabel().equals(label))
                     .map(Enum::name)
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고객 문의 카테고리 입니다."));
+                    .orElseThrow(() -> new InvalidInquiryCategoryException(INQUIRY_CATEGORY_NOT_FOUND));
             case MANAGER -> Arrays.stream(ManagerInquiryCategory.values())
                     .filter(e -> e.getLabel().equals(label))
                     .map(Enum::name)
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매니저 문의 카테고리 입니다."));
+                    .orElseThrow(() -> new InvalidInquiryCategoryException(INQUIRY_CATEGORY_NOT_FOUND));
         };
     }
 }

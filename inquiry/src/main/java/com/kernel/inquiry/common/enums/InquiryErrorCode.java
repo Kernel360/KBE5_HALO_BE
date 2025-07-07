@@ -19,6 +19,7 @@ public enum InquiryErrorCode implements ErrorCodeInterface {
     INQUIRY_NOT_FOUND(404, "INQ-201", "문의사항을 찾을 수 없습니다."),
     REPLY_NOT_FOUND(404, "INQ-202", "답변을 찾을 수 없습니다."),
     NO_DATA_FOUND(404, "INQ-203", "조건에 맞는 데이터가 없습니다."),
+    INQUIRY_CATEGORY_NOT_FOUND(404, "INQ-204", "존재하지 않는 문의 카테고리 입니다."),
 
     // 409 Conflict
     DUPLICATE_REPLY(409, "INQ-301", "이미 답변이 존재합니다.");
