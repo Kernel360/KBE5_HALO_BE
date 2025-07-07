@@ -21,9 +21,10 @@ public class ManagerReservationDetailInfo {
     private LocalTime startTime;
     private Integer turnaround;
     private String serviceName;
+    private Integer price;
     private ReservationStatus status;
     private Long customerId;
-    private String extraService;
+    private String extraServices;
     private String memo;
     private LocalDateTime cancelDate;
     private Long canceledById;
