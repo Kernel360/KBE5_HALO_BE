@@ -12,7 +12,7 @@ public class InquiryUpdateReqDTO {
 
     @Schema(description = "문의 제목", example = "문의 제목 예시", required = true)
     @NotBlank(message = "제목을 입력해주세요.")
-    @Size(min = 5, max = 50, message = "제목은 최소 5자, 최대 50자까지 입력할 수 있습니다.")
+    @Size(min = 2, max = 50, message = "제목은 최소 2자, 최대 50자까지 입력할 수 있습니다.")
     private String title;
 
     @Schema(description = "문의 내용", example = "문의 내용 예시", required = true)
