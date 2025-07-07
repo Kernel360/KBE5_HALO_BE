@@ -1,6 +1,7 @@
 package com.kernel.inquiry.service.inquiry;
 
 import com.kernel.global.common.enums.UserRole;
+import com.kernel.global.service.dto.response.EnumValueDTO;
 import com.kernel.inquiry.service.dto.request.InquiryCreateReqDTO;
 import com.kernel.inquiry.service.dto.request.InquirySearchReqDTO;
 import com.kernel.inquiry.service.dto.request.InquiryUpdateReqDTO;
@@ -9,21 +10,28 @@ import com.kernel.inquiry.service.dto.response.InquirySummaryRspDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface InquiryService {
 
     // 문의사항 검색
-    Page<InquirySummaryRspDTO> searchInquiries(InquirySearchReqDTO request, Long authorId, Pageable pageable);
+    Page<InquirySummaryRspDTO> searchInquiries(InquirySearchReqDTO searchReqDTO, Long userId, Pageable pageable);
 
     // 문의사항 상세 조회
-    InquiryDetailRspDTO getInquiryDetails(Long inquiryId);
+    InquiryDetailRspDTO getInquiryDetails(Long inquiryId, Long userId);
 
     // 문의사항 생성
-    void createInquiry(InquiryCreateReqDTO request, Long authorId, UserRole authorRole);
+    Long createInquiry(InquiryCreateReqDTO createReqDTO, Long userId, UserRole userRole);
 
     // 문의사항 수정
-    void updateInquiry(InquiryUpdateReqDTO request, Long authorId);
+    void updateInquiry(Long inquiryId, InquiryUpdateReqDTO updateReqDTO, Long userId, UserRole userRole);
 
     // 문의사항 삭제
-    void deleteInquiry(Long inquiryId, Long authorId);
+    void deleteInquiry(Long inquiryId, Long userId);
 
+    // 수요자 문의사항 카테고리 조회
+    List<EnumValueDTO> getCustomerInquiryCategory();
+
+    // 매니저 문의사항 카테고리 조회
+    List<EnumValueDTO> getManagerInquiryCategory();
 }

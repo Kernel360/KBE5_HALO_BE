@@ -1,15 +1,13 @@
 package com.kernel.inquiry.domain.entity;
 
-import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.inquiry.common.enums.AuthorType;
 import com.kernel.inquiry.common.enums.CustomerInquiryCategory;
+import com.kernel.inquiry.common.enums.InquiryCategory;
 import com.kernel.inquiry.common.enums.ManagerInquiryCategory;
-
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedBy;
 
 @Entity
 @Table(name = "inquiry")
@@ -24,25 +22,25 @@ public class Inquiry extends BaseEntity {
     @Column
     private Long inquiryId;
 
-    // 카테고리 조회용
-    @Column(name = "category_name")
-    private Enum<?> category;
+    // 카테고리
+    @Column(name = "category_name", nullable = false)
+    private String categoryName;
 
     // 작성자 ID
-    @Column
-    @CreatedBy
+    @Column(nullable = false)
     private Long authorId;
 
     // 작성자 유형
-    @Column
-    private UserRole authorRole;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthorType authorType;
 
     // 제목
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String title;
 
     // 내용
-    @Column(length = 5000)
+    @Column(length = 5000, nullable = false)
     private String content;
 
     // 첨부파일 ID
@@ -59,22 +57,36 @@ public class Inquiry extends BaseEntity {
     @Builder.Default
     private Boolean isDeleted = Boolean.FALSE;
 
+    @Transient
+    public InquiryCategory getCategoryEnum() {
+        return switch (authorType) {
+            case CUSTOMER -> CustomerInquiryCategory.valueOf(categoryName);
+            case MANAGER -> ManagerInquiryCategory.valueOf(categoryName);
+            default -> throw new IllegalStateException("지원되지 않는 역할입니다.");
+        };
+    }
+
     public void delete() {
         this.isDeleted = true;
     }
 
-    public void update(Inquiry request) {
-        if (request.getTitle() != null) {
-            this.title = request.getTitle();
+    public void update(String updateTitle, String updateContent, Long updateFileId, String updateCategory) {
+
+        if (updateTitle != null && !updateTitle.equals(title)) {
+            this.title = updateTitle;
         }
-        if (request.getContent() != null) {
-            this.content = request.getContent();
+        if (updateContent != null && !updateContent.equals(content)) {
+            this.content = updateContent;
         }
-        if (request.getFileId() != null) {
-            this.fileId = request.getFileId();
+        if (updateFileId != null && !updateFileId.equals(fileId)) {
+            this.fileId = updateFileId;
         }
-        if (request.getCategory() != null) {
-            this.category = request.getCategory();
+        if (updateCategory != null && !updateCategory.equals(categoryName)) {
+            this.categoryName = updateCategory;
         }
+    }
+
+    public void replied(){
+        this.isReplied = Boolean.TRUE;
     }
 }

@@ -1,11 +1,9 @@
 package com.kernel.global.domain.entity;
 
 import com.kernel.global.common.enums.PostStatus;
-
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;

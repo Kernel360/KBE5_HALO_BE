@@ -24,7 +24,7 @@ public class ReplyCreateReqDTO {
     @Schema(description = "답변 첨부파일 ID", example = "456", required = false)
     private Long fileId;
 
-    public static Reply toEntity(ReplyCreateReqDTO request, Inquiry inquiry, Long authorId) {
+    public Reply toEntity(ReplyCreateReqDTO request, Inquiry inquiry, Long authorId) {
         return Reply.builder()
                 .inquiryId(inquiry)
                 .authorId(authorId)

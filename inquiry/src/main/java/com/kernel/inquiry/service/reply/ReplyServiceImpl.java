@@ -1,5 +1,7 @@
 package com.kernel.inquiry.service.reply;
 
+import com.kernel.inquiry.common.enums.InquiryErrorCode;
+import com.kernel.inquiry.common.exception.InquiryNotFoundException;
 import com.kernel.inquiry.domain.entity.Inquiry;
 import com.kernel.inquiry.repository.InquiryRepository;
 import com.kernel.inquiry.repository.ReplyRepository;
@@ -19,10 +21,16 @@ public class ReplyServiceImpl implements ReplyService {
     @Transactional
     @Override
     public void createReply(ReplyCreateReqDTO request, Long authorId) {
-        Inquiry inquiry = inquiryRepository.findById(request.getInquiryId())
-                .orElseThrow(() -> new IllegalArgumentException("문의사항을 찾을 수 없습니다."));
 
-        // 답변 생성
+        // 1. 문의 조회
+        Inquiry inquiry = inquiryRepository.findById(request.getInquiryId())
+                .orElseThrow(() -> new InquiryNotFoundException(InquiryErrorCode.INQUIRY_NOT_FOUND));
+
+        // 2. 답변 생성
         replyRepository.save(request.toEntity(request, inquiry, authorId));
+
+        // 3. 문의 사항 답변 체크
+        inquiry.replied();
+
     }
 }
