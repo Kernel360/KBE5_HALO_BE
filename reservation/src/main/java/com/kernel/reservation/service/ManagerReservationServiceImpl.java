@@ -16,6 +16,7 @@ import com.kernel.reservation.repository.ManagerReservationRepository;
 import com.kernel.reservation.repository.ReservationMatchRepository;
 import com.kernel.reservation.repository.ServiceCheckLogRepository;
 import com.kernel.reservation.repository.common.ReservationCancelRepository;
+import com.kernel.reservation.repository.common.ServiceCategoryRepository;
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
 import com.kernel.reservation.service.info.ManagerReservationSummaryInfo;
 import com.kernel.reservation.service.request.ServiceCheckInReqDTO;
@@ -30,12 +31,16 @@ import com.kernel.sharedDomain.common.enums.MatchStatus;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 
+import com.kernel.sharedDomain.domain.entity.ServiceCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -47,6 +52,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     private final ReservationMatchRepository reservationMatchRepository;
     private final ReservationCancelRepository cancelRepository;
     private final ServiceCheckLogRepository serviceCheckLogRepository;
+    private final ServiceCategoryRepository serviceCategoryRepository;
 
     /**
      * 매니저에게 할당된 예약 목록 조회 (검색 조건 및 페이징 처리)
@@ -92,8 +98,21 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
             canceledBy = null;
         }
 
-        // 3. DTO로 매핑
-        ManagerReservationRspDTO responseDTO = ManagerReservationRspDTO.fromInfo(reservationDetail, canceledBy);
+        // 3. reservationDetail에 포함된 extraServices에서 이름을 파싱
+        List<String> extraServiceNames = reservationDetail.getExtraServices() != null
+                ? Arrays.asList(reservationDetail.getExtraServices().split(","))
+                : Collections.emptyList();
+
+        // 서비스 이름으로 service의 가격을 조회
+        List<ServiceCategory> extraServices = serviceCategoryRepository.findByServiceNameIn(extraServiceNames);
+        Integer totalExtraServicePrice = extraServices.stream()
+                .mapToInt(ServiceCategory::getPrice)
+                .sum();
+
+        Integer totalPrice = totalExtraServicePrice + reservationDetail.getPrice();
+
+        // 4. DTO로 매핑
+        ManagerReservationRspDTO responseDTO = ManagerReservationRspDTO.fromInfo(reservationDetail, canceledBy, extraServiceNames, totalPrice);
 
         return responseDTO;
     }

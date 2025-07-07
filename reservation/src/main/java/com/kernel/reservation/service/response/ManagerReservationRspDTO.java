@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,7 +41,10 @@ public class ManagerReservationRspDTO {
     private Long customerId;
 
     @Schema(description = "추가 서비스명", example = "창문 청소", required = false)
-    private String extraServiceName;
+    private List<String> extraServiceNames;
+
+    @Schema(description = "서비스 가격", example = "50000", required = false)
+    private Integer servicePrice;
 
     @Schema(description = "고객 요청사항", example = "창문 청소를 꼼꼼히 해주세요.", required = false)
     private String memo;
@@ -94,7 +98,8 @@ public class ManagerReservationRspDTO {
     private Integer managerReviewRating;
 
     @Schema(description = "ManagerReservationDetailInfo에서 필요한 필드만 포함하여 DTO로 변환")
-    public static ManagerReservationRspDTO fromInfo(ManagerReservationDetailInfo info, User canceledBy) {
+    public static ManagerReservationRspDTO fromInfo(ManagerReservationDetailInfo info, User canceledBy,
+                                                   List<String> extraServiceNames, Integer servicePrice) {
         return ManagerReservationRspDTO.builder()
                 .reservationId(info.getReservationId())
                 .requestDate(info.getRequestDate())
@@ -106,7 +111,8 @@ public class ManagerReservationRspDTO {
                 .roadAddress(info.getRoadAddress())
                 .detailAddress(info.getDetailAddress())
                 .userName(info.getUserName())
-                .extraServiceName(info.getExtraService() != null ? info.getExtraService() : null)
+                .extraServiceNames(extraServiceNames != null ? extraServiceNames : null)
+                .servicePrice(servicePrice)
                 .memo(info.getMemo() != null ? info.getMemo() : null)
                 .checkId(info.getReservationCheckId() != null ? info.getReservationCheckId() : null)
                 .inTime(info.getInTime() != null ? info.getInTime().toLocalDateTime() : null)
@@ -123,5 +129,4 @@ public class ManagerReservationRspDTO {
                 .managerReviewRating(info.getManagerReviewRating() != null ? info.getManagerReviewRating() : null)
                 .build();
     }
-
 }

@@ -43,7 +43,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
     private final QReservationCancel reservationCancel = QReservationCancel.reservationCancel;
     private final QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
     private final QExtraService extraService = QExtraService.extraService;
-    private final QReview review = QReview.review;
+    private final QReview customerReview = QReview.review;
+    private final QReview managerReview = QReview.review;
 
 
     /**
@@ -68,7 +69,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 .leftJoin(reservation.serviceCategory, serviceCategory)
                 .leftJoin(user).on(reservation.user.eq(user))
                 .leftJoin(userInfo).on(userInfo.user.eq(user))
-                .leftJoin(review).on(review.reservation.eq(reservation))
+                .leftJoin(managerReview).on(managerReview.reservation.eq(reservation))
                 .where(
                     reservationMatch.manager.userId.eq(managerId),
                     RequestDateGoe(searchCondDTO.getFromRequestDate()),         // 청소 예약 날짜 >= 시작일
@@ -101,7 +102,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 serviceCheckLog.outTime,
                 userInfo.roadAddress,
                 userInfo.detailAddress,
-                Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", review.reviewId).as("isReviewed")
+                Expressions.booleanTemplate("CASE WHEN {0} IS NOT NULL THEN true ELSE false END", managerReview.reviewId).as("isReviewed")
             ))
             .from(reservation)
             .leftJoin(reservationSchedule).on(reservationSchedule.reservation.eq(reservation))
@@ -110,8 +111,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             .leftJoin(reservation.serviceCategory, serviceCategory)
             .leftJoin(user).on(reservation.user.eq(user))
             .leftJoin(userInfo).on(userInfo.user.eq(user))
-            .leftJoin(review).on(review.reservation.eq(reservation)
-                .and(review.reviewAuthorType.eq(ReviewAuthorType.MANAGER)))
+            .leftJoin(managerReview).on(managerReview.reservation.eq(reservation)
+                .and(managerReview.reviewAuthorType.eq(ReviewAuthorType.MANAGER)))
             .where(
                 reservationMatch.manager.userId.eq(managerId),
                 RequestDateGoe(searchCondDTO.getFromRequestDate()),
@@ -142,6 +143,9 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
         Long managerId, Long reservationId
     ) {
 
+        QReview qCustomerReview = new QReview("customerReview");
+        QReview qManagerReview = new QReview("managerReview");
+
         // 추가 서비스 조회
         Expression<String> extraServiceNameExpr = ExpressionUtils.as(
             JPAExpressions
@@ -152,10 +156,9 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                     )
                 )
                 .from(extraService)
-                // TODO: extraService와 serviceCategory의 관계를 명확히 정의해야 함
-                //.leftJoin(serviceCategory).on(serviceCategory.serviceId.eq(extraService.serviceCategory.serviceId))
+                .leftJoin(serviceCategory).on(serviceCategory.serviceId.eq(extraService.serviceCategory.serviceId))
                 .where(extraService.reservation.reservationId.eq(reservation.reservationId)),
-            "extraServiceName"
+            "extraServices"
         );
 
         return jpaQueryFactory
@@ -165,9 +168,10 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 reservationSchedule.startTime,
                 reservationSchedule.turnaround,
                 reservation.serviceCategory.serviceName,
+                reservation.serviceCategory.price,
                 reservation.status,
                 reservation.user.userId,
-                //extraServiceNameExpr,
+                extraServiceNameExpr,
                 reservation.memo,
                 reservationCancel.cancelDate,
                 reservationCancel.canceledById,
@@ -180,23 +184,10 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 user.userName,
                 userInfo.roadAddress,
                 userInfo.detailAddress,
-                // 조회해야하는 리뷰가 수요자, 매니저 리뷰 모두 포함되어야 함
-                Expressions.stringTemplate(
-                        "CASE WHEN {0} = 'CUSTOMER' THEN {1} ELSE NULL END",
-                        review.reviewAuthorType, review.content
-                ).as("customerReviewContent"),
-                Expressions.numberTemplate(Integer.class,
-                        "CASE WHEN {0} = 'CUSTOMER' THEN {1} ELSE NULL END",
-                        review.reviewAuthorType, review.rating
-                ).as("customerReviewRating"),
-                Expressions.stringTemplate(
-                        "CASE WHEN {0} = 'MANAGER' THEN {1} ELSE NULL END",
-                        review.reviewAuthorType, review.content
-                ).as("managerReviewContent"),
-                Expressions.numberTemplate(Integer.class,
-                        "CASE WHEN {0} = 'MANAGER' THEN {1} ELSE NULL END",
-                        review.reviewAuthorType, review.rating
-                ).as("managerReviewRating")
+                qCustomerReview.content.as("customerReviewContent"),
+                qCustomerReview.rating.as("customerReviewRating"),
+                qManagerReview.content.as("managerReviewContent"),
+                qManagerReview.rating.as("managerReviewRating")
             ))
             .from(reservation)
             .leftJoin(reservationSchedule).on(reservationSchedule.reservation.eq(reservation))
@@ -206,7 +197,10 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
             .leftJoin(reservationCancel).on(reservationCancel.reservation.eq(reservation))
             .leftJoin(user).on(reservation.user.eq(user))
             .leftJoin(userInfo).on(userInfo.user.eq(user))
-            .leftJoin(review).on(review.reservation.eq(reservation))
+            .leftJoin(qCustomerReview).on(qCustomerReview.authorId.eq(reservation.user.userId)
+                        .and(qCustomerReview.reservation.reservationId.eq(reservation.reservationId)))
+            .leftJoin(qManagerReview).on(qManagerReview.authorId.eq(managerId)
+                        .and(qManagerReview.reservation.reservationId.eq(reservation.reservationId)))
             .where(
                 reservation.reservationId.eq(reservationId),
                 reservationMatch.manager.userId.eq(managerId)
