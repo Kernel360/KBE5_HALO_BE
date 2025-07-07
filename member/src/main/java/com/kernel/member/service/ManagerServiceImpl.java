@@ -8,6 +8,7 @@ import com.kernel.global.domain.entity.File;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.FileRepository;
 import com.kernel.member.common.enums.MemberErrorCode;
+import com.kernel.member.common.exception.AvailableTimeException;
 import com.kernel.member.common.exception.SpecialtyException;
 import com.kernel.member.domain.entity.AvailableTime;
 import com.kernel.member.domain.entity.Manager;
@@ -63,6 +64,9 @@ public class ManagerServiceImpl implements ManagerService {
 
         // 4. AvailableTime 저장
         List<AvailableTime> availableTimeList = signupReqDTO.toEntityList(signupReqDTO.getAvailableTimeReqDTOList());
+        if (availableTimeList.isEmpty()) {
+            throw new AvailableTimeException(MemberErrorCode.AVAILABLE_TIME_NOT_FOUND);
+        }
         availableTimeRepository.saveAll(availableTimeList);
 
         // 5. Manager 저장
@@ -132,6 +136,9 @@ public class ManagerServiceImpl implements ManagerService {
 
         // 4. Available Time 조회
         List<AvailableTime> foundAvailableTimeList = availableTimeRepository.findByManager(foundManager);
+        if (foundAvailableTimeList.isEmpty()) {
+            throw new AvailableTimeException(MemberErrorCode.AVAILABLE_TIME_NOT_FOUND);
+        }
 
         // 5. ManagerTermination 조회
         ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager);
