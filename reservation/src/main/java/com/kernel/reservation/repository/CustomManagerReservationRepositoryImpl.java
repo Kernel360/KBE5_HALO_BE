@@ -180,21 +180,22 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 user.userName,
                 userInfo.roadAddress,
                 userInfo.detailAddress,
-                // 조회해야하는 리뷰가 수요자, 매니저 리뷰 모두 포함되어야 함
+                // 고객 리뷰 집계
                 Expressions.stringTemplate(
-                        "CASE WHEN {0} = 'CUSTOMER' THEN {1} ELSE NULL END",
+                        "MAX(CASE WHEN {0} = 'CUSTOMER' THEN {1} ELSE NULL END)",
                         review.reviewAuthorType, review.content
                 ).as("customerReviewContent"),
                 Expressions.numberTemplate(Integer.class,
-                        "CASE WHEN {0} = 'CUSTOMER' THEN {1} ELSE NULL END",
+                        "MAX(CASE WHEN {0} = 'CUSTOMER' THEN {1} ELSE NULL END)",
                         review.reviewAuthorType, review.rating
                 ).as("customerReviewRating"),
+                // 매니저 리뷰 집계
                 Expressions.stringTemplate(
-                        "CASE WHEN {0} = 'MANAGER' THEN {1} ELSE NULL END",
+                        "MAX(CASE WHEN {0} = 'MANAGER' THEN {1} ELSE NULL END)",
                         review.reviewAuthorType, review.content
                 ).as("managerReviewContent"),
                 Expressions.numberTemplate(Integer.class,
-                        "CASE WHEN {0} = 'MANAGER' THEN {1} ELSE NULL END",
+                        "MAX(CASE WHEN {0} = 'MANAGER' THEN {1} ELSE NULL END)",
                         review.reviewAuthorType, review.rating
                 ).as("managerReviewRating")
             ))
