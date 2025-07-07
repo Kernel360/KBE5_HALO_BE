@@ -1,6 +1,7 @@
 package com.kernel.member.service.request;
 
 import com.kernel.member.domain.entity.AvailableTime;
+import com.kernel.member.domain.entity.Manager;
 import com.kernel.member.service.common.request.UserInfoSignupReqDTO;
 import com.kernel.member.service.common.request.UserSignupReqDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,9 +33,9 @@ public class ManagerSignupReqDTO {
 
     @Builder
     @Schema(description = "가능 시간 목록을 엔티티 리스트로 변환")
-    public static List<AvailableTime> toEntityList(List<AvailableTimeReqDTO> availableTimeReqDTOList) {
+    public static List<AvailableTime> toEntityList(List<AvailableTimeReqDTO> availableTimeReqDTOList, Manager manager) {
         return availableTimeReqDTOList.stream()
-                .map(AvailableTimeReqDTO::toEntity)
+                .map(reqDTO -> AvailableTimeReqDTO.toEntity(reqDTO, manager))
                 .toList();
     }
 }

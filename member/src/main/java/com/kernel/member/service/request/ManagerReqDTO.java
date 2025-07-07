@@ -19,7 +19,7 @@ public class ManagerReqDTO {
 
     @Schema(description = "특기", example = "HAIR_CUTTING", required = true)
     @NotNull(message = "특기는 필수 입력입니다.")
-    private ServiceCategory specialty;
+    private Long specialty;
 
     @Schema(description = "한 줄 소개", example = "전문 헤어 디자이너입니다.", required = true, maxLength = 50)
     @NotBlank(message = "한 줄 소개는 필수 입력입니다.")
@@ -35,10 +35,10 @@ public class ManagerReqDTO {
     private Long profileImageFileId;
 
     // ManagerReqDTO -> Manager
-    public static Manager toEntity(ManagerReqDTO reqDTO, User user, File file, File profileImageFile) {
+    public static Manager toEntity(ManagerReqDTO reqDTO, User user, File file, File profileImageFile, ServiceCategory serviceCategory) {
         return Manager.builder()
                 .user(user)
-                .specialty(reqDTO.getSpecialty())
+                .specialty(serviceCategory)
                 .bio(reqDTO.getBio())
                 .fileId(file)
                 .profileImageFileId(profileImageFile)

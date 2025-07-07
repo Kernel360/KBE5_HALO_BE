@@ -75,7 +75,15 @@ public class ManagerServiceImpl implements ManagerService {
         File profileFile = fileRepository.findByFileId(signupReqDTO.getManagerReqDTO().getProfileImageFileId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 프로필 이미지 파일입니다."));
 
-        managerRepository.save(signupReqDTO.getManagerReqDTO().toEntity(signupReqDTO.getManagerReqDTO(), savedUser, file, profileFile));
+        ServiceCategory serviceCategory = managerServiceCategoryRepository.findById(signupReqDTO.getManagerReqDTO().getSpecialty())
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 서비스 카테고리입니다."));
+
+        Manager savedManager = signupReqDTO.getManagerReqDTO().toEntity(signupReqDTO.getManagerReqDTO(), savedUser, file, profileFile, serviceCategory);
+        managerRepository.save(savedManager);
+
+        // 5. AvailableTime 저장
+        List<AvailableTime> availableTimeList = signupReqDTO.toEntityList(signupReqDTO.getAvailableTimeReqDTOList(), savedManager);
+        availableTimeRepository.saveAll(availableTimeList);
     }
 
     /**
