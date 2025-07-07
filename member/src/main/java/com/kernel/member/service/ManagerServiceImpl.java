@@ -14,8 +14,10 @@ import com.kernel.member.domain.entity.AvailableTime;
 import com.kernel.member.domain.entity.Manager;
 import com.kernel.member.domain.entity.ManagerTermination;
 import com.kernel.member.domain.entity.UserInfo;
+import com.kernel.member.domain.entity.*;
 import com.kernel.member.repository.AvailableTimeRepository;
 import com.kernel.member.repository.ManagerRepository;
+import com.kernel.member.repository.ManagerStatisticRepository;
 import com.kernel.member.repository.ManagerTerminationRepository;
 import com.kernel.member.repository.common.ManagerServiceCategoryRepository;
 import com.kernel.member.service.common.UserInfoService;
@@ -30,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -44,6 +47,7 @@ public class ManagerServiceImpl implements ManagerService {
     private final ManagerTerminationRepository managerTerminationRepository;
     private final FileRepository fileRepository;
     private final ManagerServiceCategoryRepository managerServiceCategoryRepository;
+    private final ManagerStatisticRepository managerStatisticRepository;
 
     /**
      * 매니저 회원가입
@@ -62,20 +66,32 @@ public class ManagerServiceImpl implements ManagerService {
         // 3. userInfo 저장
         UserInfo savedUserInfo = userInfoService.createUserInfo(signupReqDTO.getUserInfoSignupReqDTO(), savedUser);
 
-        // 4. AvailableTime 저장
-        List<AvailableTime> availableTimeList = signupReqDTO.toEntityList(signupReqDTO.getAvailableTimeReqDTOList());
-        if (availableTimeList.isEmpty()) {
-            throw new AvailableTimeException(MemberErrorCode.AVAILABLE_TIME_NOT_FOUND);
-        }
-        availableTimeRepository.saveAll(availableTimeList);
-
-        // 5. Manager 저장
+        // 4. Manager 저장
         File file = fileRepository.findByFileId(signupReqDTO.getManagerReqDTO().getFileId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 파일입니다."));
         File profileFile = fileRepository.findByFileId(signupReqDTO.getManagerReqDTO().getProfileImageFileId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 프로필 이미지 파일입니다."));
 
-        managerRepository.save(signupReqDTO.getManagerReqDTO().toEntity(signupReqDTO.getManagerReqDTO(), savedUser, file, profileFile));
+        ServiceCategory serviceCategory = managerServiceCategoryRepository.findById(signupReqDTO.getManagerReqDTO().getSpecialty())
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 서비스 카테고리입니다."));
+
+        Manager savedManager = signupReqDTO.getManagerReqDTO().toEntity(signupReqDTO.getManagerReqDTO(), savedUser, file, profileFile, serviceCategory);
+        managerRepository.save(savedManager);
+
+        // 5. AvailableTime 저장
+        List<AvailableTime> availableTimeList = signupReqDTO.toEntityList(signupReqDTO.getAvailableTimeReqDTOList(), savedManager);
+        availableTimeRepository.saveAll(availableTimeList);
+
+        // 6. ManagerStatistic entity 생성
+        ManagerStatistic managerStatistic = ManagerStatistic.builder()
+                .user(savedUser)
+                .reservationCount(0)
+                .reviewCount(0)
+                .averageRating(BigDecimal.valueOf(0.0))
+                .build();
+
+        managerStatisticRepository.save(managerStatistic);
+
     }
 
     /**
