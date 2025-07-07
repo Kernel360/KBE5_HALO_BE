@@ -117,8 +117,7 @@ public class ManagerServiceImpl implements ManagerService {
         List<AvailableTime> foundAvailableTimeList = availableTimeRepository.findByManager(foundManager);
 
         // 5. ManagerTermination 조회
-        ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager)
-                .orElseThrow(() -> new NoSuchElementException("매니저 해지 정보가 존재하지 않습니다."));
+        ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager);
 
         // 5. 응답 DTO 생성 및 반환
         return ManagerDetailRspDTO.fromInfos(
