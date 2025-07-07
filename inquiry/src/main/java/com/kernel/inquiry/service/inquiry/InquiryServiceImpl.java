@@ -120,7 +120,7 @@ public class InquiryServiceImpl implements InquiryService {
         foundInquiry.update(
                 updateReqDTO.getTitle(),
                 updateReqDTO.getContent(),
-                updateReqDTO.getFileId(),
+                updateReqDTO.getFileId() != null? updateReqDTO.getFileId(): null,
                 updateReqDTO.getCategory()
         );
     }

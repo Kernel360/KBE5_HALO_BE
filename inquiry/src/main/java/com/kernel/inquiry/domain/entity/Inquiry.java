@@ -72,16 +72,16 @@ public class Inquiry extends BaseEntity {
 
     public void update(String updateTitle, String updateContent, Long updateFileId, String updateCategory) {
 
-        if (updateTitle != null && !title.equals(updateTitle)) {
+        if (updateTitle != null && !updateTitle.equals(title)) {
             this.title = updateTitle;
         }
-        if (updateContent != null && !content.equals(updateContent)) {
+        if (updateContent != null && !updateContent.equals(content)) {
             this.content = updateContent;
         }
-        if (updateFileId != null && !fileId.equals(updateFileId)) {
+        if (updateFileId != null && !updateFileId.equals(fileId)) {
             this.fileId = updateFileId;
         }
-        if (updateCategory != null && !categoryName.equals(updateCategory)) {
+        if (updateCategory != null && !updateCategory.equals(categoryName)) {
             this.categoryName = updateCategory;
         }
     }
