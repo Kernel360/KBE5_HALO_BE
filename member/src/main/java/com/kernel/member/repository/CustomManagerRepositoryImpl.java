@@ -200,9 +200,8 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                 .leftJoin(manager).on(manager.user.eq(user))
                 .leftJoin(managerStatistic).on(managerStatistic.user.eq(user))
                 .leftJoin(managerTermination).on(managerTermination.manager.eq(manager))
-                .leftJoin(availableTime).on(availableTime.manager.eq(manager))
                 .where(user.userId.eq(managerId))
-                .fetchFirst();
+                .fetchOne();
 
         if (adminManagerDetailInfo == null) {
             throw new AuthException(ErrorCode.USER_NOT_FOUND);

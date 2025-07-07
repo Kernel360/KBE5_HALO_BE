@@ -2,6 +2,7 @@ package com.kernel.member.service.request;
 
 import com.kernel.member.common.enums.DayOfWeek;
 import com.kernel.member.domain.entity.AvailableTime;
+import com.kernel.member.domain.entity.Manager;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Builder;
@@ -26,13 +27,14 @@ public class AvailableTimeUpdateReqDTO {
         return dayOfWeek != null ? time != null : true;
     }
 
-    public static AvailableTime toEntity(AvailableTimeUpdateReqDTO availableTimeUpdateReqDTO) {
+    public static AvailableTime toEntity(AvailableTimeUpdateReqDTO availableTimeUpdateReqDTO, Manager manager) {
         if (availableTimeUpdateReqDTO == null) {
             return null;
         }
         return AvailableTime.builder()
                 .dayOfWeek(availableTimeUpdateReqDTO.getDayOfWeek())
                 .time(availableTimeUpdateReqDTO.getTime())
+                .manager(manager)
                 .build();
     }
 }
