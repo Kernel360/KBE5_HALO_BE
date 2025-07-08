@@ -2,9 +2,7 @@ package com.kernel.global.common.constant;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Set;
-import java.util.stream.Stream;
 
 @Component
 public class SecurityUrlConstants  {
@@ -20,6 +18,7 @@ public class SecurityUrlConstants  {
             "swagger-resources/**",
             "/api/common/serviceCategory",
             "/api/files/**",
+            "/api/reissue"
     };
 
     // 인증 필요 (로그인한 모든 사용자)
@@ -44,17 +43,11 @@ public class SecurityUrlConstants  {
             "/api/admin/auth/login",
             "/api/common/recovery-id",
             "/api/common/recovery-pwd",
-            "/api/common/serviceCategory"
+            "/api/common/serviceCategory",
+            "/api/reissue"
     };
 
     // JWT 필터 제외 URL
     public static final Set<String> JWT_FILTER_EXCLUDE_PATHS = Set.of(JWT_FILTER_EXCLUDE_URLS);
 
-    // 전체 관리 URL 조회 메서드
-    public static String[] getAllManagedUrls() {
-        return Stream.of(PUBLIC_URLS, AUTHENTICATED_URLS, CUSTOMER_URLS, MANAGER_URLS, ADMIN_URLS)
-                .flatMap(Arrays::stream)
-                .distinct()
-                .toArray(String[]::new);
-    }
 }
