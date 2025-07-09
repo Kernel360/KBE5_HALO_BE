@@ -38,9 +38,13 @@ import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 
 import com.kernel.sharedDomain.domain.entity.ServiceCategory;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -260,15 +264,56 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         ManagerStatistic managerStatistic = managerStatisticRepository.findById(managerId)
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
 
-        managerStatistic.updateReservationCount(1);
+        updateManagerStatistic(managerStatistic, 1);
+
 
         // 8. 수요자 통계 업데이트
         CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
 
-        customerStatistic.updateReservationCount(1);
+        updateCustomerStatistic(customerStatistic, 1);
 
         // 7. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckOutRspDTO.toDTO(checkLog);
+    }
+
+    /**
+     * 매니저 통계 업데이트
+     * @param managerStatistic 매니저 통계 엔티티
+     * @param count 예약 수 (1 또는 -1)
+     */
+    @Retryable(
+            value = OptimisticLockException.class,
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 50)
+    )
+    @Transactional
+    private void updateManagerStatistic(ManagerStatistic managerStatistic, Integer count) {
+        managerStatistic.updateReservationCount(count);
+    }
+
+    @Recover
+    private void recover(OptimisticLockException e, ManagerStatistic managerStatistic, Integer count) {
+        throw new MemberStatisticException(MemberStatisticErrorCode.CONCURRENT_UPDATE_ERROR);
+    }
+
+    /**
+     * 고객 통계 업데이트
+     * @param customerStatistic 고객 통계 엔티티
+     * @param count 예약 수 (1 또는 -1)
+     */
+    @Retryable(
+            value = OptimisticLockException.class,
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 50)
+    )
+    @Transactional
+    private void updateCustomerStatistic(CustomerStatistic customerStatistic, Integer count) {
+        customerStatistic.updateReservationCount(count);
+    }
+
+    @Recover
+    private void recover(OptimisticLockException e, CustomerStatistic customerStatistic, Integer count) {
+        throw new MemberStatisticException(MemberStatisticErrorCode.CONCURRENT_UPDATE_ERROR);
     }
 }
