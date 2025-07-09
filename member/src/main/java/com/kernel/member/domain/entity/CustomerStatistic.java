@@ -39,4 +39,10 @@ public class CustomerStatistic  extends BaseEntity {
     @Builder.Default
     private Integer reservationCount = 0;
 
+    // 고객의 예약수 업데이트
+    // count를 받는 이유는 예약상태가 "COMPLETED"로 바뀌었을 때 1추가하고 환불처리되었을 때 -1을 하기 위함
+    public void updateReservationCount(Integer count) {
+        this.reservationCount += count;
+    }
+
 }

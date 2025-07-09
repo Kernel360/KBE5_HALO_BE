@@ -5,6 +5,10 @@ import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.UserRepository;
+import com.kernel.member.common.enums.MemberStatisticErrorCode;
+import com.kernel.member.common.exception.MemberStatisticException;
+import com.kernel.member.domain.entity.CustomerStatistic;
+import com.kernel.member.domain.entity.ManagerStatistic;
 import com.kernel.member.repository.CustomerStatisticRepository;
 import com.kernel.member.repository.ManagerStatisticRepository;
 import com.kernel.reservation.common.enums.ReservationErrorCode;
@@ -255,6 +259,16 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         // 7. 예약 완료 후 매니저 / 수요자 통계 업데이트
         managerStatisticRepository.updateReservationCount(managerId, 1);
         customerStatisticRepository.updateReservationCount(reservation.getUser().getUserId(), 1);
+
+        ManagerStatistic managerStatistic = managerStatisticRepository.findById(managerId)
+                .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
+
+        managerStatistic.updateReservationCount(1);
+
+        CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
+                .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
+
+        customerStatistic.updateReservationCount(1);
 
         // 7. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckOutRspDTO.toDTO(checkLog);
