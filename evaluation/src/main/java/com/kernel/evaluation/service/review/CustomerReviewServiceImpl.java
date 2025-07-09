@@ -8,6 +8,9 @@ import com.kernel.evaluation.repository.review.CustomerReviewRepository;
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
 import com.kernel.evaluation.service.review.dto.request.ReviewUpdateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.CustomerReviewRspDTO;
+import com.kernel.member.common.enums.MemberStatisticErrorCode;
+import com.kernel.member.common.exception.MemberStatisticException;
+import com.kernel.member.domain.entity.ManagerStatistic;
 import com.kernel.member.repository.ManagerStatisticRepository;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
@@ -32,6 +35,7 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
     private final CustomerReviewRepository customerReviewRepository;
     private final ReservationQueryPort reservationQueryPort;
     private final ManagerStatisticRepository managerStatisticRepository;
+    private final EvaluationStatisticUpdateService evaluationStatisticUpdateService;
 
     /**
      * 수요자 리뷰 목록 조회
@@ -117,9 +121,10 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
         CustomerReviewInfo reviewInfo = customerReviewRepository.getCustomerReviewsByReservationId(userId, reservationId);
 
         // 5. 매니저 통계 업데이트
-        if (reviewInfo != null) {
-            managerStatisticRepository.updateReviewCount(scheduleAndMatchInfo.getManagerId());
-        }
+        ManagerStatistic managerStatistic = managerStatisticRepository.findById(scheduleAndMatchInfo.getManagerId())
+                .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
+
+        evaluationStatisticUpdateService.updateManagerReviewStatistic(managerStatistic);
 
         return CustomerReviewRspDTO.fromInfo(reviewInfo, scheduleAndMatchInfo);
     }
