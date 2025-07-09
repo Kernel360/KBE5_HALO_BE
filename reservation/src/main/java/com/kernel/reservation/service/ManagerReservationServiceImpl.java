@@ -256,15 +256,13 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         // 6. 예약 상태를 COMPLETED로 변경
         reservation.changeStatus(ReservationStatus.COMPLETED);
 
-        // 7. 예약 완료 후 매니저 / 수요자 통계 업데이트
-        managerStatisticRepository.updateReservationCount(managerId, 1);
-        customerStatisticRepository.updateReservationCount(reservation.getUser().getUserId(), 1);
-
+        // 7. 예약 완료 후 매니저
         ManagerStatistic managerStatistic = managerStatisticRepository.findById(managerId)
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
 
         managerStatistic.updateReservationCount(1);
 
+        // 8. 수요자 통계 업데이트
         CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
 
