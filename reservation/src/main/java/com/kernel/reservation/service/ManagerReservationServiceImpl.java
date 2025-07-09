@@ -5,6 +5,7 @@ import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.UserRepository;
+import com.kernel.member.repository.CustomerStatisticRepository;
 import com.kernel.member.repository.ManagerStatisticRepository;
 import com.kernel.reservation.common.enums.ReservationErrorCode;
 import com.kernel.reservation.common.enums.ServiceCheckLogErrorCode;
@@ -51,6 +52,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     private final UserRepository userRepository;
     private final ManagerReservationRepository managerReservationRepository;
     private final ManagerStatisticRepository managerStatisticRepository;
+    private final CustomerStatisticRepository customerStatisticRepository;
     private final ReservationMatchRepository reservationMatchRepository;
     private final ReservationCancelRepository cancelRepository;
     private final ServiceCheckLogRepository serviceCheckLogRepository;
@@ -250,8 +252,9 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         // 6. 예약 상태를 COMPLETED로 변경
         reservation.changeStatus(ReservationStatus.COMPLETED);
 
-        // 7. 예약 완료 후 매니저 통계 업데이트
+        // 7. 예약 완료 후 매니저 / 수요자 통계 업데이트
         managerStatisticRepository.updateReservationCount(managerId, 1);
+        customerStatisticRepository.updateReservationCount(reservation.getUser().getUserId(), 1);
 
         // 7. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckOutRspDTO.toDTO(checkLog);
