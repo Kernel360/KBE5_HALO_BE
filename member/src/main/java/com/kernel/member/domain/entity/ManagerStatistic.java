@@ -20,6 +20,10 @@ public class ManagerStatistic extends BaseEntity {
     @Id
     private Long userId;
 
+    // 동시성 제어를 위한 버전 필드
+    @Version
+    private Long version;
+
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
@@ -39,4 +43,10 @@ public class ManagerStatistic extends BaseEntity {
     @Column(precision = 2, scale = 1)
     @Builder.Default
     private BigDecimal averageRating = BigDecimal.ZERO;
+
+    // 매니저의 예약수 업데이트
+    // count를 받는 이유는 예약상태가 "COMPLETED"로 바뀌었을 때 1추가하고 환불처리되었을 때 -1을 하기 위함
+    public void updateReservationCount(Integer count) {
+        this.reservationCount += count;
+    }
 }

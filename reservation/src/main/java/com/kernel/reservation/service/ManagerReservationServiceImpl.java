@@ -5,6 +5,12 @@ import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.exception.AuthException;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.UserRepository;
+import com.kernel.member.common.enums.MemberStatisticErrorCode;
+import com.kernel.member.common.exception.MemberStatisticException;
+import com.kernel.member.domain.entity.CustomerStatistic;
+import com.kernel.member.domain.entity.ManagerStatistic;
+import com.kernel.member.repository.CustomerStatisticRepository;
+import com.kernel.member.repository.ManagerStatisticRepository;
 import com.kernel.reservation.common.enums.ReservationErrorCode;
 import com.kernel.reservation.common.enums.ServiceCheckLogErrorCode;
 import com.kernel.reservation.common.exception.ReservationException;
@@ -32,6 +38,7 @@ import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 
 import com.kernel.sharedDomain.domain.entity.ServiceCategory;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,10 +56,13 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
 
     private final UserRepository userRepository;
     private final ManagerReservationRepository managerReservationRepository;
+    private final ManagerStatisticRepository managerStatisticRepository;
+    private final CustomerStatisticRepository customerStatisticRepository;
     private final ReservationMatchRepository reservationMatchRepository;
     private final ReservationCancelRepository cancelRepository;
     private final ServiceCheckLogRepository serviceCheckLogRepository;
     private final ServiceCategoryRepository serviceCategoryRepository;
+    private final StatisticUpdateService statisticUpdateService;
 
     /**
      * 매니저에게 할당된 예약 목록 조회 (검색 조건 및 페이징 처리)
@@ -65,7 +75,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     @Transactional(readOnly = true)
     public Page<ManagerReservationSummaryRspDTO> searchManagerReservationsWithPaging(
             Long managerId, ManagerReservationSearchCondDTO searchCondDTO, Pageable pageable) {
-        
+
         // 조건 및 페이징 포함된 매니저에게 할당된 예약 목록 조회
         Page<ManagerReservationSummaryInfo> searchedReservationPage = managerReservationRepository.searchManagerReservationsWithPaging(managerId, searchCondDTO, pageable);
 
@@ -247,6 +257,19 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
 
         // 6. 예약 상태를 COMPLETED로 변경
         reservation.changeStatus(ReservationStatus.COMPLETED);
+
+        // 7. 예약 완료 후 매니저
+        ManagerStatistic managerStatistic = managerStatisticRepository.findById(managerId)
+                .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
+
+        statisticUpdateService.updateManagerStatistic(managerStatistic, 1);
+
+
+        // 8. 수요자 통계 업데이트
+        CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
+                .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
+
+        statisticUpdateService.updateCustomerStatistic(customerStatistic, 1);
 
         // 7. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckOutRspDTO.toDTO(checkLog);

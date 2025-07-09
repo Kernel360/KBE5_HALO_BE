@@ -3,6 +3,7 @@ package com.kernel.member.domain.entity;
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.global.domain.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,6 +19,10 @@ public class CustomerStatistic  extends BaseEntity {
 
     @Id
     private Long userId;
+
+    // 동시성 제어를 위한 버전 필드
+    @Version
+    private Long version;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId  // PK이자 FK
@@ -38,5 +43,11 @@ public class CustomerStatistic  extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private Integer reservationCount = 0;
+
+    // 고객의 예약수 업데이트
+    // count를 받는 이유는 예약상태가 "COMPLETED"로 바뀌었을 때 1추가하고 환불처리되었을 때 -1을 하기 위함
+    public void updateReservationCount(Integer count) {
+        this.reservationCount += count;
+    }
 
 }
