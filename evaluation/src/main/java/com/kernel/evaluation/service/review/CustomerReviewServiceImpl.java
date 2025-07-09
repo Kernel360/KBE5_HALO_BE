@@ -8,6 +8,7 @@ import com.kernel.evaluation.repository.review.CustomerReviewRepository;
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
 import com.kernel.evaluation.service.review.dto.request.ReviewUpdateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.CustomerReviewRspDTO;
+import com.kernel.member.repository.ManagerStatisticRepository;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.kernel.sharedDomain.service.ReservationQueryPort;
@@ -30,6 +31,7 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
 
     private final CustomerReviewRepository customerReviewRepository;
     private final ReservationQueryPort reservationQueryPort;
+    private final ManagerStatisticRepository managerStatisticRepository;
 
     /**
      * 수요자 리뷰 목록 조회
@@ -113,6 +115,11 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
 
         // 4. 리뷰 정보 조회
         CustomerReviewInfo reviewInfo = customerReviewRepository.getCustomerReviewsByReservationId(userId, reservationId);
+
+        // 5. 매니저 통계 업데이트
+        if (reviewInfo != null) {
+            managerStatisticRepository.updateReviewCount(scheduleAndMatchInfo.getManagerId());
+        }
 
         return CustomerReviewRspDTO.fromInfo(reviewInfo, scheduleAndMatchInfo);
     }
