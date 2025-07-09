@@ -38,7 +38,6 @@ import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 
 import com.kernel.sharedDomain.domain.entity.ServiceCategory;
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +47,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +60,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     private final ReservationCancelRepository cancelRepository;
     private final ServiceCheckLogRepository serviceCheckLogRepository;
     private final ServiceCategoryRepository serviceCategoryRepository;
-    private final StatisticUpdateService statisticUpdateService;
+    private final ReservationStatisticUpdateService reservationStatisticUpdateService;
 
     /**
      * 매니저에게 할당된 예약 목록 조회 (검색 조건 및 페이징 처리)
@@ -262,16 +260,16 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         ManagerStatistic managerStatistic = managerStatisticRepository.findById(managerId)
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
 
-        statisticUpdateService.updateManagerStatistic(managerStatistic, 1);
+        reservationStatisticUpdateService.updateManagerReservationStatistic(managerStatistic, 1);
 
 
         // 8. 수요자 통계 업데이트
         CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
 
-        statisticUpdateService.updateCustomerStatistic(customerStatistic, 1);
+        reservationStatisticUpdateService.updateCustomerReservationStatistic(customerStatistic, 1);
 
-        // 7. Entity -> ResponseDTO 변환 후, return
+        // 9. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckOutRspDTO.toDTO(checkLog);
     }
 }

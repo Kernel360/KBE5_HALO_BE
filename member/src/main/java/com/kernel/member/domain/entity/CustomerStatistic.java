@@ -50,4 +50,9 @@ public class CustomerStatistic  extends BaseEntity {
         this.reservationCount += count;
     }
 
+    // 고객의 리뷰수 업데이트
+    public void updateReviewCount() {
+        this.reviewCount += 1;
+    }
+
 }
