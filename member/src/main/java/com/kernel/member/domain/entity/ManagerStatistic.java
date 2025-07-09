@@ -20,6 +20,10 @@ public class ManagerStatistic extends BaseEntity {
     @Id
     private Long userId;
 
+    // 동시성 제어를 위한 버전 필드
+    @Version
+    private Long version;
+
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")

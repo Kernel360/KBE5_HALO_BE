@@ -3,6 +3,7 @@ package com.kernel.member.domain.entity;
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.global.domain.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,6 +19,10 @@ public class CustomerStatistic  extends BaseEntity {
 
     @Id
     private Long userId;
+
+    // 동시성 제어를 위한 버전 필드
+    @Version
+    private Long version;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId  // PK이자 FK
