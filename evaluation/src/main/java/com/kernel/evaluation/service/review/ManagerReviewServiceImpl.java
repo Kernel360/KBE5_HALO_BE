@@ -11,7 +11,13 @@ import com.kernel.evaluation.service.review.dto.request.ManagerReviewSearchCondD
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewPageRspDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewRspDTO;
+import com.kernel.member.common.enums.MemberStatisticErrorCode;
+import com.kernel.member.common.exception.MemberStatisticException;
+import com.kernel.member.domain.entity.Customer;
+import com.kernel.member.domain.entity.CustomerStatistic;
+import com.kernel.member.repository.CustomerRepository;
 import com.kernel.member.repository.CustomerStatisticRepository;
+import com.kernel.member.repository.ManagerStatisticRepository;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.kernel.sharedDomain.service.ReservationQueryPort;
@@ -27,6 +33,7 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
 
     private final ManagerReviewRepository managerReviewRepository;
     private final ReservationQueryPort reservationQueryPort;
+    private final EvaluationStatisticUpdateService evaluationStatisticUpdateService;
     private final CustomerStatisticRepository customerStatisticRepository;
 
     /**
@@ -100,9 +107,10 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
         Review savedReview = managerReviewRepository.save(managerReview);
 
         // 6. 수요자 통계 업데이트
-        if (savedReview != null) {
-            customerStatisticRepository.updateReviewCount(reservation.getUser().getUserId());
-        }
+        CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
+                .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
+
+        evaluationStatisticUpdateService.updateCustomerReviewStatistic(customerStatistic);
 
         // Entity -> ResponseDTO 후, return
         return ManagerReviewRspDTO.fromEntity(savedReview);

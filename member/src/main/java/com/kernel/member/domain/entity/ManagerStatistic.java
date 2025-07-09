@@ -49,4 +49,9 @@ public class ManagerStatistic extends BaseEntity {
     public void updateReservationCount(Integer count) {
         this.reservationCount += count;
     }
+
+    // 매니저의 리뷰수 업데이트
+    public void updateReviewCount() {
+        this.reviewCount += 1;
+    }
 }
