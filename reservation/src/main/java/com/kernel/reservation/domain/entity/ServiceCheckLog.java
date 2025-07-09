@@ -34,7 +34,8 @@ public class ServiceCheckLog extends BaseEntity {
     private Timestamp inTime;
 
     // 체크인 파일 ID
-    @Column(nullable = false)
+    //@Column(nullable = false)
+    @Column(nullable = true) // 이슈 테스트 - 체크인 파일은 필수로 하지 않음
     private Long inFileId;
 
     // 체크아웃 시간
