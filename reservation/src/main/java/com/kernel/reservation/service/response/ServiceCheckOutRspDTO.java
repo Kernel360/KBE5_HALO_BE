@@ -14,7 +14,7 @@ import lombok.Getter;
 public class ServiceCheckOutRspDTO {
 
     // 예약ID
-    private Long reservationId;
+    private Long checkId;
 
     // 체크아웃 일시
     private Timestamp outTime;
@@ -28,7 +28,7 @@ public class ServiceCheckOutRspDTO {
     // entity -> DTO
     public static ServiceCheckOutRspDTO toDTO(ServiceCheckLog entity) {
         return ServiceCheckOutRspDTO.builder()
-                .reservationId(entity.getReservation().getReservationId())
+                .checkId(entity.getReservation().getReservationId())
                 .outTime(entity.getOutTime())
                 .outFileId(entity.getOutFileId())
                 .status(entity.getReservation().getStatus())

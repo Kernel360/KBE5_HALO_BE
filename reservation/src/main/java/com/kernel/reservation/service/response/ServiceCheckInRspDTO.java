@@ -13,7 +13,7 @@ import lombok.Getter;
 @Builder
 public class ServiceCheckInRspDTO {
     // 예약ID
-    private Long reservationId;
+    private Long checkId;
 
     // 체크인 일시
     private Timestamp inTime;
@@ -27,7 +27,7 @@ public class ServiceCheckInRspDTO {
     // entity -> DTO
     public static ServiceCheckInRspDTO toDTO(ServiceCheckLog entity) {
         return ServiceCheckInRspDTO.builder()
-                .reservationId(entity.getReservation().getReservationId())
+                .checkId(entity.getReservation().getReservationId())
                 .inTime(entity.getInTime())
                 .inFileId(entity.getInFileId())
                 .status(entity.getReservation().getStatus())
