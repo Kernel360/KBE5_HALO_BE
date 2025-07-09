@@ -11,6 +11,7 @@ import com.kernel.evaluation.service.review.dto.request.ManagerReviewSearchCondD
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewPageRspDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewRspDTO;
+import com.kernel.member.repository.CustomerStatisticRepository;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.kernel.sharedDomain.service.ReservationQueryPort;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
 
     private final ManagerReviewRepository managerReviewRepository;
     private final ReservationQueryPort reservationQueryPort;
-
+    private final CustomerStatisticRepository customerStatisticRepository;
 
     /**
      * 매니저 리뷰 목록 조회 (검색 조건 및 페이징 처리)
@@ -35,6 +37,7 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
      * @return 조건에 맞는 리뷰 정보를 담은 Page 객체
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<ManagerReviewPageRspDTO> searchManagerReviewsWithPaging(
         Long managerId,
         ManagerReviewSearchCondDTO searchCondDTO,
@@ -64,6 +67,7 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
      * @return 작성된 리뷰 정보를 담은 응답
      */
     @Override
+    @Transactional
     public ManagerReviewRspDTO createManagerReview(Long userId, Long reservationId, ReviewCreateReqDTO createReqDTO) {
 
         // 1. 해당 예약건의 매니저가 맞는지 체크
@@ -94,6 +98,11 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
 
         // 5. 리뷰 저장
         Review savedReview = managerReviewRepository.save(managerReview);
+
+        // 6. 수요자 통계 업데이트
+        if (savedReview != null) {
+            customerStatisticRepository.updateReviewCount(reservation.getUser().getUserId());
+        }
 
         // Entity -> ResponseDTO 후, return
         return ManagerReviewRspDTO.fromEntity(savedReview);
