@@ -21,6 +21,7 @@ dependencies {
     // Module dependencies
     implementation project(':global')
     implementation project(':shared-domain')
+    implementation project(':member')
 
     // Spring Boot dependencies
     implementation 'org.springframework.boot:spring-boot-starter-web'
