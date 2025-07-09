@@ -281,6 +281,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
      * 매니저 통계 업데이트
      * @param managerStatistic 매니저 통계 엔티티
      * @param count 예약 수 (1 또는 -1)
+     * OptimisticLockException 발생 시 재시도 0.05초 간격으로 최대 5회 재시도
      */
     @Retryable(
             value = OptimisticLockException.class,
@@ -292,6 +293,13 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         managerStatistic.updateReservationCount(count);
     }
 
+    /**
+     * OptimisticLockException 발생 시 복구 메소드
+     * @param e OptimisticLockException 예외 객체
+     * @param managerStatistic 매니저 통계 엔티티
+     * @param count 예약 수 (1 또는 -1)
+     * recover에 파라미터를 사용하지 않아도 메서드에 포함한 이유는 recover가 동작할 때 파라미터를 사용해 문제가 발생한 메서드를 구분하기 때문
+     */
     @Recover
     private void recover(OptimisticLockException e, ManagerStatistic managerStatistic, Integer count) {
         throw new MemberStatisticException(MemberStatisticErrorCode.CONCURRENT_UPDATE_ERROR);
@@ -301,6 +309,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
      * 고객 통계 업데이트
      * @param customerStatistic 고객 통계 엔티티
      * @param count 예약 수 (1 또는 -1)
+     * OptimisticLockException 발생 시 재시도 0.05초 간격으로 최대 5회 재시도
      */
     @Retryable(
             value = OptimisticLockException.class,
@@ -312,6 +321,13 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         customerStatistic.updateReservationCount(count);
     }
 
+    /**
+     * OptimisticLockException 발생 시 복구 메소드
+     * @param e OptimisticLockException 예외 객체
+     * @param customerStatistic 고객 통계 엔티티
+     * @param count 예약 수 (1 또는 -1)
+     * recover에 파라미터를 사용하지 않아도 메서드에 포함한 이유는 recover가 동작할 때 파라미터를 사용해 문제가 발생한 메서드를 구분하기 때문
+     */
     @Recover
     private void recover(OptimisticLockException e, CustomerStatistic customerStatistic, Integer count) {
         throw new MemberStatisticException(MemberStatisticErrorCode.CONCURRENT_UPDATE_ERROR);
