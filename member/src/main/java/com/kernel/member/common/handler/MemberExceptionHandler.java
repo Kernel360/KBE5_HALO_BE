@@ -2,6 +2,7 @@ package com.kernel.member.common.handler;
 
 import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.member.common.exception.AvailableTimeException;
+import com.kernel.member.common.exception.MemberStatisticException;
 import com.kernel.member.common.exception.SpecialtyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,9 +30,17 @@ public class MemberExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, e.getMessage(), null));
     }
 
+    // 매니저 근무 가능 시간 예외 처리
     @ExceptionHandler(AvailableTimeException.class)
     public ResponseEntity<ApiResponse<Void>> handleAvailableTimeException(AvailableTimeException e) {
         log.error("AvailableTimeException error: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, e.getMessage(), null));
+    }
+
+    // 사용자 통계 테이블 예외 처리
+    @ExceptionHandler(MemberStatisticException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMemberStatisticException(MemberStatisticException e) {
+        log.error("MemberStatisticException error: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, e.getMessage(), null));
     }
 }
