@@ -42,9 +42,6 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +62,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     private final ReservationCancelRepository cancelRepository;
     private final ServiceCheckLogRepository serviceCheckLogRepository;
     private final ServiceCategoryRepository serviceCategoryRepository;
+    private final StatisticUpdateService statisticUpdateService;
 
     /**
      * 매니저에게 할당된 예약 목록 조회 (검색 조건 및 페이징 처리)
@@ -77,7 +75,7 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
     @Transactional(readOnly = true)
     public Page<ManagerReservationSummaryRspDTO> searchManagerReservationsWithPaging(
             Long managerId, ManagerReservationSearchCondDTO searchCondDTO, Pageable pageable) {
-        
+
         // 조건 및 페이징 포함된 매니저에게 할당된 예약 목록 조회
         Page<ManagerReservationSummaryInfo> searchedReservationPage = managerReservationRepository.searchManagerReservationsWithPaging(managerId, searchCondDTO, pageable);
 
@@ -264,72 +262,16 @@ public class ManagerReservationServiceImpl implements ManagerReservationService 
         ManagerStatistic managerStatistic = managerStatisticRepository.findById(managerId)
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
 
-        updateManagerStatistic(managerStatistic, 1);
+        statisticUpdateService.updateManagerStatistic(managerStatistic, 1);
 
 
         // 8. 수요자 통계 업데이트
         CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
 
-        updateCustomerStatistic(customerStatistic, 1);
+        statisticUpdateService.updateCustomerStatistic(customerStatistic, 1);
 
         // 7. Entity -> ResponseDTO 변환 후, return
         return ServiceCheckOutRspDTO.toDTO(checkLog);
-    }
-
-    /**
-     * 매니저 통계 업데이트
-     * @param managerStatistic 매니저 통계 엔티티
-     * @param count 예약 수 (1 또는 -1)
-     * OptimisticLockException 발생 시 재시도 0.05초 간격으로 최대 5회 재시도
-     */
-    @Retryable(
-            value = OptimisticLockException.class,
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 50)
-    )
-    @Transactional
-    private void updateManagerStatistic(ManagerStatistic managerStatistic, Integer count) {
-        managerStatistic.updateReservationCount(count);
-    }
-
-    /**
-     * OptimisticLockException 발생 시 복구 메소드
-     * @param e OptimisticLockException 예외 객체
-     * @param managerStatistic 매니저 통계 엔티티
-     * @param count 예약 수 (1 또는 -1)
-     * recover에 파라미터를 사용하지 않아도 메서드에 포함한 이유는 recover가 동작할 때 파라미터를 사용해 문제가 발생한 메서드를 구분하기 때문
-     */
-    @Recover
-    private void recover(OptimisticLockException e, ManagerStatistic managerStatistic, Integer count) {
-        throw new MemberStatisticException(MemberStatisticErrorCode.CONCURRENT_UPDATE_ERROR);
-    }
-
-    /**
-     * 고객 통계 업데이트
-     * @param customerStatistic 고객 통계 엔티티
-     * @param count 예약 수 (1 또는 -1)
-     * OptimisticLockException 발생 시 재시도 0.05초 간격으로 최대 5회 재시도
-     */
-    @Retryable(
-            value = OptimisticLockException.class,
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 50)
-    )
-    @Transactional
-    private void updateCustomerStatistic(CustomerStatistic customerStatistic, Integer count) {
-        customerStatistic.updateReservationCount(count);
-    }
-
-    /**
-     * OptimisticLockException 발생 시 복구 메소드
-     * @param e OptimisticLockException 예외 객체
-     * @param customerStatistic 고객 통계 엔티티
-     * @param count 예약 수 (1 또는 -1)
-     * recover에 파라미터를 사용하지 않아도 메서드에 포함한 이유는 recover가 동작할 때 파라미터를 사용해 문제가 발생한 메서드를 구분하기 때문
-     */
-    @Recover
-    private void recover(OptimisticLockException e, CustomerStatistic customerStatistic, Integer count) {
-        throw new MemberStatisticException(MemberStatisticErrorCode.CONCURRENT_UPDATE_ERROR);
     }
 }
