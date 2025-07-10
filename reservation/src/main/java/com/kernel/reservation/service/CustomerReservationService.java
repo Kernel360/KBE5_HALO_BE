@@ -2,6 +2,7 @@ package com.kernel.reservation.service;
 
 
 import com.kernel.global.common.enums.UserRole;
+import com.kernel.reservation.service.request.CustomerReservationSearchCondDTO;
 import com.kernel.reservation.service.request.ReservationCancelReqDTO;
 import com.kernel.reservation.service.request.ReservationConfirmReqDTO;
 import com.kernel.reservation.service.request.ReservationReqDTO;
@@ -9,7 +10,6 @@ import com.kernel.reservation.service.response.CustomerReservationConfirmRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationDetailRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationSummaryRspDTO;
 import com.kernel.reservation.service.response.common.ReservationRspDTO;
-import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,7 +19,7 @@ public interface CustomerReservationService {
     ReservationRspDTO makeReservationByCustomer(Long customerId, ReservationReqDTO reservationReqDTO);
 
     // 수요자 예역 내역 검색 및 조회
-    Page<CustomerReservationSummaryRspDTO> getCustomerReservations(Long customerId, ReservationStatus status, Pageable pageable);
+    Page<CustomerReservationSummaryRspDTO> getCustomerReservations(Long customerId, CustomerReservationSearchCondDTO searchCondDTO, Pageable pageable);
 
     // 수요자 예약 내역 상세 조회
     CustomerReservationDetailRspDTO getCustomerReservationDetail(Long customerId, Long reservationId);

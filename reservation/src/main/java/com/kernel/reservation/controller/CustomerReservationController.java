@@ -6,6 +6,7 @@ import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.reservation.service.CustomerReservationService;
 import com.kernel.reservation.service.MatchService;
 import com.kernel.reservation.service.ServiceCategoryService;
+import com.kernel.reservation.service.request.CustomerReservationSearchCondDTO;
 import com.kernel.reservation.service.request.ReservationCancelReqDTO;
 import com.kernel.reservation.service.request.ReservationConfirmReqDTO;
 import com.kernel.reservation.service.request.ReservationReqDTO;
@@ -16,7 +17,6 @@ import com.kernel.reservation.service.response.common.MatchedManagersRspDTO;
 import com.kernel.reservation.service.response.common.ReservationMatchedRspDTO;
 import com.kernel.reservation.service.response.common.ReservationRspDTO;
 import com.kernel.reservation.service.response.common.ServiceCategoryTreeDTO;
-import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -95,19 +95,19 @@ public class CustomerReservationController {
 
     /**
      * 예약 내역 조회
-     * @param status 예약 상태
+     * @param searchCondDTO 조회조건
      * @param user 로그인한 유저
      * @param pageable 페이징 정보
      * @return 검색 조건에 따른 예약 목록(페이징 포함)
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<CustomerReservationSummaryRspDTO>>> getCustomerReservations(
-            @RequestParam(required = false) ReservationStatus status,
+            @ModelAttribute CustomerReservationSearchCondDTO searchCondDTO,
             @PageableDefault(size = 5) Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         Page<CustomerReservationSummaryRspDTO> rspDTOPage
-                = customerReservationService.getCustomerReservations(user.getUserId(), status, pageable);
+                = customerReservationService.getCustomerReservations(user.getUserId(), searchCondDTO, pageable);
 
         return ResponseEntity.ok(new ApiResponse<>(true,  "수요자 예약 내역 조회 성공", rspDTOPage));
     }
