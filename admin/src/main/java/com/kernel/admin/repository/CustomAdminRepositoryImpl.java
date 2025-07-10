@@ -25,7 +25,6 @@ public class CustomAdminRepositoryImpl implements CustomAdminRepository {
     @Override
     public Page<AdminUserSearchInfo> searchByConditionsWithPaging(AdminUserSearchCondition request, Pageable pageable) {
         QUser user = QUser.user;
-
         // 전체 개수
         Long total = Optional.ofNullable(
                 queryFactory
@@ -35,7 +34,7 @@ public class CustomAdminRepositoryImpl implements CustomAdminRepository {
                                 user.userName.containsIgnoreCase(request.getUserName() != null ? request.getUserName() : ""),
                                 user.email.containsIgnoreCase(request.getEmail() != null ? request.getEmail() : ""),
                                 user.phone.containsIgnoreCase(request.getPhone() != null ? request.getPhone() : ""),
-                                user.status.eq(request.getStatus() != null ? request.getStatus() : UserStatus.ACTIVE),
+                                request.getStatus() != null && !request.getStatus().isEmpty() ? user.status.in(request.getStatus()) : null,
                                 user.role.eq(UserRole.ADMIN) // 관리자만 조회
                         )
                         .fetchOne()
@@ -56,7 +55,7 @@ public class CustomAdminRepositoryImpl implements CustomAdminRepository {
                         user.userName.containsIgnoreCase(request.getUserName() != null ? request.getUserName() : ""),
                         user.email.containsIgnoreCase(request.getEmail() != null ? request.getEmail() : ""),
                         user.phone.containsIgnoreCase(request.getPhone() != null ? request.getPhone() : ""),
-                        user.status.eq(request.getStatus() != null ? request.getStatus() : UserStatus.ACTIVE),
+                        request.getStatus() != null && !request.getStatus().isEmpty() ? user.status.in(request.getStatus()) : null,
                         user.role.eq(UserRole.ADMIN)
                 )
                 .offset(pageable.getOffset())
