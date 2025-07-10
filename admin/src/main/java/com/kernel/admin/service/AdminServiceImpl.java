@@ -73,7 +73,7 @@ public class AdminServiceImpl implements AdminService {
     public AdminDetailRspDTO updateAdmin(Long userId, AdminUpdateReqDTO request) {
 
         // 1. admin User 조회
-        User foundAdmin = userService.getByUserIdAndStatus(userId, UserStatus.ACTIVE);
+        User foundAdmin = userService.getByUserIdAndStatus(request.getAdminId(), UserStatus.ACTIVE);
 
         // 2. phone 중복 검사
         validatePhoneUpdate(foundAdmin.getPhone(), request.getPhone());
