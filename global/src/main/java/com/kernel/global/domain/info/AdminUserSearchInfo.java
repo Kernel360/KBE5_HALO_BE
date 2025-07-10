@@ -7,7 +7,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PUBLIC) // TODO: AccessLevel.PROTECTED일 때 문제가 되는 원인 파악
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdminUserSearchInfo {
     private Long userId;
     private String userName;
