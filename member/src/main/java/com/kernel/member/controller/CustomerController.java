@@ -8,7 +8,7 @@ import com.kernel.member.service.request.ChargePointReqDTO;
 import com.kernel.member.service.request.CustomerSignupReqDTO;
 import com.kernel.member.service.request.CustomerUpdateReqDTO;
 import com.kernel.member.service.response.CustomerDetailRspDTO;
-
+import com.kernel.member.service.response.CustomerPointRspDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +79,22 @@ public class CustomerController {
         CustomerDetailRspDTO infoRspDTO = customerService.getCustomer(customer.getUserId());
 
         return ResponseEntity.ok(new ApiResponse<>(true, "포인트 충전 성공", infoRspDTO));
+    }
+
+    /**
+     * 포인트 조회
+     * @param customer 수요자ID
+     * @return 수요자 정보를 담은 응답
+     */
+    @GetMapping("/my/point")
+    public ResponseEntity<ApiResponse<CustomerPointRspDTO>> chargePoint(
+            @AuthenticationPrincipal CustomUserDetails customer
+    ) {
+
+        Integer getPoint = customerService.getCustomerPoints(customer.getUserId());
+        CustomerPointRspDTO rspDTO = CustomerPointRspDTO.builder().point(getPoint).build();
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "포인트 조회 성공", rspDTO));
     }
 
 
