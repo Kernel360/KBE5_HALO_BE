@@ -23,7 +23,7 @@ public enum ErrorCode implements ErrorCodeInterface {
     REFRESH_TOKEN_NOT_FOUND(401, "JWT003", "리프레시 토큰을 찾을 수 없습니다."),
 
     // 권한 관련
-    ACCESS_DENIED(403, "AUTH005", "접근 권한이 없습니다."),
+    ACCESS_DENIED(403, "AUTH007", "접근 권한이 없습니다."),
 
     // 서버 에러
     INTERNAL_SERVER_ERROR(500, "SRV001", "서버 내부 오류가 발생했습니다.");
