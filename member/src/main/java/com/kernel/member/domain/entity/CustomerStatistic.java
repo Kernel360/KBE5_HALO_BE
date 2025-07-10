@@ -22,7 +22,8 @@ public class CustomerStatistic  extends BaseEntity {
 
     // 동시성 제어를 위한 버전 필드
     @Version
-    private Long version;
+    @Builder.Default
+    private Long version = 0L;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId  // PK이자 FK
