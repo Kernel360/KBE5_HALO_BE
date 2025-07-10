@@ -46,8 +46,28 @@ public class User extends BaseEntity {
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
+    // 테스트 계정 플래그
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean testAccount = false;
+
     // 사용자 email 수정
     public void updateEmail(String email) {
+        if(!email.isBlank() && !this.email.equals(email)) {
+            this.email = email;
+        }
+    }
+
+    // 관리자 계정 업데이트
+    public void updateAdmin(String phone, String userName, String email) {
+        // 전화번호는 고유키이므로 서비스 단에서 중복 검사 필수
+        if(!phone.isBlank() && !this.phone.equals(phone)) {
+            this.phone = phone;
+        }
+
+        if(!userName.isBlank() && !this.userName.equals(userName)) {
+            this.userName = userName;
+        }
         if(!email.isBlank() && !this.email.equals(email)) {
             this.email = email;
         }

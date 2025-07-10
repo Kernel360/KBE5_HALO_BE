@@ -2,6 +2,7 @@ package com.kernel.admin.controller;
 
 import com.kernel.admin.service.AdminService;
 import com.kernel.admin.service.dto.request.AdminSearchReqDTO;
+import com.kernel.admin.service.dto.request.AdminUpdateReqDTO;
 import com.kernel.admin.service.dto.response.AdminDetailRspDTO;
 import com.kernel.admin.service.dto.response.AdminSearchRspDTO;
 import com.kernel.global.domain.entity.User;
@@ -63,15 +64,15 @@ public class AdminController {
      * 관리자 정보 수정 API
      *
      * @param userId      수정할 관리자 ID
-     * @param updateReqDTO 관리자 정보 수정 요청 DTO
+     * @param request 관리자 정보 수정 요청 DTO
      * @return 수정된 관리자 정보가 포함된 ApiResponse 객체
      */
     @PatchMapping("/{userId}")
     public ResponseEntity<ApiResponse<AdminDetailRspDTO>> updateAdmin(
             @PathVariable Long userId,
-            @RequestBody @Valid UserUpdateReqDTO updateReqDTO
-    ) {
-        AdminDetailRspDTO updatedAdmin = adminService.updateAdmin(userId, updateReqDTO);
+            @RequestBody @Valid AdminUpdateReqDTO request
+            ) {
+        AdminDetailRspDTO updatedAdmin = adminService.updateAdmin(userId, request);
         return ResponseEntity.ok(new ApiResponse<>(true, "관리자 정보 수정 성공", updatedAdmin));
     }
 
