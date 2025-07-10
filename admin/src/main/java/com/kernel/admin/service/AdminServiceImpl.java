@@ -13,7 +13,6 @@ import com.kernel.global.service.dto.condition.AdminUserSearchCondition;
 import com.kernel.member.service.common.UserService;
 import com.kernel.member.service.common.info.UserAccountInfo;
 import com.kernel.member.service.common.request.UserSignupReqDTO;
-import com.kernel.member.service.common.request.UserUpdateReqDTO;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -57,9 +56,7 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(readOnly = true)
     public Page<AdminSearchRspDTO> searchAdminList(AdminSearchReqDTO request, Pageable pageable) {
         AdminUserSearchCondition adminUserSearchCondition = request.toCondition();
-
         Page<AdminUserSearchInfo> adminPage = adminRepository.searchByConditionsWithPaging(adminUserSearchCondition, pageable);
-
 
         return AdminSearchRspDTO.fromInfo(adminPage);
     }
@@ -117,6 +114,12 @@ public class AdminServiceImpl implements AdminService {
          adminRepository.save(foundAdmin);
     }
 
+    /**
+     * 전화번호 업데이트 시 중복 검사
+     *
+     * @param currentPhone 현재 전화번호
+     * @param newPhone 새 전화번호
+     */
     private void validatePhoneUpdate(String currentPhone, String newPhone) {
         // null이거나 공백인 경우 검사하지 않음
         if (newPhone == null || newPhone.isBlank()) return;

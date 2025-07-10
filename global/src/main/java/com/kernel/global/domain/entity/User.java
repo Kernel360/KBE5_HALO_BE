@@ -46,11 +46,6 @@ public class User extends BaseEntity {
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
-    // 테스트 계정 플래그
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean testAccount = false;
-
     // 사용자 email 수정
     public void updateEmail(String email) {
         if(!email.isBlank() && !this.email.equals(email)) {
