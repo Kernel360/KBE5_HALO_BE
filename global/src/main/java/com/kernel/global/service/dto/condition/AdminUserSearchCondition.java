@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.List;
+
 @Getter
 @Builder
 @Schema(description = "관리자 사용자 검색 조건 DTO")
@@ -25,5 +27,5 @@ public class AdminUserSearchCondition {
     private String email;
 
     @Schema(description = "사용자 상태", example = "ACTIVE")
-    private UserStatus status;
+    private List<UserStatus> status;
 }

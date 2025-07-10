@@ -6,8 +6,12 @@ import com.kernel.global.service.dto.condition.AdminUserSearchCondition;
 import jakarta.validation.constraints.Max;
 import lombok.Getter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Setter;
+
+import java.util.List;
 
 @Getter
+@Setter
 @Schema(description = "관리자 검색 요청 DTO")
 public class AdminSearchReqDTO {
 
@@ -24,7 +28,7 @@ public class AdminSearchReqDTO {
     private String email;
 
     @Schema(description = "사용자 상태", example = "ACTIVE")
-    private UserStatus status; // UserStatus enum의 이름을 문자열로 받음
+    private List<UserStatus> status; // UserStatus enum의 이름을 문자열로 받음
 
     // AdminUserSearchCondition에서 사용되는 필드들 매핑
     public AdminUserSearchCondition toCondition() {

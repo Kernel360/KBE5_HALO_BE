@@ -53,6 +53,21 @@ public class User extends BaseEntity {
         }
     }
 
+    // 관리자 계정 업데이트
+    public void updateAdmin(String phone, String userName, String email) {
+        // 전화번호는 고유키이므로 서비스 단에서 중복 검사 필수
+        if(!phone.isBlank() && !this.phone.equals(phone)) {
+            this.phone = phone;
+        }
+
+        if(!userName.isBlank() && !this.userName.equals(userName)) {
+            this.userName = userName;
+        }
+        if(!email.isBlank() && !this.email.equals(email)) {
+            this.email = email;
+        }
+    }
+
     // 회원 탈퇴
     public void delete(){
         this.status = UserStatus.DELETED;

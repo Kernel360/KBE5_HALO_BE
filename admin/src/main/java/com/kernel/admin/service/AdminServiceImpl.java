@@ -2,6 +2,7 @@ package com.kernel.admin.service;
 
 import com.kernel.admin.repository.AdminRepository;
 import com.kernel.admin.service.dto.request.AdminSearchReqDTO;
+import com.kernel.admin.service.dto.request.AdminUpdateReqDTO;
 import com.kernel.admin.service.dto.response.AdminDetailRspDTO;
 import com.kernel.admin.service.dto.response.AdminSearchRspDTO;
 import com.kernel.global.common.enums.UserRole;
@@ -12,7 +13,6 @@ import com.kernel.global.service.dto.condition.AdminUserSearchCondition;
 import com.kernel.member.service.common.UserService;
 import com.kernel.member.service.common.info.UserAccountInfo;
 import com.kernel.member.service.common.request.UserSignupReqDTO;
-import com.kernel.member.service.common.request.UserUpdateReqDTO;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -56,9 +56,7 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(readOnly = true)
     public Page<AdminSearchRspDTO> searchAdminList(AdminSearchReqDTO request, Pageable pageable) {
         AdminUserSearchCondition adminUserSearchCondition = request.toCondition();
-
         Page<AdminUserSearchInfo> adminPage = adminRepository.searchByConditionsWithPaging(adminUserSearchCondition, pageable);
-
 
         return AdminSearchRspDTO.fromInfo(adminPage);
     }
@@ -67,20 +65,32 @@ public class AdminServiceImpl implements AdminService {
     * 관리자 정보 수정
     *
     * @param userId 관리자 ID
-    * @param updateReqDTO 관리자 정보 수정 요청 DTO
+    * @param request 관리자 정보 수정 요청 DTO
     * @return 수정된 관리자 상세 정보 DTO
     */
     @Override
     @Transactional
-    public AdminDetailRspDTO updateAdmin(Long userId, UserUpdateReqDTO updateReqDTO) {
+    public AdminDetailRspDTO updateAdmin(Long userId, AdminUpdateReqDTO request) {
 
         // 1. admin User 조회
-        User foundAdmin = userService.getByUserIdAndStatus(userId, UserStatus.ACTIVE);
+        User foundAdmin = userService.getByUserIdAndStatus(request.getAdminId(), UserStatus.ACTIVE);
 
-        // User 수정
-        foundAdmin.updateEmail(updateReqDTO.getEmail());
+        // 2. phone 중복 검사
+        validatePhoneUpdate(foundAdmin.getPhone(), request.getPhone());
 
-        // DTO 변환 후 return
+        // 3. User 정보 업데이트
+        foundAdmin.updateAdmin(
+                request.getPhone(),
+                request.getUserName(),
+                request.getEmail()
+        );
+
+        // 4. 비밀번호 수정
+        if (request.getResetPwd() != null && request.getResetPwd().getNewPassword() != null && !request.getResetPwd().getNewPassword().isBlank()) {
+            userService.resetPassword(request.getAdminId(), request.getResetPwd());
+        }
+
+        // 5. DTO 변환 후 return
         return AdminDetailRspDTO.fromInfo(
             UserAccountInfo.fromEntity(foundAdmin)
         );
@@ -102,6 +112,23 @@ public class AdminServiceImpl implements AdminService {
 
          // 3. User 저장
          adminRepository.save(foundAdmin);
-     }
+    }
+
+    /**
+     * 전화번호 업데이트 시 중복 검사
+     *
+     * @param currentPhone 현재 전화번호
+     * @param newPhone 새 전화번호
+     */
+    private void validatePhoneUpdate(String currentPhone, String newPhone) {
+        // null이거나 공백인 경우 검사하지 않음
+        if (newPhone == null || newPhone.isBlank()) return;
+
+        // 현재 전화번호와 새 전화번호가 다를 경우에만 중복 검사
+        if (currentPhone.equals(newPhone)) return;
+
+        // 중복 전화번호 검사
+        userService.validateDuplicatePhone(newPhone);
+    }
 
 }
