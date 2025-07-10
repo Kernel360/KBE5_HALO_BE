@@ -50,8 +50,10 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
         Page<CustomerReviewInfo> reviewInfoList;
 
         // 1. 리뷰 조회
-        if(searchReqDTO.getRating() == null || searchReqDTO.getRating() == 0) {
+        if(searchReqDTO.getRating() == null) {
             reviewInfoList = customerReviewRepository.getCustomerReviewsAll(userId, pageable);
+        }else if (searchReqDTO.getRating() == 0){
+            reviewInfoList = customerReviewRepository.getCustomerReviewsNotWritten(userId, pageable);
         }else{
             reviewInfoList = customerReviewRepository.getCustomerReviewsByRating(userId, searchReqDTO, pageable);
         }

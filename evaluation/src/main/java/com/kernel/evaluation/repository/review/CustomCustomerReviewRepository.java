@@ -13,7 +13,10 @@ public interface CustomCustomerReviewRepository {
     // 수요자 리뷰 내역 조회 by 별점(페이징)
     Page<CustomerReviewInfo> getCustomerReviewsByRating(Long userId, ReviewSearchReqDTO searchReqDTO, Pageable pageable);
 
-    // 수요자 리뷰 조회 bz 예약 ID
+    // 수요자 작성 필요 리뷰 조회(페이징)
+    Page<CustomerReviewInfo> getCustomerReviewsNotWritten(Long userId, Pageable pageable);
+
+    // 수요자 리뷰 조회 by 예약 ID
     CustomerReviewInfo getCustomerReviewsByReservationId(Long customerId, Long reservationId);
 
 }

@@ -39,7 +39,6 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
     @Override
     public Page<CustomerReviewInfo> getCustomerReviewsAll(Long userId, Pageable pageable) {
 
-
         // 1. 리뷰 내역 조회
         List<CustomerReviewInfo> reviews = queryFactory
                 .select(Projections.fields(CustomerReviewInfo.class,
@@ -91,7 +90,6 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
         ).orElse(0L);
 
         return new PageImpl<>(reviews, pageable, total);
-
     }
 
     /**
@@ -146,6 +144,66 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
         ).orElse(0L);
 
         return new PageImpl<>(reviews, pageable, total);
+    }
+
+    /**
+     * 수요자 작성 필요 리뷰 조회
+     * @param userId 로그인 유저
+     * @param pageable 페이징
+     * @return reviewRspDTO
+     */
+    @Override
+    public Page<CustomerReviewInfo> getCustomerReviewsNotWritten(Long userId, Pageable pageable) {
+        // 1. 리뷰 내역 조회
+        List<CustomerReviewInfo> reviews = queryFactory
+                .select(Projections.fields(CustomerReviewInfo.class,
+                        reservation.reservationId,
+                        reservation.serviceCategory.serviceName
+                ))
+                .from(reservation)
+                .leftJoin(review).on(
+                        review.reservation.reservationId.eq(reservation.reservationId)
+                                .and(review.authorId.eq(userId))
+                                .and(review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER))
+                )
+                .leftJoin(reservation.serviceCategory, serviceCategory)
+                .innerJoin(reservation.user, user)
+                .where(
+                        reservation.user.userId.eq(userId),
+                        reservation.status.eq(ReservationStatus.COMPLETED),
+                        review.reviewId.isNull()
+                )
+                .offset(pageable.getOffset())               // 시작 위치
+                .limit(pageable.getPageSize())              // 페이지 사이즈
+                .fetch();
+
+        // 2. 존재 여부 검사
+        if(reviews.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        // 3. 전체 카운트 조회
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(reservation.reservationId.count())
+                        .from(reservation)
+                        .leftJoin(review).on(
+                                review.reservation.reservationId.eq(reservation.reservationId)
+                                        .and(review.authorId.eq(userId))
+                                        .and(review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER))
+                        )
+                        .leftJoin(reservation.serviceCategory, serviceCategory)
+                        .innerJoin(reservation.user, user)
+                        .where(
+                                reservation.user.userId.eq(userId),
+                                reservation.status.eq(ReservationStatus.COMPLETED),
+                                review.reviewId.isNull()
+                        )
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(reviews, pageable, total);
+
     }
 
     /**
