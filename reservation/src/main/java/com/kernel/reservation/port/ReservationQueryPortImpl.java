@@ -3,7 +3,6 @@ package com.kernel.reservation.port;
 import com.kernel.reservation.common.enums.ReservationErrorCode;
 import com.kernel.reservation.common.exception.ReservationException;
 import com.kernel.reservation.repository.common.ReservationQueryPortRepository;
-import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.kernel.sharedDomain.service.ReservationQueryPort;
 import com.kernel.sharedDomain.service.response.ScheduleAndMatchInfo;
@@ -47,13 +46,13 @@ public class ReservationQueryPortImpl implements ReservationQueryPort {
     /**
      * 예약 일정 및 매칭 조회 List
      * @param userId 수요자ID
-     * @param status 예약 상태
+     * @param reservationIds 조회할 예약 ID List
      * @return ScheduleAndMatchInfo
      */
     @Override
-    public List<ScheduleAndMatchInfo> findSchedulesAndMatchesByUserIdAndStatus(Long userId, ReservationStatus status) {
+    public List<ScheduleAndMatchInfo> findSchedulesAndMatchesByUserIdAndReservationIds(Long userId, List<Long> reservationIds) {
 
-        return portRepository.findSchedulesAndMatchesByUserIdAndStatus(status, userId);
+        return portRepository.findSchedulesAndMatchesByUserIdAndReservationIds(reservationIds, userId);
     }
 
     /**
