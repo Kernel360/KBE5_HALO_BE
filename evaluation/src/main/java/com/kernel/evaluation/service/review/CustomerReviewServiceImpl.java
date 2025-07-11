@@ -6,13 +6,13 @@ import com.kernel.evaluation.domain.entity.Review;
 import com.kernel.evaluation.domain.info.CustomerReviewInfo;
 import com.kernel.evaluation.repository.review.CustomerReviewRepository;
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
+import com.kernel.evaluation.service.review.dto.request.ReviewSearchReqDTO;
 import com.kernel.evaluation.service.review.dto.request.ReviewUpdateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.CustomerReviewRspDTO;
 import com.kernel.member.common.enums.MemberStatisticErrorCode;
 import com.kernel.member.common.exception.MemberStatisticException;
 import com.kernel.member.domain.entity.ManagerStatistic;
 import com.kernel.member.repository.ManagerStatisticRepository;
-import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.kernel.sharedDomain.service.ReservationQueryPort;
 import com.kernel.sharedDomain.service.response.ScheduleAndMatchInfo;
@@ -45,30 +45,40 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<CustomerReviewRspDTO> getCustomerReviews(Long userId, Pageable pageable) {
+    public Page<CustomerReviewRspDTO> getCustomerReviews(Long userId, ReviewSearchReqDTO searchReqDTO, Pageable pageable) {
 
-        // 1. 소유자 리뷰 작성 가능 예약 조회
-        List<ScheduleAndMatchInfo> scheduleList =
-                reservationQueryPort.findSchedulesAndMatchesByUserIdAndStatus(userId, ReservationStatus.COMPLETED);
+        Page<CustomerReviewInfo> reviewInfoList;
 
-        // 2. 리뷰 조회
-        List<CustomerReviewInfo> reviewInfoList = customerReviewRepository.getCustomerReviews(userId, pageable).getContent();
+        // 1. 리뷰 조회
+        if(searchReqDTO.getRating() == null) {
+            reviewInfoList = customerReviewRepository.getCustomerReviewsAll(userId, pageable);
+        }else if (searchReqDTO.getRating() == 0){
+            reviewInfoList = customerReviewRepository.getReservationsWithoutReview(userId, pageable);
+        }else{
+            reviewInfoList = customerReviewRepository.getCustomerReviewsByRating(userId, searchReqDTO, pageable);
+        }
 
-        // 3. 예약 ID → 리뷰 정보 매핑
-        Map<Long, CustomerReviewInfo> reviewMap = reviewInfoList.stream()
-                .collect(Collectors.toMap(CustomerReviewInfo::getReservationId, info -> info));
+        // 2. 예약ID 추출
+        List<Long> reservationIds = reviewInfoList.getContent().stream().map(CustomerReviewInfo::getReservationId).toList();
 
-        // 4. 일정/매칭 정보 + 리뷰 정보를 DTO로 변환
-        List<CustomerReviewRspDTO> content = scheduleList.stream()
-                .map(scheduleAndMatchInfo -> {
-                    CustomerReviewInfo reviewInfo = reviewMap.get(scheduleAndMatchInfo.getReservationId());
+        // 3. 예약 정보 조회
+        List<ScheduleAndMatchInfo> scheduleAndMatchList =
+                reservationQueryPort.findSchedulesAndMatchesByUserIdAndReservationIds(userId, reservationIds);
+
+        // 4. 예약 ID → 일정/매칭 정보 매칭
+        Map<Long, ScheduleAndMatchInfo> scheduleAndMatchInfoMap = scheduleAndMatchList.stream()
+                .collect(Collectors.toMap(ScheduleAndMatchInfo::getReservationId, info -> info));
+
+        // 5. 일정/매칭 정보 + 리뷰 정보를 DTO로 변환
+        List<CustomerReviewRspDTO> content = reviewInfoList.getContent().stream()
+                .map(reviewInfo -> {
+                    ScheduleAndMatchInfo scheduleAndMatchInfo = scheduleAndMatchInfoMap.get(reviewInfo.getReservationId());
                     return CustomerReviewRspDTO.fromInfo(reviewInfo, scheduleAndMatchInfo);
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         // 5. 페이징 처리
-        return new PageImpl<>(content, pageable, content.size());
-
+        return new PageImpl<>(content, pageable, reviewInfoList.getTotalElements());
     }
 
     /**

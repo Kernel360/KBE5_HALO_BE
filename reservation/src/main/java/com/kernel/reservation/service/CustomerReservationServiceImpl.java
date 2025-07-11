@@ -21,6 +21,7 @@ import com.kernel.reservation.repository.common.ReservationUserRepository;
 import com.kernel.reservation.service.info.CustomerReservationConfirmInfo;
 import com.kernel.reservation.service.info.CustomerReservationDetailInfo;
 import com.kernel.reservation.service.info.CustomerReservationSummaryInfo;
+import com.kernel.reservation.service.request.CustomerReservationSearchCondDTO;
 import com.kernel.reservation.service.request.ReservationCancelReqDTO;
 import com.kernel.reservation.service.request.ReservationConfirmReqDTO;
 import com.kernel.reservation.service.request.ReservationReqDTO;
@@ -93,16 +94,16 @@ public class CustomerReservationServiceImpl implements CustomerReservationServic
     /**
      * 예약 내역 조회
      * @param customerId 수요자ID
-     * @param status     예약 상태
+     * @param searchCondDTO  검색조건
      * @param pageable   페이징
      * @return 검색 조건에 따른 예약 목록(페이징 포함)
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<CustomerReservationSummaryRspDTO> getCustomerReservations(Long customerId, ReservationStatus status, Pageable pageable) {
+    public Page<CustomerReservationSummaryRspDTO> getCustomerReservations(Long customerId, CustomerReservationSearchCondDTO searchCondDTO, Pageable pageable) {
 
         // 수요자 예약 내역 조회(상태 검색, 페이징, 상세내역 포함)
-        Page<CustomerReservationSummaryInfo> result = customerReservationRepository.getCustomerReservationsByStatus(customerId, status, pageable);
+        Page<CustomerReservationSummaryInfo> result = customerReservationRepository.getCustomerReservations(customerId, searchCondDTO, pageable);
 
         return result.map(CustomerReservationSummaryRspDTO::fromInfo);
 

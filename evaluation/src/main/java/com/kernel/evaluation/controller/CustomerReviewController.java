@@ -2,11 +2,11 @@ package com.kernel.evaluation.controller;
 
 import com.kernel.evaluation.service.review.CustomerReviewService;
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
+import com.kernel.evaluation.service.review.dto.request.ReviewSearchReqDTO;
 import com.kernel.evaluation.service.review.dto.request.ReviewUpdateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.CustomerReviewRspDTO;
 import com.kernel.global.security.CustomUserDetails;
 import com.kernel.global.service.dto.response.ApiResponse;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +33,11 @@ public class CustomerReviewController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<Page<CustomerReviewRspDTO>>> getCustomerReviews(
+            @ModelAttribute @Valid ReviewSearchReqDTO searchReqDTO,
             @AuthenticationPrincipal CustomUserDetails user,
-            @PageableDefault(size = 10, page = 0) Pageable pageable
+            @PageableDefault(size = 5, page = 0) Pageable pageable
     ){
-        Page<CustomerReviewRspDTO> rspDTOPage = reviewService.getCustomerReviews(user.getUserId(), pageable);
+        Page<CustomerReviewRspDTO> rspDTOPage = reviewService.getCustomerReviews(user.getUserId(), searchReqDTO, pageable);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 리뷰 목록 조회 성공", rspDTOPage));
     }

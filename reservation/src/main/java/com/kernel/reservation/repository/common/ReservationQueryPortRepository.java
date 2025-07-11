@@ -1,6 +1,5 @@
 package com.kernel.reservation.repository.common;
 
-import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.kernel.sharedDomain.service.response.ScheduleAndMatchInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -43,10 +42,10 @@ public interface ReservationQueryPortRepository extends JpaRepository<Reservatio
             "JOIN ReservationMatch rm ON r.reservationId = rm.reservation.reservationId " +
             "JOIN Manager m ON rm.manager.userId = m.userId " +
             "LEFT JOIN File f ON f.fileId = m.profileImageFileId.fileId " +
-            "WHERE r.status = :status " +
+            "WHERE r.reservationId in :reservationIds " +
             "AND r.user.userId = :userId")
-    List<ScheduleAndMatchInfo> findSchedulesAndMatchesByUserIdAndStatus(
-            @Param("status") ReservationStatus status,
+    List<ScheduleAndMatchInfo> findSchedulesAndMatchesByUserIdAndReservationIds(
+            @Param("reservationIds") List<Long> reservationIds,
             @Param("userId") Long userId
     );
 

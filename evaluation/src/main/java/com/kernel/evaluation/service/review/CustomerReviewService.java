@@ -1,6 +1,7 @@
 package com.kernel.evaluation.service.review;
 
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
+import com.kernel.evaluation.service.review.dto.request.ReviewSearchReqDTO;
 import com.kernel.evaluation.service.review.dto.request.ReviewUpdateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.CustomerReviewRspDTO;
 import org.springframework.data.domain.Page;
@@ -9,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 public interface CustomerReviewService {
 
     // 수요자 리뷰 내역 조회
-    Page<CustomerReviewRspDTO> getCustomerReviews(Long customerId, Pageable pageable);
+    Page<CustomerReviewRspDTO> getCustomerReviews(Long customerId, ReviewSearchReqDTO searchReqDTO, Pageable pageable);
 
     // 수요자 리뷰 조회 by 예약ID
     CustomerReviewRspDTO getCustomerReviewsByReservationId(Long customerId, Long reservationId);
