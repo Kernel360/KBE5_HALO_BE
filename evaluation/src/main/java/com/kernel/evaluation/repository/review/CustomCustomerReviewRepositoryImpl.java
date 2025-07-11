@@ -117,7 +117,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                 .where(
                         review.authorId.eq(userId),
                         review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER),
-                        ratingEq(searchReqDTO.getRating())
+                        ratingEqOrBelowThreeRange(searchReqDTO.getRating())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -138,7 +138,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
                         .where(
                                 review.authorId.eq(userId),
                                 review.reviewAuthorType.eq(ReviewAuthorType.CUSTOMER),
-                                ratingEq(searchReqDTO.getRating())
+                                ratingEqOrBelowThreeRange(searchReqDTO.getRating())
                         )
                         .fetchOne()
         ).orElse(0L);
@@ -246,7 +246,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
     }
 
     // 리뷰 별점 조건
-    private BooleanExpression ratingEq(Integer rating){
+    private BooleanExpression ratingEqOrBelowThreeRange(Integer rating){
         if(rating == null) return null;
 
         if(rating > 3)
