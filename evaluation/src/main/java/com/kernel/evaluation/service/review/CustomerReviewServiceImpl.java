@@ -53,7 +53,7 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
         if(searchReqDTO.getRating() == null) {
             reviewInfoList = customerReviewRepository.getCustomerReviewsAll(userId, pageable);
         }else if (searchReqDTO.getRating() == 0){
-            reviewInfoList = customerReviewRepository.getCustomerReviewsNotWritten(userId, pageable);
+            reviewInfoList = customerReviewRepository.getReservationsWithoutReview(userId, pageable);
         }else{
             reviewInfoList = customerReviewRepository.getCustomerReviewsByRating(userId, searchReqDTO, pageable);
         }

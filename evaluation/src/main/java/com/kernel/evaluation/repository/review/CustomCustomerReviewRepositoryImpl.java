@@ -153,7 +153,7 @@ public class CustomCustomerReviewRepositoryImpl implements CustomCustomerReviewR
      * @return reviewRspDTO
      */
     @Override
-    public Page<CustomerReviewInfo> getCustomerReviewsNotWritten(Long userId, Pageable pageable) {
+    public Page<CustomerReviewInfo> getReservationsWithoutReview(Long userId, Pageable pageable) {
         // 1. 리뷰 내역 조회
         List<CustomerReviewInfo> reviews = queryFactory
                 .select(Projections.fields(CustomerReviewInfo.class,
