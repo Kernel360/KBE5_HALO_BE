@@ -12,16 +12,21 @@ import com.kernel.member.domain.entity.QUserInfo;
 import com.kernel.reservation.domain.entity.QReservationMatch;
 import com.kernel.reservation.domain.entity.QReservationSchedule;
 import com.kernel.reservation.service.info.MatchedManagersInfo;
-import com.kernel.reservation.service.request.ReservationReqDTO;
+import com.kernel.reservation.service.request.ManagerReqDTO;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.QReservation;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.DatePath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,17 +55,17 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
 
     /**
      * 매니저 매칭 리스트 조회
-     * @param reservationReqDTO 예약 요청
+     * @param managerReqDTO 매니저 요청
      * @return 매니저 매칭 리스트
      */
-    public List<Long> getMatchedManagers(ReservationReqDTO reservationReqDTO) {
+    public List<Long> getMatchedManagers(ManagerReqDTO managerReqDTO) {
 
         // 1. 예약 요일 Enum으로 변환
-        DayOfWeek requestDay = DayOfWeek.fromJavaDayOfWeek(reservationReqDTO.getRequestDate().getDayOfWeek());
+        DayOfWeek requestDay = DayOfWeek.fromJavaDayOfWeek(managerReqDTO.getRequestDate().getDayOfWeek());
 
         // 2. 시작 시간, 소요시간
-        LocalTime startTime = reservationReqDTO.getStartTime();
-        int turnaround = reservationReqDTO.getTurnaround();
+        LocalTime startTime = managerReqDTO.getStartTime();
+        int turnaround = managerReqDTO.getTurnaround();
 
         List<LocalTime> requiredTimes = IntStream.range(0, turnaround+1)
                 .mapToObj(i -> startTime.plusHours(i))
@@ -85,8 +90,8 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
         BigDecimal lngDelta = new BigDecimal("0.055");
 
         // 기준 좌표
-        BigDecimal targetLat = reservationReqDTO.getLatitude();
-        BigDecimal targetLng = reservationReqDTO.getLongitude();
+        BigDecimal targetLat = managerReqDTO.getLatitude();
+        BigDecimal targetLng = managerReqDTO.getLongitude();
 
         // 4. 최종 매칭 매니저 조회
         List<Long> matchedManagers = queryFactory
@@ -119,15 +124,14 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                                 .leftJoin(match).on(match.reservation.eq(reservation))
                                 .where(
                                         match.manager.userId.eq(manager.userId),
-                                        schedule.requestDate.eq(reservationReqDTO.getRequestDate()),
+                                        schedule.requestDate.eq(managerReqDTO.getRequestDate()),
                                         reservation.status.eq(ReservationStatus.CONFIRMED),
                                         schedule.startTime.between(
                                                 startTime,
-                                                startTime.plusHours(turnaround - 1)
+                                                startTime.plusHours(turnaround)
                                         )
                                 ).notExists()
                 )
-                .limit(5)
                 .fetch();
 
         return matchedManagers;
@@ -139,11 +143,11 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
      * @return 매니저 매칭 리스트
      */
     @Override
-    public List<MatchedManagersInfo> getMatchingManagersInfo(Long customerId, List<Long> managerIds) {
+    public Page<MatchedManagersInfo> getMatchingManagersInfo(Long customerId, List<Long> managerIds, Pageable pageable) {
 
         DatePath<LocalDate> maxRequestDate = Expressions.datePath(LocalDate.class, "maxRequestDate");
 
-        // 최근 예약 일자
+        // 1. 최근 예약 일자 조회
         List<Tuple> recentReservationDate = queryFactory
                 .select(
                         match.manager.userId,
@@ -168,8 +172,18 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                         t -> t.get(maxRequestDate)  // 반드시 같은 alias로 get
                 ));
 
-        // 2. 예약 가능한 매니저 정보 추출
-        List<Tuple> matchedManagers = queryFactory
+        // 3. Total count 조회
+        Long totalCountResult = queryFactory
+                .select(user.count())
+                .from(user)
+                .leftJoin(manager).on(manager.user.eq(user))
+                .where(manager.userId.in(managerIds))
+                .fetchOne();
+        
+        long totalCount = totalCountResult != null ? totalCountResult : 0L;
+
+        // 4. 페이징된 매니저 정보 추출
+        JPAQuery<Tuple> query = queryFactory
                 .select(
                         user.userId,
                         user.userName,
@@ -183,11 +197,20 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                 .leftJoin(manager).on(manager.user.eq(user))
                 .leftJoin(managerStatistic).on(managerStatistic.user.eq(user))
                 .leftJoin(file).on(file.fileId.eq(manager.profileImageFileId.fileId))
-                .where(manager.userId.in(managerIds))
+                .leftJoin(manager.specialty)
+                .where(manager.userId.in(managerIds));
+
+        // 5. 정렬 적용
+        applySorting(query, pageable.getSort());
+
+        // 6. 그 다음 페이징 + fetch
+        List<Tuple> matchedManagers = query
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
-        // 4. Info Mapping
-        return matchedManagers.stream()
+        // 6. Info Mapping
+        List<MatchedManagersInfo> content = matchedManagers.stream()
                 .map(tuple -> {
                     Long managerId = tuple.get(user.userId);
                     return MatchedManagersInfo.builder()
@@ -202,6 +225,26 @@ public class CustomMatchRepositoryImpl implements CustomMatchRepository {
                             .build();
                 })
                 .toList();
+
+        return new PageImpl<>(content, pageable, totalCount);
     }
 
+    private void applySorting(JPAQuery<?> query, Sort sort){
+        for (Sort.Order order : sort) {
+            String prop = order.getProperty();
+            boolean isAsc = order.isAscending();
+
+            switch(prop){
+                case "averageRating" -> query.orderBy(isAsc ?
+                        managerStatistic.averageRating.asc() :
+                        managerStatistic.averageRating.desc());
+                case "reviewCount" -> query.orderBy(isAsc ?
+                        managerStatistic.reviewCount.asc() :
+                        managerStatistic.reviewCount.desc());
+                case "reservationCount" -> query.orderBy(isAsc ?
+                        managerStatistic.reservationCount.asc() :
+                        managerStatistic.reservationCount.desc());
+            }
+        }
+    }
 }

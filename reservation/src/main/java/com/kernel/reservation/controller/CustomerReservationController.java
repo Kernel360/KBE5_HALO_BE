@@ -6,10 +6,7 @@ import com.kernel.global.service.dto.response.ApiResponse;
 import com.kernel.reservation.service.CustomerReservationService;
 import com.kernel.reservation.service.MatchService;
 import com.kernel.reservation.service.ServiceCategoryService;
-import com.kernel.reservation.service.request.CustomerReservationSearchCondDTO;
-import com.kernel.reservation.service.request.ReservationCancelReqDTO;
-import com.kernel.reservation.service.request.ReservationConfirmReqDTO;
-import com.kernel.reservation.service.request.ReservationReqDTO;
+import com.kernel.reservation.service.request.*;
 import com.kernel.reservation.service.response.CustomerReservationConfirmRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationDetailRspDTO;
 import com.kernel.reservation.service.response.CustomerReservationSummaryRspDTO;
@@ -21,12 +18,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers/reservations")
@@ -46,14 +42,15 @@ public class CustomerReservationController {
     @PostMapping
     public ResponseEntity<ApiResponse<ReservationMatchedRspDTO>> makeReservationByCustomer(
             @AuthenticationPrincipal CustomUserDetails user,
-            @Valid @RequestBody ReservationReqDTO reservationReqDTO
+            @Valid @RequestBody ReservationReqDTO reservationReqDTO,
+            @PageableDefault(size = 5, page = 0, sort = "averageRating", direction = Sort.Direction.DESC) Pageable pageable
     ){
 
         // 1. 보유 포인트 검사
         customerReservationService.validateSufficientPoints(user.getUserId(), reservationReqDTO.getPrice());
 
         // 2. 매칭 매니저 조회
-        List<MatchedManagersRspDTO> matchedManagers = matchServiceService.getMatchingManagers(reservationReqDTO, user.getUserId());
+        Page<MatchedManagersRspDTO> matchedManagers = matchServiceService.getMatchingManagers(ManagerReqDTO.toManagerReqDTO(reservationReqDTO), user.getUserId(), pageable);
 
         // 3. 예약 요청 서비스 카테고리 조회
         ServiceCategoryTreeDTO requestCategory
@@ -70,6 +67,25 @@ public class CustomerReservationController {
                 .build();
 
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 예약 요청 성공", result));
+    }
+
+    /**
+     * 매니저 리스트 정렬 및 페이징
+     * @param user 로그인한 유저
+     * @param managerReqDTO 수요자 매니저 요청DTO
+     * @return 매칭 매니저 리스트
+     */
+    @PostMapping("/managers")
+    public ResponseEntity<ApiResponse<Page<MatchedManagersRspDTO>>> getMatchingManagersBySortWithPaging(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @Valid @RequestBody ManagerReqDTO managerReqDTO,
+            @PageableDefault(size = 5, page = 0, sort = "averageRating", direction = Sort.Direction.DESC) Pageable pageable
+    ){
+
+        // 매칭 매니저 조회
+        Page<MatchedManagersRspDTO> matchedManagers = matchServiceService.getMatchingManagers(managerReqDTO, user.getUserId(), pageable);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "매칭 매니저 조회 성공", matchedManagers));
     }
 
     /**
