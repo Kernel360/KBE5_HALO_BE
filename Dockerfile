@@ -18,4 +18,4 @@ WORKDIR /app
 COPY --from=build /workspace/build/libs/*.jar app.jar
 
 # 실행 시 외부 설정(application.yml) 지정
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=file:/config/application.yml", "--spring.config.location=file:/config/logback-spring.xml"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=file:/config/application.yml", "--logging.config=file:/config/logback-spring.xml"]
