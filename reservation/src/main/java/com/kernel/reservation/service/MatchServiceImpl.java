@@ -4,18 +4,20 @@ package com.kernel.reservation.service;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
-import com.kernel.sharedDomain.common.enums.MatchStatus;
 import com.kernel.reservation.common.enums.ReservationErrorCode;
 import com.kernel.reservation.common.exception.NoAvailableManagerException;
 import com.kernel.reservation.domain.entity.ReservationMatch;
-import com.kernel.reservation.repository.CustomerReservationRepository;
 import com.kernel.reservation.repository.common.MatchRepository;
 import com.kernel.reservation.repository.common.ReservationUserRepository;
 import com.kernel.reservation.service.info.MatchedManagersInfo;
+import com.kernel.reservation.service.request.ManagerReqDTO;
 import com.kernel.reservation.service.request.ReservationReqDTO;
 import com.kernel.reservation.service.response.common.MatchedManagersRspDTO;
+import com.kernel.sharedDomain.common.enums.MatchStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,29 +30,27 @@ import java.util.NoSuchElementException;
 public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository matchingRepository;
-    private final CustomerReservationRepository customerReservationRepository;
     private final ReservationUserRepository userRepository;
 
     /**
      * 매니저 매칭 리스트 조회
-     * @param reservationReqDTO 예약요청DTO
+     * @param managerReqDTO 매니저요청
      * @param userId 수요자Id
      * @return 매니저 매칭 리스트
      */
     @Override
     @Transactional
-    public List<MatchedManagersRspDTO> getMatchingManagers(ReservationReqDTO reservationReqDTO, Long userId) {
+    public Page<MatchedManagersRspDTO> getMatchingManagers(ManagerReqDTO managerReqDTO, Long userId, Pageable pageable) {
 
-        List<Long> matchedManagers = matchingRepository.getMatchedManagers(reservationReqDTO);
+        List<Long> matchedManagers = matchingRepository.getMatchedManagers(managerReqDTO);
 
         // 매니저가 없을 경우 예외 발생
         if (matchedManagers.isEmpty()) {
             throw new NoAvailableManagerException(ReservationErrorCode.NO_AVAILABLE_MANAGER);
         }
 
-        List<MatchedManagersInfo> matchedManagersInfo = matchingRepository.getMatchingManagersInfo(userId, matchedManagers);
-
-        return MatchedManagersRspDTO.fromInfoList(matchedManagersInfo);
+        Page<MatchedManagersInfo> matchedManagersInfo = matchingRepository.getMatchingManagersInfo(userId, matchedManagers, pageable);
+        return matchedManagersInfo.map(MatchedManagersRspDTO::fromInfo);
     }
 
     /**
