@@ -31,6 +31,12 @@ public class MatchedManagersInfo {
     // 매니저 프로필 사진
     private String profileImageId;
 
+    // 매니저 프로필 url
+    private String profileImageUrl;
+
+    // 매니저 특기
+    private String specialty;
+
     // 매니저 한줄 소개
     private String bio;
 

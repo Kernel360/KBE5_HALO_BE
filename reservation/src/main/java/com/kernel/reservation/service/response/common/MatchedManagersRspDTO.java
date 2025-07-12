@@ -32,8 +32,12 @@ public class MatchedManagersRspDTO {
     private BigDecimal averageRating;
 
     /* Manager */
-    // 매니저 프로필 사진
-    private String profileImageId;
+
+    // 매니저 프로필 사진 url
+    private String profileImageUrl;
+
+    // 매니저 특기
+    private String specialty;
 
     // 매니저 한줄 소개
     private String bio;
@@ -44,17 +48,21 @@ public class MatchedManagersRspDTO {
 
     public static List<MatchedManagersRspDTO> fromInfoList(List<MatchedManagersInfo> infoList){
         return infoList.stream()
-                .map(info -> MatchedManagersRspDTO.builder()
-                    .managerId(info.getManagerId())
-                    .managerName(info.getManagerName())
-                    .reviewCount(info.getReviewCount())
-                    .reservationCount(info.getReservationCount())
-                    .averageRating(info.getAverageRating())
-                    .profileImageId(info.getProfileImageId())
-                    .bio(info.getBio())
-                    .recentReservationDate(info.getRecentReservationDate())
-                    .build()
-        ).collect(Collectors.toList());
+                .map(MatchedManagersRspDTO::fromInfo)
+                .collect(Collectors.toList());
+    }
+
+    public static MatchedManagersRspDTO fromInfo(MatchedManagersInfo info){
+        return MatchedManagersRspDTO.builder()
+                .managerId(info.getManagerId())
+                .managerName(info.getManagerName())
+                .reviewCount(info.getReviewCount())
+                .reservationCount(info.getReservationCount())
+                .averageRating(info.getAverageRating())
+                .profileImageUrl(info.getProfileImageId())
+                .bio(info.getBio())
+                .recentReservationDate(info.getRecentReservationDate())
+                .build();
     }
 
 

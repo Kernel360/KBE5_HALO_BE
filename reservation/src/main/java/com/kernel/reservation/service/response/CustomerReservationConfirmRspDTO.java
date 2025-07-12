@@ -44,6 +44,7 @@ public class CustomerReservationConfirmRspDTO {
     private String managerName;
 
     /* Manager */
+    // 매니저 프로필 사진 url
     private String profileImagePath;
 
     /* ServiceCategory */
