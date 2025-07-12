@@ -22,8 +22,7 @@ public class ManagerStatistic extends BaseEntity {
 
     // 동시성 제어를 위한 버전 필드
     @Version
-    @Builder.Default
-    private Long version = 0L;
+    private Long version;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
