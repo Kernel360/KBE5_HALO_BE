@@ -3,6 +3,7 @@ package com.kernel.reservation.service.response.common;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -23,5 +24,5 @@ public class ReservationMatchedRspDTO {
     private ServiceCategoryTreeDTO requestCategory;
 
     // 매칭 매니저 리스트
-    private List<MatchedManagersRspDTO> matchedManagers;
+    private Page<MatchedManagersRspDTO> matchedManagers;
 }

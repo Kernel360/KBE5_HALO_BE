@@ -3,6 +3,7 @@ package com.kernel.reservation.repository;
 import com.kernel.evaluation.common.enums.ReviewAuthorType;
 import com.kernel.evaluation.domain.entity.QReview;
 import com.kernel.global.common.enums.UserRole;
+import com.kernel.global.domain.entity.QFile;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.member.domain.entity.QManager;
 import com.kernel.member.domain.entity.QManagerStatistic;
@@ -13,6 +14,7 @@ import com.kernel.reservation.service.request.CustomerReservationSearchCondDTO;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.QReservation;
 import com.kernel.sharedDomain.domain.entity.QServiceCategory;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -43,6 +45,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
     private final QReservationSchedule schedule = QReservationSchedule.reservationSchedule;
     private final QReservationCancel reservationCancel = QReservationCancel.reservationCancel;
     private final QPayment payment = QPayment.payment;
+    private final QFile file = QFile.file;
 
     /**
      * 수요자 예약 내역 조회
@@ -150,17 +153,21 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                         serviceCategory.serviceName,           // 서비스 이름(대분류)
                         serviceCategory.serviceTime,           // 서비스 시간
                         match.manager.userName.as("managerName"),                // 매니저 이름
-                        manager.bio,                          // 매니저 한줄 소개
-                        managerStatistic.averageRating,        // 매니저 평점 평균
+                        manager.bio,                              // 매니저 한줄 소개
+                        ExpressionUtils.as(manager.profileImageFileId.filePathsJson, "filePathsJson"), // 매니저 프로필 url
+                        managerStatistic.averageRating,           // 매니저 평점 평균
                         managerStatistic.reviewCount,           // 리뷰 수
-                        managerStatistic.reservationCount       // 예약 건수
+                        managerStatistic.reservationCount,       // 예약 건수
+                        payment.paymentMethod,                   // 결제수단
+                        payment.amount,                           // 결제금액
+                        payment.paidAt                          // 결제날짜
                 ))
                 .from(reservation)
                 .leftJoin(location).on(location.reservation.eq(reservation))
                 .leftJoin(schedule).on(schedule.reservation.eq(reservation))
                 .leftJoin(match).on(match.reservation.eq(reservation)
                         .and(match.matchId.eq(
-                                JPAExpressions.select(match.matchId.max())
+                                JPAExpressions.select(match.matchId)
                                         .from(match)
                                         .where(match.reservation.eq(reservation))
                         ))
@@ -168,6 +175,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 .leftJoin(manager).on(match.manager.eq(manager.user))
                 .leftJoin(managerStatistic).on(managerStatistic.user.eq(manager.user))
                 .leftJoin(serviceCategory).on(reservation.serviceCategory.eq(serviceCategory))
+                .leftJoin(payment).on(payment.reservation.reservationId.eq(reservationId))
+                .leftJoin(file).on(file.fileId.eq(manager.profileImageFileId.fileId))
                 .where(
                         reservation.reservationId.eq(reservationId),
                         reservation.user.userId.eq(userId)
@@ -254,7 +263,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                         location.roadAddress,
                         location.detailAddress,
                         match.manager.userName.as("managerName"),
-                    //    manager.profileImageFileId.filePathsJson.as("profileImagePath"),
+                        manager.profileImageFileId.filePathsJson.as("profileImagePath"),
                         payment.paymentMethod,
                         payment.amount
                 ))

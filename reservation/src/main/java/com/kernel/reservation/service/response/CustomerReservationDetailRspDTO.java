@@ -1,5 +1,6 @@
 package com.kernel.reservation.service.response;
 
+import com.kernel.payment.common.enums.PaymentMethod;
 import com.kernel.reservation.service.info.CustomerReservationDetailInfo;
 import com.kernel.reservation.service.response.common.ExtraServiceRspDTO;
 import com.kernel.reservation.service.response.common.ReservationCancelRspDTO;
@@ -8,8 +9,8 @@ import com.kernel.reservation.service.response.common.StatisticRspDTO;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -74,6 +75,9 @@ public class CustomerReservationDetailRspDTO {
     // 매니저 한줄 소개
     private String bio;
 
+    // 매니저 프로필 이미지
+    private String profileImageUrl;
+
     /* ManagerStatistic */
     private StatisticRspDTO mangerStatistic;
 
@@ -81,8 +85,14 @@ public class CustomerReservationDetailRspDTO {
     private ReservationCancelRspDTO reservationCancel;
 
     /* Payment */
-    // 결제 수단 //TODO 가격관리 정의 후 수정
-    //private String payment;
+    // 결제 수단
+    private PaymentMethod paymentMethod;
+
+    // 결제 금액
+    private Integer paymentPrice;
+
+    // 결제 날짜
+    private LocalDateTime paidAt;
 
     /* Review */
     private ReviewRspDTO review;
@@ -104,6 +114,7 @@ public class CustomerReservationDetailRspDTO {
                 .turnaround(info.getTurnaround())
                 .extraServices(ExtraServiceRspDTO.fromInfo(info.getExtraServices()))
                 .managerName(info.getManagerName())
+                .profileImageUrl(info.getFilePathsJson())
                 .bio(info.getBio())
                 .mangerStatistic(StatisticRspDTO.fromInfo(info))
                 .reservationCancel(
@@ -111,6 +122,9 @@ public class CustomerReservationDetailRspDTO {
                                 ? ReservationCancelRspDTO.fromInfo(info.getReservationCancel())
                                 : null
                 )
+                .paymentMethod(info.getPaymentMethod())
+                .paymentPrice(info.getAmount())
+                .paidAt(info.getPaidAt())
                 .review(
                         info.getReview() != null
                                 ? ReviewRspDTO.fromInfo(info.getReview())

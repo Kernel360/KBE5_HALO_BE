@@ -1,12 +1,12 @@
 package com.kernel.reservation.service.info;
 
-import com.kernel.reservation.service.response.common.ReservationCancelRspDTO;
-import com.kernel.reservation.service.response.common.ReviewRspDTO;
+import com.kernel.payment.common.enums.PaymentMethod;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -71,6 +71,9 @@ public class CustomerReservationDetailInfo {
     // 매니저 한줄 소개
     private String bio;
 
+    // 매니저 프로필 url
+    private String filePathsJson;
+
     /* ManagerStatistic */
     // 리뷰 수
     private Integer reviewCount;
@@ -85,8 +88,15 @@ public class CustomerReservationDetailInfo {
     private ReservationCancelInfo reservationCancel;
 
     /* Payment */
-    // 결제 수단 //TODO 가격관리 정의 후 수정
-    //private String payment;
+    // 결제 수단
+    private PaymentMethod paymentMethod;
+
+    // 결제 금액
+    private Integer amount;
+
+    // 결제날짜
+    private LocalDateTime paidAt;
+
 
     /* Review */
     private ReviewInfo review;
