@@ -159,7 +159,8 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                         managerStatistic.reviewCount,           // 리뷰 수
                         managerStatistic.reservationCount,       // 예약 건수
                         payment.paymentMethod,                   // 결제수단
-                        payment.amount                           // 결제금액
+                        payment.amount,                           // 결제금액
+                        payment.paidAt                          // 결제날짜
                 ))
                 .from(reservation)
                 .leftJoin(location).on(location.reservation.eq(reservation))

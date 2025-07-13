@@ -10,6 +10,7 @@ import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -87,7 +88,11 @@ public class CustomerReservationDetailRspDTO {
     // 결제 수단
     private PaymentMethod paymentMethod;
 
+    // 결제 금액
     private Integer paymentPrice;
+
+    // 결제 날짜
+    private LocalDateTime paidAt;
 
     /* Review */
     private ReviewRspDTO review;
@@ -119,6 +124,7 @@ public class CustomerReservationDetailRspDTO {
                 )
                 .paymentMethod(info.getPaymentMethod())
                 .paymentPrice(info.getAmount())
+                .paidAt(info.getPaidAt())
                 .review(
                         info.getReview() != null
                                 ? ReviewRspDTO.fromInfo(info.getReview())

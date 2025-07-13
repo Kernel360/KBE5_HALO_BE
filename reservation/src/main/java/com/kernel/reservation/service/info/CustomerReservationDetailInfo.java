@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -90,7 +91,12 @@ public class CustomerReservationDetailInfo {
     // 결제 수단
     private PaymentMethod paymentMethod;
 
+    // 결제 금액
     private Integer amount;
+
+    // 결제날짜
+    private LocalDateTime paidAt;
+
 
     /* Review */
     private ReviewInfo review;
