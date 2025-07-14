@@ -76,6 +76,8 @@ public class ManagerServiceImpl implements ManagerService {
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 서비스 카테고리입니다."));
 
         Manager savedManager = signupReqDTO.getManagerReqDTO().toEntity(signupReqDTO.getManagerReqDTO(), savedUser, file, profileFile, serviceCategory);
+        savedManager.apply();
+
         managerRepository.save(savedManager);
 
         // 5. AvailableTime 저장

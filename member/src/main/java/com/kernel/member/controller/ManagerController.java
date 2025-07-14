@@ -1,15 +1,19 @@
 package com.kernel.member.controller;
 
 import com.kernel.global.security.CustomUserDetails;
+import com.kernel.global.service.CustomOAuth2UserService;
+import com.kernel.global.service.dto.request.OAuthLoginReqDTO;
 import com.kernel.global.service.dto.response.ApiResponse;
+import com.kernel.global.service.dto.response.OAuthLoginResult;
+import com.kernel.global.service.dto.response.OAuthLoginRspDTO;
 import com.kernel.member.service.ManagerService;
 import com.kernel.member.service.ManagerTerminationService;
 import com.kernel.member.service.request.ManagerSignupReqDTO;
 import com.kernel.member.service.request.ManagerTerminationReqDTO;
 import com.kernel.member.service.request.ManagerUpdateReqDTO;
 import com.kernel.member.service.response.ManagerDetailRspDTO;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,7 @@ public class ManagerController {
 
     private final ManagerService managerService;
     private final ManagerTerminationService managerTerminationService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     /**
      * 매니저 회원가입
@@ -37,6 +42,30 @@ public class ManagerController {
         // 매니저 회원가입 로직
         managerService.signup(signupReqDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 회원가입 성공", null));
+    }
+
+    /**
+     * 구글 OAuth2 로그인
+     * @param request 구글 OAuth2 인증 코드
+     * @return 로그인 결과 응답
+     */
+    @PostMapping("/google")
+    public ResponseEntity<OAuthLoginRspDTO> googleLogin(@RequestBody OAuthLoginReqDTO request) {
+        OAuthLoginResult loginResult = customOAuth2UserService.login(request.getCode(), "manager");
+        OAuthLoginRspDTO response = loginResult.getResponse();
+
+        if (!response.isNew()) {
+            String accessToken = loginResult.getAccessToken();
+            Cookie refreshToken = loginResult.getRefreshToken();
+
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Set-Cookie", refreshToken.getName() + "=" + refreshToken.getValue()
+                            + "; HttpOnly; Path=/; Max-Age=" + refreshToken.getMaxAge())
+                    .body(response);
+        } else {
+            return ResponseEntity.ok(response);
+        }
     }
 
     /**

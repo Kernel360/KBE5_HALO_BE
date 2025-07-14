@@ -110,7 +110,7 @@ public class SecurityConfig {
         http
             .securityMatcher(SecurityUrlConstants.CUSTOMER_URLS)
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/customers/auth/login", "/api/customers/auth/signup").permitAll()
+                    .requestMatchers("/api/customers/auth/login", "/api/customers/auth/signup", "/api/customers/auth/google").permitAll()
                     .requestMatchers(SecurityUrlConstants.CUSTOMER_URLS).hasRole(UserRole.CUSTOMER.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
@@ -132,7 +132,7 @@ public class SecurityConfig {
         http
             .securityMatcher(SecurityUrlConstants.MANAGER_URLS)
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/managers/auth/login", "/api/managers/auth/signup").permitAll()
+                    .requestMatchers("/api/managers/auth/login", "/api/managers/auth/signup", "/api/managers/auth/google").permitAll()
                     .requestMatchers(SecurityUrlConstants.MANAGER_URLS).hasRole(UserRole.MANAGER.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)

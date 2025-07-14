@@ -17,6 +17,11 @@ public enum ErrorCode implements ErrorCodeInterface {
     ACCOUNT_LOCKED(401, "AUTH004", "계정이 잠겨있습니다."),
     INVALID_PASSWORD(400, "AUTH005", "비밀번호가 올바르지 않습니다."),
 
+    // OAuth2 관련
+    INVALID_USER_INFO(400, "AUTH008", "필수 사용자 정보가 누락되었습니다."),
+    DUPLICATE_PHONE(400, "AUTH009", "이미 등록된 전화번호입니다."),
+    OAUTH2_PROVIDER_ERROR(400, "AUTH010", "OAuth2 제공자에서 오류가 발생했습니다."),
+
     // JWT 토큰 관련
     INVALID_TOKEN(401, "JWT001", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(401, "JWT002", "만료된 토큰입니다."),
