@@ -33,6 +33,8 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
     @Autowired
     private ObjectMapper objectMapper;
 
+    // 인증 실패 시 호출되는 메서드
+    // 예외 메시지를 포함한 JSON 문자열을 RuntimeException으로 throw
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
@@ -40,6 +42,10 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
         throw new RuntimeException(objectMapper.writeValueAsString(failureResponse));
     }
 
+    // 인증 실패에 대한 응답 데이터를 구성하는 메서드
+    // - 오류 코드와 메시지를 추출
+    // - 상황에 따라 Google 계정을 연동 해제하거나 토큰을 폐기
+    // - 요청 URI에 따라 사용자 역할을 추론
     public Map<String, Object> buildFailureResponse(AuthenticationException exception, HttpServletRequest request) {
         String accessToken = null;
         String errorCode = "oauth_error";
@@ -51,6 +57,7 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
             accessToken = oae.getError().getDescription();
         }
 
+        // Google 계정과 관련된 실패 상황에 따라 계정 연동 해제 또는 토큰 폐기
         if (accessToken != null) {
             if ("DUPLICATE_PHONE".equals(errorCode) || "MISSING_REQUIRED_INFO".equals(errorCode)) {
                 googleOAuth2Service.unlinkAccount(accessToken);
@@ -61,6 +68,7 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
             }
         }
 
+        // 요청 URI를 기반으로 사용자 역할(CUSTOMER, MANAGER, UNKNOWN)을 추론
         String requestUri = request.getRequestURI();
         String role = "UNKNOWN";
         if (requestUri.contains("customer")) {

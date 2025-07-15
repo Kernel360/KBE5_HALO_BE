@@ -25,14 +25,18 @@ public class CustomOAuth2SuccessHandler {
     private final JwtProperties jwtProperties;
     private final RefreshRepository refreshRepository;
 
-    public OAuthLoginResult buildSuccessResponse(String email, String name, String role, boolean isNew) {
+    // 신규 소셜 로그인 사용자를 위한 응답 객체 생성
+    public OAuthLoginResult buildNewUserResponse(String email, String name, String role, String provider, String providerId) {
+        // 신규 사용자의 경우, providerId는 필수로 제공되어야 함
+        OAuthLoginRspDTO result = OAuthLoginRspDTO.ofNewUser(email, name, role, provider, providerId);
 
-        OAuthLoginRspDTO result = OAuthLoginRspDTO.ofNewUser(email, name, role, generateRandomPassword());
-
+        // 액세스 토큰 및 쿠키는 생성하지 않음 (신규 사용자는 추후 추가 정보 입력 필요)
         return OAuthLoginResult.ofResult(result, null, null);
     }
 
-    public OAuthLoginResult buildLoginSuccessResponse(String phone, Long userId, String name, String role, UserStatus status) {
+    // 기존 소셜 로그인 사용자를 위한 응답 객체 생성
+    // JWT 토큰 생성 및 refresh 토큰을 DB와 쿠키에 저장
+    public OAuthLoginResult buildExistingUserLoginSuccessResponse(String phone, Long userId, String name, String role, UserStatus status, String provider) {
         String accessToken = jwtTokenProvider.createToken("access", phone, userId, role, status.name(), jwtProperties.accessTokenValiditySeconds());
         String refreshToken = jwtTokenProvider.createToken("refresh", phone, userId, role, status.name(), jwtProperties.refreshTokenValiditySeconds());
 
@@ -40,12 +44,13 @@ public class CustomOAuth2SuccessHandler {
 
         Cookie refreshCookie = createHttpOnlyCookie("refresh", refreshToken);
 
-        OAuthLoginRspDTO result = OAuthLoginRspDTO.ofExistingUser(name, role, phone, userId, status);
+        OAuthLoginRspDTO result = OAuthLoginRspDTO.ofExistingUser(name, role, phone, userId, status, provider);
 
         return OAuthLoginResult.ofResult(result, accessToken, refreshCookie);
     }
 
-    // refreshToken 저장
+    // 생성된 refresh 토큰을 DB에 저장
+    // 만료 시간은 현재 시간 + 유효 시간(milliseconds)
     private void saveRefreshToken(String phone, String refresh, long expireMs) {
         Date expiration = new Date(System.currentTimeMillis() + expireMs);
         refreshRepository.save(Refresh.builder()
@@ -56,7 +61,7 @@ public class CustomOAuth2SuccessHandler {
                 .build());
     }
 
-    // 쿠키 생성
+    // HttpOnly 속성을 갖는 refresh 토큰 쿠키 생성
     private Cookie createHttpOnlyCookie(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(jwtProperties.refreshTokenValiditySeconds().intValue());
@@ -64,15 +69,5 @@ public class CustomOAuth2SuccessHandler {
         cookie.setHttpOnly(true);
         // cookie.setSecure(true); // TODO true 설정 시, HTTPS에서만 전송됨(http x) 테스트시 용이하게 주석처리. 배포시 설정해야함
         return cookie;
-    }
-
-    private String generateRandomPassword() {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-        StringBuilder password = new StringBuilder();
-        java.security.SecureRandom random = new java.security.SecureRandom();
-        for (int i = 0; i < 8; i++) {
-            password.append(chars.charAt(random.nextInt(chars.length())));
-        }
-        return password.toString();
     }
 }
