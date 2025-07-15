@@ -65,7 +65,7 @@ public class CustomOAuth2SuccessHandler {
         cookie.setMaxAge(jwtProperties.refreshTokenValiditySeconds().intValue());
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        // cookie.setSecure(true); // TODO true 설정 시, HTTPS에서만 전송됨(http x) 테스트시 용이하게 주석처리. 배포시 설정해야함
+        cookie.setSecure(true);
         return cookie;
     }
 }
