@@ -13,17 +13,16 @@ public class OAuthLoginRspDTO {
     private final String email;
     private final String userName;
     private final String role;
+    private final String provider;
+    private final String providerId;
 
     // 기존 사용자일 경우에만 포함
     private final String phone;
     private final Long userId;
     private final UserStatus status;
 
-    // 신규 사용자일 경우에만 포함
-    private final String password;
-
     // 기존 사용자 응답
-    public static OAuthLoginRspDTO ofExistingUser(String name, String role, String phone, Long userId, UserStatus status) {
+    public static OAuthLoginRspDTO ofExistingUser(String name, String role, String phone, Long userId, UserStatus status, String provider) {
         return OAuthLoginRspDTO.builder()
                 .isNew(false)
                 .userName(name)
@@ -31,17 +30,19 @@ public class OAuthLoginRspDTO {
                 .phone(phone)
                 .userId(userId)
                 .status(status)
+                .provider(provider)
                 .build();
     }
 
     // 신규 사용자 응답
-    public static OAuthLoginRspDTO ofNewUser(String email, String name, String role, String password) {
+    public static OAuthLoginRspDTO ofNewUser(String email, String name, String role, String provider, String providerId) {
         return OAuthLoginRspDTO.builder()
                 .isNew(true)
                 .email(email)
                 .userName(name)
                 .role(role)
-                .password(password)
+                .provider(provider)
+                .providerId(providerId)
                 .build();
     }
 }

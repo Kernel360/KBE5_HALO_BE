@@ -1,5 +1,6 @@
 package com.kernel.global.domain.entity;
 
+import com.kernel.global.common.enums.SocialProvider;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import jakarta.persistence.*;
@@ -31,8 +32,16 @@ public class User extends BaseEntity {
     @Column
     private String email;
 
+    // 소셜 로그인 제공자 (예: google, kakao)
+    @Column
+    private SocialProvider provider;
+
+    // 소셜 로그인 제공자의 고유 사용자 ID
+    @Column
+    private String providerId;
+
     // 사용자 비밀번호
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     // 사용자 권한
