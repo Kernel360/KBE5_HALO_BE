@@ -1,10 +1,10 @@
 package com.kernel.member.service.common.request;
 
+import com.kernel.global.common.enums.SocialProvider;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
 import com.kernel.member.common.annotation.ValidUserSignup;
-import com.kernel.global.common.enums.SocialProvider;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;

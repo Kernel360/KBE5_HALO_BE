@@ -9,21 +9,19 @@ import com.kernel.global.common.handler.CustomOAuth2SuccessHandler;
 import com.kernel.global.domain.entity.User;
 import com.kernel.global.repository.UserRepository;
 import com.kernel.global.service.dto.response.OAuthLoginResult;
-import com.kernel.global.service.dto.response.OAuthLoginRspDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.BodyInserters;
 
 @Service
 @RequiredArgsConstructor

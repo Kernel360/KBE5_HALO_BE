@@ -7,12 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -24,9 +21,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler {
-
-    @Value("${app.frontend-url}")
-    private String frontendUrl;
 
     private final GoogleOAuth2Service googleOAuth2Service;
 
