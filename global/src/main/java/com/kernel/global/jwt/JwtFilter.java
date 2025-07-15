@@ -36,6 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         
         // Bearer 접두사 제거하여 실제 토큰 추출
+        // 경로에 따라서 분기 필요
         String accessToken = jwtTokenProvider.resolveToken(request);
 
         if (accessToken == null || accessToken.isBlank()) {
