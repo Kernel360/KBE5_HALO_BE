@@ -6,11 +6,11 @@ import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.handler.JwtAccessDeniedHandler;
 import com.kernel.global.common.handler.JwtAuthenticationEntryPoint;
 import com.kernel.global.common.properties.JwtProperties;
-import com.kernel.global.security.CustomLoginFilter;
-import com.kernel.global.security.CustomLogoutFilter;
 import com.kernel.global.jwt.JwtFilter;
 import com.kernel.global.jwt.JwtTokenProvider;
 import com.kernel.global.repository.RefreshRepository;
+import com.kernel.global.security.CustomLoginFilter;
+import com.kernel.global.security.CustomLogoutFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -110,7 +110,7 @@ public class SecurityConfig {
         http
             .securityMatcher(SecurityUrlConstants.CUSTOMER_URLS)
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/customers/auth/login", "/api/customers/auth/signup").permitAll()
+                    .requestMatchers("/api/customers/auth/login", "/api/customers/auth/signup", "/api/customers/auth/google").permitAll()
                     .requestMatchers(SecurityUrlConstants.CUSTOMER_URLS).hasRole(UserRole.CUSTOMER.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
@@ -132,7 +132,7 @@ public class SecurityConfig {
         http
             .securityMatcher(SecurityUrlConstants.MANAGER_URLS)
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/managers/auth/login", "/api/managers/auth/signup").permitAll()
+                    .requestMatchers("/api/managers/auth/login", "/api/managers/auth/signup", "/api/managers/auth/google").permitAll()
                     .requestMatchers(SecurityUrlConstants.MANAGER_URLS).hasRole(UserRole.MANAGER.name()))
             .addFilterBefore(new JwtFilter(jwtTokenProvider), CustomLoginFilter.class)
             .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)

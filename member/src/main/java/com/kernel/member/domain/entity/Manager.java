@@ -70,6 +70,12 @@ public class Manager {
         }
     }
 
+    // 매니저 신청
+    public void apply() {
+        this.contractStatus = ContractStatus.PENDING;
+        this.contractDate = null; // 계약 일시는 아직 설정되지 않음
+    }
+
     // 매니저 신청 승인
     public void approve() {
         this.contractStatus = ContractStatus.APPROVED;

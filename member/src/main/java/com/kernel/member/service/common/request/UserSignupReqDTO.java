@@ -1,8 +1,10 @@
 package com.kernel.member.service.common.request;
 
+import com.kernel.global.common.enums.SocialProvider;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.domain.entity.User;
+import com.kernel.member.common.annotation.ValidUserSignup;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
@@ -14,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+@ValidUserSignup
 @Getter
 @Builder
 @NoArgsConstructor
@@ -34,13 +37,18 @@ public class UserSignupReqDTO {
     private String email;
 
     // 비밀번호
-    @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
 
     // 계정 상태
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
+
+    // 소셜 로그인 제공자
+    private SocialProvider provider;
+
+    // 소셜 로그인 제공자의 고유 사용자 ID
+    private String providerId;
 
 
     // UserSignupReqDTO -> User
@@ -49,9 +57,11 @@ public class UserSignupReqDTO {
                 .phone(phone)
                 .userName(userName)
                 .email(email)
-                .password(encoder.encode(password))
+                .password(password != null ? encoder.encode(password) : null)
                 .role(role)
                 .status(status)
+                .provider(provider != null ? provider : null)
+                .providerId(providerId != null ? providerId : null)
                 .build();
     }
 

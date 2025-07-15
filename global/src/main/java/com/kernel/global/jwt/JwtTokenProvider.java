@@ -24,6 +24,11 @@ public class JwtTokenProvider {
 
     // 토큰 추출
     public String resolveToken(HttpServletRequest request) {
+        // 권한별 다른 header를 사용하도록 수정
+            // 권한별로 header명을 다르게
+        // 권한이 달라도 로그인을 했을 때 로그인이 풀리는 이유가 Authorization 헤더가 공유하기 떄문
+            // header 이름을 다르게 가져가고
+        // 토큰 관련 트러블 슈팅
         String bearer = request.getHeader("Authorization");
         if (bearer != null && bearer.startsWith("Bearer ")) {
             return bearer.substring(7).trim();

@@ -1,7 +1,11 @@
 package com.kernel.member.controller;
 
 import com.kernel.global.security.CustomUserDetails;
+import com.kernel.global.service.CustomOAuth2UserService;
+import com.kernel.global.service.dto.request.OAuthLoginReqDTO;
 import com.kernel.global.service.dto.response.ApiResponse;
+import com.kernel.global.service.dto.response.OAuthLoginResult;
+import com.kernel.global.service.dto.response.OAuthLoginRspDTO;
 import com.kernel.member.common.enums.PointChargeType;
 import com.kernel.member.service.CustomerService;
 import com.kernel.member.service.request.ChargePointReqDTO;
@@ -10,6 +14,7 @@ import com.kernel.member.service.request.CustomerUpdateReqDTO;
 import com.kernel.member.service.response.CustomerDetailRspDTO;
 import com.kernel.member.service.response.CustomerPointRspDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     /**
      * 수요자 회원가입
@@ -34,6 +40,30 @@ public class CustomerController {
     ) {
         customerService.signup(signupReqDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "수요자 회원가입 성공", null));
+    }
+
+    /**
+     * 구글 OAuth2 로그인
+     * @param request
+     * @return
+     */
+    @PostMapping("/google")
+    public ResponseEntity<OAuthLoginRspDTO> googleLogin(@RequestBody OAuthLoginReqDTO request) {
+        OAuthLoginResult loginResult = customOAuth2UserService.login(request.getCode(), "customer");
+        OAuthLoginRspDTO response = loginResult.getResponse();
+
+        if (!response.isNew()) {
+            String accessToken = loginResult.getAccessToken();
+            Cookie refreshToken = loginResult.getRefreshToken();
+
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Set-Cookie", refreshToken.getName() + "=" + refreshToken.getValue()
+                            + "; HttpOnly; Path=/; Max-Age=" + refreshToken.getMaxAge())
+                    .body(response);
+        } else {
+            return ResponseEntity.ok(response);
+        }
     }
 
     /**
