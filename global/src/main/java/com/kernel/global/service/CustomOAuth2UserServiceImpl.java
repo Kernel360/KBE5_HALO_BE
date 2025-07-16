@@ -110,7 +110,7 @@ public class CustomOAuth2UserServiceImpl implements CustomOAuth2UserService {
                 existingUser.getPhone(),
                 existingUser.getUserId(),
                 existingUser.getUserName(),
-                role.toUpperCase(),
+                userOptional.get().getRole().toString(),
                 existingUser.getStatus(),
                 provider
             );
