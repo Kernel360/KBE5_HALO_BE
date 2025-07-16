@@ -1,6 +1,7 @@
 package com.kernel.member.service.response;
 
 import com.kernel.global.common.enums.UserStatus;
+import com.kernel.member.common.enums.ContractStatus;
 import com.kernel.member.common.enums.Gender;
 
 import com.kernel.member.service.common.info.AdminManagerDetailInfo;
@@ -26,6 +27,7 @@ public class AdminManagerRspDTO {
     private String roadAddress;
     private String detailAddress;
     private UserStatus status;
+    private ContractStatus contractStatus;
     private Integer reservationCount;
     private Integer reviewCount;
     private BigDecimal averageRating;
@@ -52,6 +54,7 @@ public class AdminManagerRspDTO {
                 .roadAddress(info.getRoadAddress())
                 .detailAddress(info.getDetailAddress())
                 .status(info.getStatus())
+                .contractStatus(info.getContractStatus())
                 .reservationCount(info.getReservationCount())
                 .reviewCount(info.getReviewCount())
                 .averageRating(info.getAverageRating())
