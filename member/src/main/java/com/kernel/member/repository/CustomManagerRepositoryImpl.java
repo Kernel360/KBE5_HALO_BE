@@ -218,7 +218,6 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                 .leftJoin(manager).on(manager.user.eq(user))
                 .leftJoin(managerStatistic).on(managerStatistic.user.eq(user))
                 .leftJoin(managerTermination).on(managerTermination.manager.eq(manager))
-                .leftJoin(file).on(file.fileId.eq(manager.profileImageFileId.fileId).or(file.fileId.eq(manager.fileId.fileId)))
                 .where(user.userId.eq(managerId))
                 .fetchOne();
 
