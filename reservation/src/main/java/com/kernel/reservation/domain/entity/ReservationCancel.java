@@ -32,6 +32,7 @@ public class ReservationCancel extends BaseEntity {
 
     // 예약 취소자 타입
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private UserRole canceledByType;
 
     // 예약 취소 날짜
