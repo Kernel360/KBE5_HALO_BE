@@ -4,6 +4,7 @@ import com.kernel.global.common.enums.ErrorCode;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.global.common.exception.AuthException;
+import com.kernel.global.domain.entity.QFile;
 import com.kernel.global.domain.entity.QUser;
 import com.kernel.member.common.enums.ContractStatus;
 import com.kernel.member.domain.entity.*;
@@ -12,9 +13,11 @@ import com.kernel.member.service.common.info.ManagerSummaryInfo;
 import com.kernel.member.service.request.AdminManagerSearchReqDTO;
 
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.JPQLQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +41,7 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
     private final QManagerStatistic managerStatistic = QManagerStatistic.managerStatistic;
     private final QAvailableTime availableTime = QAvailableTime.availableTime;
     private final QManagerTermination managerTermination = QManagerTermination.managerTermination;
+    private final QFile file = QFile.file;
 
     /**
      * 매니저 목록을 검색하고 페이징 처리된 결과를 반환합니다.
@@ -59,13 +63,16 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         user.email,
                         managerStatistic.averageRating,
                         user.status,
+                        manager.bio,
                         manager.contractStatus,
                         managerStatistic.reservationCount,
-                        managerStatistic.reviewCount))
+                        managerStatistic.reviewCount,
+                        file.filePathsJson))
                 .from(user)
                 .leftJoin(manager).on(manager.user.eq(user)).fetchJoin()
                 .leftJoin(userInfo).on(userInfo.user.eq(user)).fetchJoin()
                 .leftJoin(managerStatistic).on(managerStatistic.user.eq(user)).fetchJoin()
+                .leftJoin(file).on(file.fileId.eq(manager.profileImageFileId.fileId))
                 .where(
                         authorEq(request.getUserName()),
                         authorRoleEq(),
@@ -170,6 +177,7 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
 
     @Override
     public AdminManagerDetailInfo getAdminManagerDetailInfo(Long managerId) {
+
         AdminManagerDetailInfo adminManagerDetailInfo = jpaQueryFactory
                 .select(Projections.fields(AdminManagerDetailInfo.class,
                         user.userId,
@@ -182,8 +190,18 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                         userInfo.roadAddress,
                         userInfo.detailAddress,
                         manager.bio,
-                        manager.profileImageFileId.fileId,
-                        manager.fileId.fileId,
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(file.filePathsJson)
+                                        .from(file)
+                                        .where(file.fileId.eq(manager.profileImageFileId.fileId)),
+                                "profileImageFilePath"),
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(file.filePathsJson)
+                                        .from(file)
+                                        .where(file.fileId.eq(manager.fileId.fileId)),
+                                "filePaths"),
                         manager.contractStatus,
                         manager.contractDate,
                         managerStatistic.averageRating,
@@ -200,6 +218,7 @@ public class CustomManagerRepositoryImpl implements CustomManagerRepository{
                 .leftJoin(manager).on(manager.user.eq(user))
                 .leftJoin(managerStatistic).on(managerStatistic.user.eq(user))
                 .leftJoin(managerTermination).on(managerTermination.manager.eq(manager))
+                .leftJoin(file).on(file.fileId.eq(manager.profileImageFileId.fileId).or(file.fileId.eq(manager.fileId.fileId)))
                 .where(user.userId.eq(managerId))
                 .fetchOne();
 

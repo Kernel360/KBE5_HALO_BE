@@ -1,5 +1,6 @@
 package com.kernel.reservation.service.info;
 
+import com.kernel.payment.common.enums.PaymentStatus;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.*;
 
@@ -8,7 +9,7 @@ import java.time.LocalTime;
 
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdminReservationSummaryInfo {
 
@@ -38,6 +39,9 @@ public class AdminReservationSummaryInfo {
 
     // 예약 상태
     private ReservationStatus status;
+
+    // 결제 상태
+    private PaymentStatus paymentStatus;
 
     // 서비스 이름
     private String serviceName;

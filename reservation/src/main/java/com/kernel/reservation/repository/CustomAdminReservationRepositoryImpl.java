@@ -2,6 +2,7 @@ package com.kernel.reservation.repository;
 
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.member.domain.entity.QManager;
+import com.kernel.payment.common.enums.PaymentStatus;
 import com.kernel.payment.domain.QPayment;
 import com.kernel.reservation.domain.entity.QReservationLocation;
 import com.kernel.reservation.domain.entity.QReservationMatch;
@@ -60,19 +61,22 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
                         reservation.user.userName.as("customerName"),
                         reservation.status,
                         serviceCategory.serviceName,
-                        reservation.price
+                        reservation.price,
+                        payment.status.as("paymentStatus")
                 ))
                 .from(reservation)
-                .leftJoin(reservation, schedule.reservation)
-                .leftJoin(reservation, location.reservation)
-                .leftJoin(reservation, match.reservation)
-                .leftJoin(reservation.serviceCategory, serviceCategory)
+                .leftJoin(schedule).on(schedule.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(location).on(location.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(match).on(match.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(serviceCategory).on(serviceCategory.serviceId.eq(reservation.serviceCategory.serviceId))
+                .leftJoin(payment).on(payment.reservation.reservationId.eq(reservation.reservationId))
                 .where(
                         RequestDateGoe(searchCondDTO.getFromRequestDate()),
                         RequestDateLoe(searchCondDTO.getToRequestDate()),
                         reservationStatus(searchCondDTO.getReservationStatus()),
                         managerNameLike(searchCondDTO.getManagerNameKeyword()),
-                        customerNameLike(searchCondDTO.getCustomerNameKeyword())
+                        customerNameLike(searchCondDTO.getCustomerNameKeyword()),
+                        paymentStatus(searchCondDTO.getPaymentStatus())
                 )
                 .orderBy(schedule.requestDate.desc(), schedule.startTime.desc())
                 .offset(pageable.getOffset())
@@ -82,12 +86,16 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
         long total = Optional.ofNullable(
                 queryFactory.select(reservation.count())
                         .from(reservation)
+                        .leftJoin(schedule).on(schedule.reservation.reservationId.eq(reservation.reservationId))
+                        .leftJoin(match).on(match.reservation.reservationId.eq(reservation.reservationId))
+                        .leftJoin(payment).on(payment.reservation.reservationId.eq(reservation.reservationId))
                         .where(
                                 RequestDateGoe(searchCondDTO.getFromRequestDate()),
                                 RequestDateLoe(searchCondDTO.getToRequestDate()),
                                 reservationStatus(searchCondDTO.getReservationStatus()),
                                 managerNameLike(searchCondDTO.getManagerNameKeyword()),
-                                customerNameLike(searchCondDTO.getCustomerNameKeyword())
+                                customerNameLike(searchCondDTO.getCustomerNameKeyword()),
+                                paymentStatus(searchCondDTO.getPaymentStatus())
                         )
                         .fetchOne()
         ).orElse(0L);
@@ -120,11 +128,11 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
                         payment.paidAt
                 ))
                 .from(reservation)
-                .leftJoin(reservation, schedule.reservation)
-                .leftJoin(reservation, location.reservation)
-                .leftJoin(reservation, match.reservation)
-                .leftJoin(reservation.serviceCategory, serviceCategory)
-                .leftJoin(reservation, payment.reservation)
+                .leftJoin(schedule).on(schedule.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(location).on(location.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(match).on(match.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(serviceCategory).on(serviceCategory.serviceId.eq(reservation.serviceCategory.serviceId))
+                .leftJoin(payment).on(payment.reservation.reservationId.eq(reservation.reservationId))
                 .where(reservation.reservationId.eq(reservationId))
                 .fetchOne();
 
@@ -156,19 +164,28 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
                 : null;
     }
 
-    // 고객명 검색어 포함 -> 검색된 이름 중에 role이 CUSTOMER인 경우만 조회 필요
-    private BooleanExpression customerNameLike(String keyword) {
-        return (keyword != null && !keyword.isBlank())
-                ? reservation.user.userName.eq(keyword)
-                .and(reservation.user.role.eq(UserRole.CUSTOMER))
+    // 결제 상태
+    private BooleanExpression paymentStatus(List<PaymentStatus> paymentStatuses) {
+        return (paymentStatuses != null && !paymentStatuses.isEmpty())
+                ? payment.status.in(paymentStatuses)
                 : null;
     }
 
-    // 매니저 검색어 포함 -> 검색된 이름 중에 role이 MANAGER인 경우만 조회 필요
+    // 매니저 검색어 포함 -> 매니저가 존재하고 검색된 이름 중에 role이 MANAGER인 경우만 조회
     private BooleanExpression managerNameLike(String keyword) {
         return (keyword != null && !keyword.isBlank())
-                ? match.manager.userName.eq(keyword)
+                ? match.manager.isNotNull()
+                .and(match.manager.userName.contains(keyword))
                 .and(match.manager.role.eq(UserRole.MANAGER))
+                : null;
+    }
+
+    // 고객명 검색어 포함 -> 고객이 존재하고 검색된 이름 중에 role이 CUSTOMER인 경우만 조회
+    private BooleanExpression customerNameLike(String keyword) {
+        return (keyword != null && !keyword.isBlank())
+                ? reservation.user.isNotNull()
+                .and(reservation.user.userName.contains(keyword))
+                .and(reservation.user.role.eq(UserRole.CUSTOMER))
                 : null;
     }
 }

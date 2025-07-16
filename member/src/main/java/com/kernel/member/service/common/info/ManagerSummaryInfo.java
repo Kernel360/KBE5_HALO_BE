@@ -17,9 +17,11 @@ public class ManagerSummaryInfo {
     private String userName;
     private String phone;
     private String email;
+    private String bio;
     private BigDecimal averageRating;
     private UserStatus userstatus;
     private ContractStatus contractStatus;
     private Integer reservationCount;
     private Integer reviewCount;
+    private String filePathsJson;
 }

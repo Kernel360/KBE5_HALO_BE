@@ -1,5 +1,6 @@
 package com.kernel.reservation.service.response;
 
+import com.kernel.payment.common.enums.PaymentStatus;
 import com.kernel.reservation.service.info.AdminReservationSummaryInfo;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.*;
@@ -40,6 +41,9 @@ public class AdminReservationSummaryRspDTO {
     // 예약 상태
     private ReservationStatus status;
 
+    // 결제 상태
+    private PaymentStatus paymentStatus;
+
     // 서비스 이름
     private String serviceName;
 
@@ -57,6 +61,7 @@ public class AdminReservationSummaryRspDTO {
                 .customerId(info.getCustomerId())
                 .customerName(info.getCustomerName())
                 .status(info.getStatus())
+                .paymentStatus(info.getPaymentStatus())
                 .serviceName(info.getServiceName())
                 .price(info.getPrice())
                 .build();

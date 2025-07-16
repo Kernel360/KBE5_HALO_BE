@@ -30,8 +30,8 @@ public class AdminManagerRspDTO {
     private Integer reviewCount;
     private BigDecimal averageRating;
     private String bio;
-    private Long profileImageId;
-    private Long fileId;  // 첨부파일 ID
+    private String profileImagePath;
+    private String filePaths;
     ///private List<AvailableAreaResponseDTO> availableArea;
     private List<AvailableTimeRspDTO> availableTimes;
     private LocalDateTime createdAt;
@@ -56,8 +56,8 @@ public class AdminManagerRspDTO {
                 .reviewCount(info.getReviewCount())
                 .averageRating(info.getAverageRating())
                 .bio(info.getBio())
-                .profileImageId(info.getProfileImageFileId())
-                .fileId(info.getFileId())
+                .profileImagePath(info.getProfileImagePath() != null ? info.getProfileImagePath() : null)
+                .filePaths(info.getFilePaths() != null ? info.getFilePaths() : null)
                 .availableTimes(availableTimes)
                 .createdAt(info.getCreatedAt())
                 .updatedAt(info.getUpdatedAt())

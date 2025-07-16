@@ -1,6 +1,7 @@
 package com.kernel.reservation.service.request;
 
 
+import com.kernel.payment.common.enums.PaymentStatus;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,9 @@ public class AdminReservationSearchCondDTO {
 
     // 예약 상태
     private List<ReservationStatus> reservationStatus;
+
+    // 결제 상태
+    private List<PaymentStatus> paymentStatus;
 
     // 체크인 여부
     private Boolean isCheckedIn;
