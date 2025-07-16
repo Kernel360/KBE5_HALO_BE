@@ -14,7 +14,7 @@ public class SettlementScheduler {
 
     private final AdminSettlementService adminSettlementService;
 
-    @Scheduled(cron = "0 49 13 * * WED")
+    @Scheduled(cron = "0 0 2 * * THU")
     public void runWeeklySettlement() {
         LocalDate start = LocalDate.now().minusWeeks(1).with(DayOfWeek.MONDAY);
         LocalDate end = start.plusDays(6);
