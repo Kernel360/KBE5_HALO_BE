@@ -111,13 +111,18 @@ public class ManagerSettlementServiceImpl implements ManagerSettlementService {
         // 4. 이번주 예상 금액 조회
         Long thisWeekEstimated = reservationQueryPort.getThisWeekEstimated(userId, thisWeekStart, thisWeekEnd);
 
-        // 5. 저번주 정산 금액 조회
+        // 5. 수수료 계산
+        SettlementCalculator calculator = SettlementCalculator.builder()
+                .feeRate(SettlementConfig.FEE_RATE.getValue())
+                .build();
+
+        // 6. 저번주 정산 금액 조회
         Long LastWeekSettled = reservationQueryPort.getSettledAmount(userId, lastWeekStart, lastWeekEnd);
 
-        // 6. 이번달 예상 금액 조회
+        // 7. 이번달 예상 금액 조회
         Long thisMonthSettled = reservationQueryPort.getSettledAmount(userId, thisMonthStart, lastWeekEnd);
 
-        return ManagerSettlementSumRspDTO.fromInfo(thisWeekEstimated, LastWeekSettled, thisMonthSettled);
+        return ManagerSettlementSumRspDTO.fromInfo(calculator.calculateTotalAmount(thisWeekEstimated), LastWeekSettled, thisMonthSettled);
     }
 }
 
