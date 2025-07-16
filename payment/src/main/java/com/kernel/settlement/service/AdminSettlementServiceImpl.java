@@ -152,7 +152,7 @@ public class AdminSettlementServiceImpl implements AdminSettlementService {
                 .feeRate(SettlementConfig.FEE_RATE.getValue())
                 .build();
 
-        return AdminThisWeekEstimatedRspDto.fromInfo(result, calculator.calculatePlatformFee(result));
+        return AdminThisWeekEstimatedRspDto.fromInfo(calculator.calculateTotalAmount(result), calculator.calculatePlatformFee(result));
     }
 
     /**
@@ -188,16 +188,17 @@ public class AdminSettlementServiceImpl implements AdminSettlementService {
 
         SettledAmountWithPlatformFeeInfo lastWeekSettlement = adminSettlementRepository.getSettlementByReservationIds(lastWeekReservation);
 
-        // 7. 이번달 예상 금액 조회
+        // 7. 이번달 정산 금액 조회
         List<Long> lastMonthReservation = reservationQueryPort.getSettledAmountWithoutUserId(thisMonthStart, lastWeekEnd);
 
         SettledAmountWithPlatformFeeInfo lastMonthSettlement = adminSettlementRepository.getSettlementByReservationIds(lastMonthReservation);
 
         // 8. 이번주 예상 수수료 계산
+        Long thisWeekEstimatedTotalAmount = calculator.calculateTotalAmount(thisWeekEstimated);
         Long thisWeekEstimatedPlatformFee = calculator.calculatePlatformFee(thisWeekEstimated);
 
         return AdminSettlementSumRspDTO.fromInfo(
-                thisWeekEstimated,
+                thisWeekEstimatedTotalAmount,
                 thisWeekEstimatedPlatformFee,
                 lastWeekSettlement != null ? lastWeekSettlement.getTotalAmount() : 0L,
                 lastWeekSettlement != null ? lastWeekSettlement.getPlatformFee() : 0L,

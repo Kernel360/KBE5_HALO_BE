@@ -25,4 +25,9 @@ public class SettlementCalculator {
     public int calculateTotalAmount(int price) {
         return price * (100 - feeRate) / 100;
     }
+
+    // 관리자 확인용 정산 계산
+    public Long calculateTotalAmount(Long price) {
+        return price * (100 - feeRate) / 100;
+    }
 }
