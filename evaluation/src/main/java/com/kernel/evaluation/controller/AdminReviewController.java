@@ -1,7 +1,10 @@
 package com.kernel.evaluation.controller;
 
+import com.kernel.evaluation.service.review.CustomerReviewService;
 import com.kernel.evaluation.service.review.ManagerReviewService;
 import com.kernel.evaluation.service.review.dto.request.ManagerReviewSearchCondDTO;
+import com.kernel.evaluation.service.review.dto.request.ReviewSearchReqDTO;
+import com.kernel.evaluation.service.review.dto.response.CustomerReviewRspDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewPageRspDTO;
 import com.kernel.global.service.dto.response.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,9 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/reviews")
 @RequiredArgsConstructor
-public class AdminManagerReviewController {
+public class AdminReviewController {
 
     private final ManagerReviewService managerReviewService;
+    private final CustomerReviewService customerReviewService;
 
     @Schema(description = "매니저 리뷰 조회 API")
     @GetMapping("/{manager-id}")
@@ -31,6 +35,17 @@ public class AdminManagerReviewController {
         Page<ManagerReviewPageRspDTO> response = managerReviewService.searchManagerReviewsWithPaging(managerId, request, pageable);
 
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 리뷰 조회 성공", response));
+    }
+
+    @GetMapping("/customer/{customer-id}")
+    public ResponseEntity<ApiResponse<Page<CustomerReviewRspDTO>>> getCustomerReviews(
+            @PathVariable("customer-id") Long customerId,
+            @ModelAttribute ReviewSearchReqDTO request,
+            @PageableDefault(size = 3, page = 0) Pageable pageable
+    ) {
+        Page<CustomerReviewRspDTO> response = customerReviewService.getCustomerReviews(customerId, request, pageable);
+
+        return ResponseEntity.ok(new ApiResponse<>(true, "고객 리뷰 조회 성공", response));
     }
 
 }
