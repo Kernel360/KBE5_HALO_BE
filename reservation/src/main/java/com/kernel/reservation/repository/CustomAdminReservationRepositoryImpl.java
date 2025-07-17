@@ -74,6 +74,7 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
                         RequestDateGoe(searchCondDTO.getFromRequestDate()),
                         RequestDateLoe(searchCondDTO.getToRequestDate()),
                         reservationStatus(searchCondDTO.getReservationStatus()),
+                        managerIdEq(searchCondDTO.getManagerId()),
                         managerNameLike(searchCondDTO.getManagerNameKeyword()),
                         customerNameLike(searchCondDTO.getCustomerNameKeyword()),
                         paymentStatus(searchCondDTO.getPaymentStatus())
@@ -93,6 +94,7 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
                                 RequestDateGoe(searchCondDTO.getFromRequestDate()),
                                 RequestDateLoe(searchCondDTO.getToRequestDate()),
                                 reservationStatus(searchCondDTO.getReservationStatus()),
+                                managerIdEq(searchCondDTO.getManagerId()),
                                 managerNameLike(searchCondDTO.getManagerNameKeyword()),
                                 customerNameLike(searchCondDTO.getCustomerNameKeyword()),
                                 paymentStatus(searchCondDTO.getPaymentStatus())
@@ -186,6 +188,13 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
                 ? reservation.user.isNotNull()
                 .and(reservation.user.userName.contains(keyword))
                 .and(reservation.user.role.eq(UserRole.CUSTOMER))
+                : null;
+    }
+
+    // 매니저 ID로 조회
+    private BooleanExpression managerIdEq(Long managerId) {
+        return (managerId != null)
+                ? match.manager.userId.eq(managerId)
                 : null;
     }
 }

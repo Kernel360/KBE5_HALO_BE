@@ -39,4 +39,7 @@ public class AdminReservationSearchCondDTO {
 
     // 매니저 명
     public String managerNameKeyword;
+
+    // 매니저 ID
+    public Long managerId;
 }
