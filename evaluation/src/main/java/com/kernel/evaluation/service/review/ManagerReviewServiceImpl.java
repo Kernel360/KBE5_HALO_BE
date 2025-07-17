@@ -9,15 +9,13 @@ import com.kernel.evaluation.domain.info.ManagerReviewInfo;
 import com.kernel.evaluation.repository.review.ManagerReviewRepository;
 import com.kernel.evaluation.service.review.dto.request.ManagerReviewSearchCondDTO;
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
+import com.kernel.evaluation.service.review.dto.request.ReviewUpdateReqDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewPageRspDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewRspDTO;
 import com.kernel.member.common.enums.MemberStatisticErrorCode;
 import com.kernel.member.common.exception.MemberStatisticException;
-import com.kernel.member.domain.entity.Customer;
 import com.kernel.member.domain.entity.CustomerStatistic;
-import com.kernel.member.repository.CustomerRepository;
 import com.kernel.member.repository.CustomerStatisticRepository;
-import com.kernel.member.repository.ManagerStatisticRepository;
 import com.kernel.sharedDomain.common.enums.ReservationStatus;
 import com.kernel.sharedDomain.domain.entity.Reservation;
 import com.kernel.sharedDomain.service.ReservationQueryPort;
@@ -26,6 +24,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -110,9 +110,43 @@ public class ManagerReviewServiceImpl implements ManagerReviewService {
         CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
 
-        evaluationStatisticUpdateService.updateCustomerReviewStatistic(customerStatistic);
+        evaluationStatisticUpdateService.updateCustomerReviewStatisticOnCreate(customerStatistic, createReqDTO);
 
         // Entity -> ResponseDTO 후, return
         return ManagerReviewRspDTO.fromEntity(savedReview);
+    }
+
+    /**
+     * 수요자 리뷰 수정
+     * @param userId 로그인 유저 ID
+     * @param reviewId 예약ID
+     * @param updateReqDTO 리뷰요청DTO
+     * @return reviewRspDTO
+     */
+    @Override
+    public ManagerReviewRspDTO updateManagerReview(Long userId, Long reviewId, ReviewUpdateReqDTO updateReqDTO) {
+
+        // 1. 예약 조회
+        Reservation reservation = reservationQueryPort.findReservationByReservationIdAndManagerId(updateReqDTO.getReservationId(), userId);
+        if (reservation == null) {
+            throw new ReviewException(ReviewErrorCode.UNAUTHORIZED);
+        }
+
+        // 2. 리뷰 존재 여부 확인
+        Review foundReview = managerReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NoSuchElementException("수정 가능한 리뷰가 존재하지 않습니다."));
+
+        // 3. 리뷰 수정
+        foundReview.update(updateReqDTO.getRating(), updateReqDTO.getContent());
+
+        // 6. 수요자 통계 업데이트
+        CustomerStatistic customerStatistic = customerStatisticRepository.findById(reservation.getUser().getUserId())
+                .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.CUSTOMER_STATISTIC_NOT_FOUND));
+
+        evaluationStatisticUpdateService.updateCustomerReviewStatisticOnUpdate(customerStatistic, updateReqDTO);
+
+
+        // Entity -> ResponseDTO 후, return
+        return ManagerReviewRspDTO.fromEntity(foundReview);
     }
 }
