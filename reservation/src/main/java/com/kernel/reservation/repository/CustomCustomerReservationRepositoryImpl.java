@@ -78,7 +78,6 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
                 .leftJoin(location).on(location.reservation.eq(reservation))
                 .leftJoin(schedule).on(schedule.reservation.eq(reservation))
                 .leftJoin(match).on(match.reservation.eq(reservation))
-                .leftJoin(user).on(match.manager.eq(user))
                 .leftJoin(review).on(
                         review.reservation.eq(reservation),
                         review.authorId.eq(userId),
@@ -324,7 +323,7 @@ public class CustomCustomerReservationRepositoryImpl implements CustomCustomerRe
     private BooleanExpression managerNameContains(String keyword) {
         return (keyword != null && !keyword.isBlank())
                 ? match.manager.userName.contains(keyword)
-                .and(reservation.user.role.eq(UserRole.MANAGER))
+                .and(match.manager.role.eq(UserRole.MANAGER))
                 : null;
     }
 }
