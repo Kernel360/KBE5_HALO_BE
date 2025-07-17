@@ -4,6 +4,7 @@ import com.kernel.evaluation.common.enums.ReviewAuthorType;
 import com.kernel.evaluation.domain.entity.QReview;
 import com.kernel.global.common.enums.UserRole;
 import com.kernel.global.domain.entity.QUser;
+import com.kernel.member.domain.entity.QCustomerStatistic;
 import com.kernel.member.domain.entity.QUserInfo;
 import com.kernel.reservation.domain.entity.*;
 import com.kernel.reservation.service.info.ManagerReservationDetailInfo;
@@ -45,6 +46,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
     private final QExtraService extraService = QExtraService.extraService;
     private final QReview customerReview = QReview.review;
     private final QReview managerReview = QReview.review;
+    private final QCustomerStatistic customerStatistic = QCustomerStatistic.customerStatistic;
 
 
     /**
@@ -182,6 +184,8 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                 serviceCheckLog.outTime,
                 serviceCheckLog.outFileId,
                 user.userName,
+                customerStatistic.averageRating,
+                customerStatistic.reviewCount,
                 userInfo.roadAddress,
                 userInfo.detailAddress,
                 qCustomerReview.content.as("customerReviewContent"),
@@ -201,6 +205,7 @@ public class CustomManagerReservationRepositoryImpl implements CustomManagerRese
                         .and(qCustomerReview.reservation.reservationId.eq(reservation.reservationId)))
             .leftJoin(qManagerReview).on(qManagerReview.authorId.eq(managerId)
                         .and(qManagerReview.reservation.reservationId.eq(reservation.reservationId)))
+            .leftJoin(customerStatistic).on(customerStatistic.user.eq(user))
             .where(
                 reservation.reservationId.eq(reservationId),
                 reservationMatch.manager.userId.eq(managerId)
