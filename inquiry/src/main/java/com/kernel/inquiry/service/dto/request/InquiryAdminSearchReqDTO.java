@@ -17,6 +17,9 @@ import java.util.List;
 @ToString
 public class InquiryAdminSearchReqDTO {
 
+    @Schema(description = "문의 작성자 ID", example = "12345", required = false)
+    private Long authorId;
+
     @Schema(description = "작성일시 시작일", example = "2023-01-01", required = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fromCreatedAt;
