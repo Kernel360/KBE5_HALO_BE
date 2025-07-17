@@ -51,6 +51,7 @@ public class CustomInquiryAdminRepositoryImpl implements CustomInquiryAdminRepos
                         .from(inquiry)
                         .join(user).on(inquiry.authorId.eq(user.userId))
                         .where(
+                                authorIdEq(searchReqDTO.getAuthorId()),
                                 userNameEq(searchReqDTO.getUserName()),
                                 authorTypeEq(searchReqDTO.getAuthorType()),
                                 createdAtGoe(searchReqDTO.getFromCreatedAt()),
@@ -78,6 +79,7 @@ public class CustomInquiryAdminRepositoryImpl implements CustomInquiryAdminRepos
                 .from(inquiry)
                 .join(user).on(inquiry.authorId.eq(user.userId))
                 .where(
+                        authorIdEq(searchReqDTO.getAuthorId()),
                         userNameEq(searchReqDTO.getUserName()),
                         authorTypeEq(searchReqDTO.getAuthorType()),
                         createdAtGoe(searchReqDTO.getFromCreatedAt()),
@@ -146,6 +148,15 @@ public class CustomInquiryAdminRepositoryImpl implements CustomInquiryAdminRepos
             inquiryInfo.initReplyInfo(replyInfo);
 
         return inquiryInfo;
+    }
+
+    /**
+     * 작성자 ID 조건식
+     * @param authorId 작성자 ID
+     * @return 작성자 ID 조건식
+     */
+    private BooleanExpression authorIdEq(Long authorId) {
+        return authorId != null ? inquiry.authorId.eq(authorId) : null;
     }
 
     /**

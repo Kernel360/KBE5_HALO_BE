@@ -1,6 +1,7 @@
 package com.kernel.member.service.response;
 
 import com.kernel.global.common.enums.UserStatus;
+import com.kernel.member.common.enums.ContractStatus;
 import com.kernel.member.common.enums.Gender;
 
 import com.kernel.member.service.common.info.AdminManagerDetailInfo;
@@ -26,12 +27,13 @@ public class AdminManagerRspDTO {
     private String roadAddress;
     private String detailAddress;
     private UserStatus status;
+    private ContractStatus contractStatus;
     private Integer reservationCount;
     private Integer reviewCount;
     private BigDecimal averageRating;
     private String bio;
-    private Long profileImageId;
-    private Long fileId;  // 첨부파일 ID
+    private String profileImagePath;
+    private String filePaths;
     ///private List<AvailableAreaResponseDTO> availableArea;
     private List<AvailableTimeRspDTO> availableTimes;
     private LocalDateTime createdAt;
@@ -39,6 +41,7 @@ public class AdminManagerRspDTO {
     private LocalDateTime contractAt;
     private LocalDateTime terminatedAt;
     private String terminationReason;
+    private LocalDateTime requestAt;
 
     // AdminManagerDetailInfo -> AdminManagerRspDTO
     public static AdminManagerRspDTO fromInfo(AdminManagerDetailInfo info, List<AvailableTimeRspDTO> availableTimes) {
@@ -52,18 +55,20 @@ public class AdminManagerRspDTO {
                 .roadAddress(info.getRoadAddress())
                 .detailAddress(info.getDetailAddress())
                 .status(info.getStatus())
+                .contractStatus(info.getContractStatus())
                 .reservationCount(info.getReservationCount())
                 .reviewCount(info.getReviewCount())
                 .averageRating(info.getAverageRating())
                 .bio(info.getBio())
-                .profileImageId(info.getProfileImageFileId())
-                .fileId(info.getFileId())
+                .profileImagePath(info.getProfileImagePath() != null ? info.getProfileImagePath() : null)
+                .filePaths(info.getFilePaths() != null ? info.getFilePaths() : null)
                 .availableTimes(availableTimes)
                 .createdAt(info.getCreatedAt())
                 .updatedAt(info.getUpdatedAt())
                 .contractAt(info.getContractDate())
                 .terminatedAt(info.getTerminatedAt())
                 .terminationReason(info.getReason())
+                .requestAt(info.getRequestAt())
                 .build();
     }
 

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -25,6 +27,12 @@ public class UserAccountInfo {
     // 계정 상태
     private UserStatus status;
 
+    // 생성일자
+    private LocalDateTime createdAt;
+
+    // 수정일자
+    private LocalDateTime updatedAt;
+
     // User -> UserAccountInfo
     public static UserAccountInfo fromEntity(User user) {
         return UserAccountInfo.builder()
@@ -32,6 +40,8 @@ public class UserAccountInfo {
                 .email(user.getEmail())
                 .userName(user.getUserName())
                 .status(user.getStatus())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 

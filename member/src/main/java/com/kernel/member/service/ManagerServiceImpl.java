@@ -119,7 +119,8 @@ public class ManagerServiceImpl implements ManagerService {
         List<AvailableTime> foundAvailableTimeList = availableTimeRepository.findByManager(foundManager);
 
         // 5. ManagerTermination 조회
-        ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager);
+        ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager)
+                .orElse(null);
 
         // 5. 응답 DTO 생성 및 반환
         return ManagerDetailRspDTO.fromInfos(
@@ -159,7 +160,8 @@ public class ManagerServiceImpl implements ManagerService {
         }
 
         // 5. ManagerTermination 조회
-        ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager);
+        ManagerTermination foundManagerTermination = managerTerminationRepository.findByManager(foundManager)
+                .orElse(null);
 
         // 6. User 수정
         foundUser.updateEmail(updateReqDTO.getUserUpdateReqDTO().getEmail());

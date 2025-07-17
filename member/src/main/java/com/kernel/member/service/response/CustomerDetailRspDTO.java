@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -49,6 +50,12 @@ public class CustomerDetailRspDTO {
     @Schema(description = "상세 주소", example = "10층", required = true)
     private String detailAddress;
 
+    @Schema(description = "생성 일시", example = "2023-10-01T12:00:00", required = true)
+    private LocalDateTime createdAt;
+
+    @Schema(description = "수정 일시", example = "2023-10-01T12:00:00", required = true)
+    private LocalDateTime updatedAt;
+
     /* Customer */
     @Schema(description = "포인트", example = "1000", required = true)
     private Integer point;
@@ -70,6 +77,8 @@ public class CustomerDetailRspDTO {
                 .roadAddress(userDetailInfo.getRoadAddress())
                 .detailAddress(userDetailInfo.getDetailAddress())
                 .point(customerDetailInfo.getPoint())
+                .createdAt(userAccountInfo.getCreatedAt())
+                .updatedAt(userAccountInfo.getUpdatedAt())
                 .build();
     }
 }

@@ -27,8 +27,8 @@ public class AdminManagerDetailInfo {
     private String roadAddress;
     private String detailAddress;
     private String bio;
-    private Long profileImageFileId;
-    private Long fileId; // 첨부파일 ID
+    private String profileImagePath;
+    private String filePaths;
     private ContractStatus contractStatus;
     private LocalDateTime contractDate;
     private BigDecimal averageRating;
