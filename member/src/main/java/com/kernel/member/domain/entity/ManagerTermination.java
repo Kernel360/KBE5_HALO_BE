@@ -34,12 +34,11 @@ public class ManagerTermination {
     private String reason;
 
     // 계약 해지 일시
-    @Column(nullable = false)
-    @UpdateTimestamp
+    @Column
     private LocalDateTime terminatedAt;
 
     // 계약 해지 테이블 업데이트
-    public void updateTerminatedAt(LocalDateTime terminatedAt) {
-        this.terminatedAt = terminatedAt;
+    public void updateTerminatedAt() {
+        this.terminatedAt = LocalDateTime.now();
     }
 }

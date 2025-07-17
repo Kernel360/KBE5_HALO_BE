@@ -41,6 +41,7 @@ public class AdminManagerRspDTO {
     private LocalDateTime contractAt;
     private LocalDateTime terminatedAt;
     private String terminationReason;
+    private LocalDateTime requestAt;
 
     // AdminManagerDetailInfo -> AdminManagerRspDTO
     public static AdminManagerRspDTO fromInfo(AdminManagerDetailInfo info, List<AvailableTimeRspDTO> availableTimes) {
@@ -67,6 +68,7 @@ public class AdminManagerRspDTO {
                 .contractAt(info.getContractDate())
                 .terminatedAt(info.getTerminatedAt())
                 .terminationReason(info.getReason())
+                .requestAt(info.getRequestAt())
                 .build();
     }
 

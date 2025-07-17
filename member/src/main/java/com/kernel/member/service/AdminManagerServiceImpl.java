@@ -3,8 +3,10 @@ package com.kernel.member.service;
 import com.kernel.global.common.enums.UserStatus;
 import com.kernel.member.domain.entity.AvailableTime;
 import com.kernel.member.domain.entity.Manager;
+import com.kernel.member.domain.entity.ManagerTermination;
 import com.kernel.member.repository.AvailableTimeRepository;
 import com.kernel.member.repository.ManagerRepository;
+import com.kernel.member.repository.ManagerTerminationRepository;
 import com.kernel.member.service.common.info.AdminManagerDetailInfo;
 import com.kernel.member.service.common.info.ManagerDetailInfo;
 import com.kernel.member.service.common.info.ManagerSummaryInfo;
@@ -30,6 +32,7 @@ public class AdminManagerServiceImpl implements AdminManagerService {
 
     private final ManagerRepository managerRepository;
     private final AvailableTimeRepository availableTimeRepository;
+    private final ManagerTerminationRepository managerTerminationRepository;
 
     /**
      * 전체 매니저 목록 조회
@@ -98,6 +101,10 @@ public class AdminManagerServiceImpl implements AdminManagerService {
         Manager manager = managerRepository.findById(managerId)
                 .orElseThrow(() -> new NoSuchElementException("매니저를 찾을 수 없습니다."));
 
+        ManagerTermination termination = managerTerminationRepository.findByManager(manager)
+                .orElseThrow(() -> new NoSuchElementException("해당 매니저의 해지 정보를 찾을 수 없습니다."));
+
         manager.terminate();
+        termination.updateTerminatedAt();
     }
 }
