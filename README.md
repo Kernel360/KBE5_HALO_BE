@@ -113,7 +113,7 @@ https://halocare.site
 ## 📄 기술 문서
 
 - 👉 **API 명세서** : [바로가기](https://api.halocare.site/swagger-ui)
-- 👉 **기능 명세서** : [바로가기](https://프로젝트주소/docs)
+- 👉 **기능 명세서** : [바로가기](https://www.notion.so/1fca3f519ab88001af8ed29685217236?source=copy_link)
 - 👉 **ERD** :
   ![ERD](https://github.com/user-attachments/assets/40372f13-838d-4f3d-a2de-a59fa231d5cb)
 
