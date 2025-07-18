@@ -3,6 +3,8 @@ package com.kernel.evaluation.controller;
 import com.kernel.evaluation.service.review.ManagerReviewService;
 import com.kernel.evaluation.service.review.dto.request.ManagerReviewSearchCondDTO;
 import com.kernel.evaluation.service.review.dto.request.ReviewCreateReqDTO;
+import com.kernel.evaluation.service.review.dto.request.ReviewUpdateReqDTO;
+import com.kernel.evaluation.service.review.dto.response.CustomerReviewRspDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewPageRspDTO;
 import com.kernel.evaluation.service.review.dto.response.ManagerReviewRspDTO;
 import com.kernel.global.security.CustomUserDetails;
@@ -61,5 +63,23 @@ public class ManagerReviewController {
 
         ManagerReviewRspDTO responseDTO = managerReviewService.createManagerReview(user.getUserId(), reservationId, requestDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "매니저 리뷰 등록 성공", responseDTO));
+    }
+
+    /**
+     * 매니저 리뷰 수정 API
+     * @param reviewId 리뷰ID
+     * @param user 로그인 유저
+     * @param updateReqDTO 리뷰요청DTO
+     * @return 작성된 리뷰 정보를 담은 응답
+     */
+    @PatchMapping("/{review-id}")
+    public ResponseEntity<ApiResponse<ManagerReviewRspDTO>> updateManagerReview(
+            @PathVariable("review-id") Long reviewId,
+            @AuthenticationPrincipal CustomUserDetails user,
+            @Valid @RequestBody ReviewUpdateReqDTO updateReqDTO
+    ) {
+
+        ManagerReviewRspDTO responseDTO = managerReviewService.updateManagerReview(user.getUserId(), reviewId, updateReqDTO);
+        return ResponseEntity.ok(new ApiResponse<>(true, "매니저 리뷰 수정 성공", responseDTO));
     }
 }

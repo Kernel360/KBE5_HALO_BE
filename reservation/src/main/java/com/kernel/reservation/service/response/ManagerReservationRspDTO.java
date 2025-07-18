@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -73,6 +74,12 @@ public class ManagerReservationRspDTO {
     @Schema(description = "고객 이름", example = "홍길동", required = true)
     private String userName;
 
+    @Schema(description = "고객 평균 별점", example = "3.5", required = true)
+    private BigDecimal averageRating;
+
+    @Schema(description = "고객 리뷰 수", example = "30", required = true)
+    private Integer reviewCount;
+
     @Schema(description = "예약 취소 일시", example = "2023-01-01T15:00:00", required = false)
     private LocalDateTime cancelDate;
 
@@ -111,6 +118,8 @@ public class ManagerReservationRspDTO {
                 .roadAddress(info.getRoadAddress())
                 .detailAddress(info.getDetailAddress())
                 .userName(info.getUserName())
+                .averageRating(info.getAverageRating())
+                .reviewCount(info.getReviewCount())
                 .extraServiceNames(extraServiceNames != null ? extraServiceNames : null)
                 .servicePrice(servicePrice)
                 .memo(info.getMemo() != null ? info.getMemo() : null)

@@ -134,7 +134,7 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
         ManagerStatistic managerStatistic = managerStatisticRepository.findById(scheduleAndMatchInfo.getManagerId())
                 .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
 
-        evaluationStatisticUpdateService.updateManagerReviewStatistic(managerStatistic);
+        evaluationStatisticUpdateService.updateManagerReviewStatisticOnCreate(managerStatistic, createReqDTO);
 
         return CustomerReviewRspDTO.fromInfo(reviewInfo, scheduleAndMatchInfo);
     }
@@ -165,6 +165,13 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
 
         // 5. 예약 일정 및 매칭 조회
         ScheduleAndMatchInfo scheduleAndMatchInfo = reservationQueryPort.findScheduleAndMatchByReservationIdAndUserId(updateReqDTO.getReservationId(), userId);
+
+        // 6. 매니저 통계 조회
+        ManagerStatistic managerStatistic = managerStatisticRepository.findById(scheduleAndMatchInfo.getManagerId())
+                .orElseThrow(() -> new MemberStatisticException(MemberStatisticErrorCode.MANAGER_STATISTIC_NOT_FOUND));
+
+        // 7. 매니저 리뷰 평균 업데이트
+        evaluationStatisticUpdateService.updateManagerReviewStatisticOnUpdate(managerStatistic, updateReqDTO);
 
         return CustomerReviewRspDTO.fromInfo(reviewInfo, scheduleAndMatchInfo);
     }

@@ -3,7 +3,6 @@ package com.kernel.member.domain.entity;
 import com.kernel.global.domain.entity.BaseEntity;
 import com.kernel.global.domain.entity.User;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -30,7 +29,7 @@ public class CustomerStatistic  extends BaseEntity {
     private User user;
 
     // 평점
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 3, scale = 2)
     @Builder.Default
     private BigDecimal averageRating = BigDecimal.ZERO;
 
@@ -53,6 +52,12 @@ public class CustomerStatistic  extends BaseEntity {
     // 고객의 리뷰수 업데이트
     public void updateReviewCount() {
         this.reviewCount += 1;
+    }
+
+    // 매니저 평균 별점 업데이트
+    public void updateAverageRating(BigDecimal updateRating) {
+        if(updateRating != null && !averageRating.equals(updateRating))
+            averageRating = updateRating;
     }
 
 }

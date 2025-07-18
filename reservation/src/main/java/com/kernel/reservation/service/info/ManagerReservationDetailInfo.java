@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +38,8 @@ public class ManagerReservationDetailInfo {
     private String roadAddress;
     private String detailAddress;
     private String userName;
+    private BigDecimal averageRating;
+    private Integer reviewCount;
     private String customerReviewContent;
     private Integer customerReviewRating;
     private String managerReviewContent;

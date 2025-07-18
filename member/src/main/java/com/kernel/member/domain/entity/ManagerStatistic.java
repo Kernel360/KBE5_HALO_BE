@@ -40,7 +40,7 @@ public class ManagerStatistic extends BaseEntity {
     private Integer reviewCount = 0;
 
     // 매니저가 받은 별점 평균
-    @Column(precision = 2, scale = 1)
+    @Column(nullable = false, precision = 3, scale = 2)
     @Builder.Default
     private BigDecimal averageRating = BigDecimal.ZERO;
 
@@ -53,5 +53,10 @@ public class ManagerStatistic extends BaseEntity {
     // 매니저의 리뷰수 업데이트
     public void updateReviewCount() {
         this.reviewCount += 1;
+    }
+
+    // 매니저 평균 별점 업데이트
+    public void updateAverageRating(BigDecimal updateRating) {
+            averageRating = updateRating;
     }
 }
