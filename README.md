@@ -3,7 +3,7 @@
 <!-- logo -->
 ![Image](https://github.com/user-attachments/assets/프로젝트로고)
 
-### 프로젝트명 - 슬로건 또는 핵심 문구
+### 프로젝트명 - Halocare
 
 [<img src="https://img.shields.io/badge/release-v1.0.0-yellow?style=flat&logo=google-chrome&logoColor=white" />]()  
 [<img src="https://img.shields.io/badge/프로젝트 기간-2025.05.26~2025.07.18-green?style=flat&logo=&logoColor=white" />]()
