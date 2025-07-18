@@ -1,6 +1,7 @@
 package com.kernel.reservation.repository;
 
 import com.kernel.global.common.enums.UserRole;
+import com.kernel.global.domain.entity.QUser;
 import com.kernel.member.domain.entity.QManager;
 import com.kernel.payment.common.enums.PaymentStatus;
 import com.kernel.payment.domain.QPayment;
@@ -39,6 +40,7 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
     private final QServiceCheckLog checkLog = QServiceCheckLog.serviceCheckLog;
     private final QServiceCategory serviceCategory = QServiceCategory.serviceCategory;
     private final QPayment payment = QPayment.payment;
+    private final QUser user = QUser.user;
 
     /**
      * 전체 예약 조회(검색 조건 및 페이징 처리)
@@ -56,7 +58,8 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
                         schedule.startTime,
                         location.roadAddress,
                         match.manager.userId.as("managerId"),
-                        match.manager.userName.as("managerName"),
+                        user.userName.as("managerName"),
+                        //match.manager.userName.as("managerName"),
                         reservation.user.userId.as("customerId"),
                         reservation.user.userName.as("customerName"),
                         reservation.status,
@@ -70,6 +73,7 @@ public class CustomAdminReservationRepositoryImpl implements CustomAdminReservat
                 .leftJoin(match).on(match.reservation.reservationId.eq(reservation.reservationId))
                 .leftJoin(serviceCategory).on(serviceCategory.serviceId.eq(reservation.serviceCategory.serviceId))
                 .leftJoin(payment).on(payment.reservation.reservationId.eq(reservation.reservationId))
+                .leftJoin(user).on(user.userId.eq(match.manager.userId))
                 .where(
                         RequestDateGoe(searchCondDTO.getFromRequestDate()),
                         RequestDateLoe(searchCondDTO.getToRequestDate()),
