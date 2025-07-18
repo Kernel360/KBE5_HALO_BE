@@ -112,10 +112,10 @@ https://halocare.site
 
 ## 📄 기술 문서
 
-- 👉 **API 명세서** : [바로가기](https://프로젝트주소/swagger-ui/index.html)
+- 👉 **API 명세서** : [바로가기](https://api.halocare.site/swagger-ui)
 - 👉 **기능 명세서** : [바로가기](https://프로젝트주소/docs)
 - 👉 **ERD** :
-  ![ERD](https://github.com/user-attachments/assets/erd.png)
+  ![ERD](https://github.com/user-attachments/assets/40372f13-838d-4f3d-a2de-a59fa231d5cb)
 
 ---
 
