@@ -100,7 +100,7 @@ https://halocare.site
 
 ## 🛠️ 아키텍처
 
-![아키텍처](https://github.com/user-attachments/assets/architecture.png)
+![아키텍처]("https://github.com/user-attachments/assets/09e4ab04-60a7-4057-9168-0a28092bfc07")
 
 ---
 
