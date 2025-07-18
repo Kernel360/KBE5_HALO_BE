@@ -1,8 +1,4 @@
 <div align="center">
-
-<!-- logo -->
-![Image](https://github.com/user-attachments/assets/프로젝트로고)
-
 ### 프로젝트명 - Halocare
 
 [<img src="https://img.shields.io/badge/release-v1.0.0-yellow?style=flat&logo=google-chrome&logoColor=white" />]()  
@@ -131,7 +127,7 @@ https://halocare.site
 
 ## 🚀 CI / CD 파이프라인
 
-![파이프라인](https://github.com/user-attachments/assets/cicd-pipeline.png)
+![파이프라인](https://github.com/user-attachments/assets/757aeb9f-bab1-430c-900e-be5bad8ab920)
 
 ---
 
