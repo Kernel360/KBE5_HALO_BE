@@ -131,7 +131,7 @@ https://halocare.site
 
 ## 🚀 CI / CD 파이프라인
 
-![파이프라인](https://github.com/user-attachments/assets/cicd-pipeline.png)
+![파이프라인](https://github.com/user-attachments/assets/afb2f1d8-7a24-417c-9a37-297b7c71d104)
 
 ---
 
